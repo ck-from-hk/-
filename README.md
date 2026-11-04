@@ -8,6 +8,9 @@
 > 九十年代 DOS 打字教學程式致敬之作——單一 HTML 檔，毋須安裝、毋須連網即可完整執行。
 > A tribute to 1990s DOS typing tutors — a single HTML file that runs fully offline, no install required.
 
+https://ck-from-hk.github.io/-/
+^按此即可遊玩
+
 [繁體中文](#繁體中文) ｜ [English](#english)
 
 ---
