@@ -1,5 +1,5 @@
-版主唔識programming
-如有問題自己fork自己改即可
+項目擁有人唔識programming
+如有問題自己fork自己叫AI改即可
 
 90年代.ATC格式檔案請自備
 無編碼的字和標點會自動skip
