@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
 <title>快快快樂學倉頡 — 仿DOS重構版</title>
 <meta name="description" content="九十年代 DOS 打字教學程式致敬之作，單一 HTML 檔、離線可玩。含打字練習、實力測驗、文章卷測驗、倉頡查碼與最佳成績排行榜。">
+<script id="rawSrc" type="text/plain"></script>
 <script>document.documentElement.classList.add("js")</script>
 <script src="chinese_dict.js" onerror="void 0"></script>
 <script src="words_dict.js" onerror="void 0"></script>
@@ -17,9 +18,10 @@ html,body{overscroll-behavior:none;margin:0;background:#111;width:100vw;height:1
 .dos-screen{width:960px;height:540px;background:#005a52;position:relative;border:3px solid #808080;box-shadow:0 0 25px rgba(0,0,0,.9);display:flex;flex-direction:column;justify-content:space-between;transform-origin:center;flex-shrink:0}
 @media(pointer:coarse)and(hover:none){.key-button,.menu-btn,.tk-btn{min-height:44px;font-size:18px}.dos-footer{height:60px}.menu-item-row{min-height:44px}}
 .key-button,.menu-item-row,.cand-item,.tk-btn{touch-action:manipulation}
-#touchKeypad{position:fixed;bottom:0;left:0;right:0;display:none;background:rgba(20,20,20,.96);border-top:2px solid #555;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));flex-direction:column;gap:4px;z-index:9999}
+#touchKeypad{position:fixed;bottom:0;left:0;right:0;display:none;background:rgba(20,20,20,.96);border-top:2px solid #555;padding:6px 6px calc(12px + env(safe-area-inset-bottom,0px));flex-direction:column;gap:4px;z-index:9999;touch-action:none}
 .tk-row{display:flex;justify-content:center;gap:4px}
-.tk-btn{background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;color:#000;font-weight:bold;font-size:16px;height:40px;flex:1;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.tk-sp{pointer-events:none;visibility:hidden}
+.tk-btn{background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;color:#000;font-weight:bold;font-size:16px;height:40px;flex:1;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
 .tk-btn:active{background:#888;border-color:#404040 #fff #fff #404040}
 #kpModeLabel{position:absolute;top:-17px;right:8px;color:#5ff;font-size:10px;background:#2a2a2a;border:1px solid #555;border-radius:9px;padding:2px 10px;cursor:pointer;z-index:10000;white-space:nowrap}
 .tk-btn.col{flex-direction:column;line-height:1.05;gap:0;padding:2px 0}
@@ -53,9 +55,11 @@ html,body{overscroll-behavior:none;margin:0;background:#111;width:100vw;height:1
 .char-cell{text-align:center;font-size:20px;font-weight:bold;line-height:1;height:100%;display:flex;align-items:center;justify-content:center}
 .typed-row .char-cell.correct{color:#00f}
 .typed-row .char-cell.wrong{color:#f00}
+.typed-row .char-cell.skipped{color:#888}
 .typed-row .char-cell.active-cursor{background:rgba(0,0,255,.18);border-bottom:2px solid #00f}
 .prompt-row{background:rgba(0,0,0,.04)}
 .prompt-row .char-cell{color:#000}
+.prompt-row .char-cell.skipped{color:#888}
 .exam-line-17{border-top:1px solid #000;color:#800000;background:#c8ccc8;padding:0 8px;font-size:18px;font-weight:bold;gap:14px}
 .exam-line-18{background:#b8bcb8;color:#000;padding:0 8px;font-size:18px;font-weight:bold;justify-content:space-between;border-top:1px dotted #666}
 .compose-box{display:inline-flex;align-items:center;gap:12px}
@@ -197,7 +201,7 @@ html.js #jsNote{display:none}
 <div class="sub-window" id="leaderboardWindow">
 <div class="sub-win-title"><span>🏆 最佳成績排行榜</span><span style="font-size:13px;color:#aaa" id="lbStatusHint">[Esc] 返回</span></div>
 <div style="max-height:260px;overflow-y:auto"><table class="retro-table"><thead><tr><th>名次</th><th>姓名</th><th>模式</th><th>時長</th><th>速度</th><th>準確率</th><th>日期</th></tr></thead><tbody id="lbTableBody"></tbody></table></div>
-<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:6px"><div style="display:flex;gap:8px"><button class="key-button" id="clearLbBtn" style="color:#800000">重置</button><button class="key-button" id="exportDictBtn" style="color:#000080">匯出碼表 .tt</button><button class="key-button" id="exportDictJsBtn" style="color:#000080">匯出 .js</button></div><button class="key-button" id="closeLbBtn">返回 [Esc]</button></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:6px"><div style="display:flex;gap:8px"><button class="key-button" id="clearLbBtn" style="color:#800000">重置</button><button class="key-button" id="exportDictBtn" style="color:#000080">匯出碼表 .tt</button><button class="key-button" id="exportDictJsBtn" style="color:#000080">匯出 .js</button><button class="key-button" id="exportSelfHtmlBtn" style="color:#004000">💾 下載本網頁 .html</button></div><button class="key-button" id="closeLbBtn">返回 [Esc]</button></div>
 <div style="font-size:11px;color:#888;margin-top:4px">💡 「匯出 .js」：下載 chinese_dict.js，與本程式 HTML 放同一資料夾，開啟即自動載入擴充字庫</div>
 </div>
 <div class="sub-window" id="aboutWindow" style="max-width:640px">
@@ -215,7 +219,7 @@ html.js #jsNote{display:none}
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 匯出 .js 的用途（排行榜頁）</div>
 • 排行榜頁「匯出 .js」會把<b>目前生效的字庫</b>（內建＋已載入之擴充碼）包裝成 chinese_dict.js 下載。<br>• 把此檔與本程式 HTML 放在<b>同一資料夾</b>，下次開啟 HTML 即自動載入，毋須再手動上傳——適合備份或分發給他人（連同 HTML 一起傳）。<br>• 「匯出碼表 .tt」則為純文字碼表，供上傳載入或編輯之用。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 電腦命題題庫</div>
-• 按「📂 選擇題庫資料夾」一鍵匯入整個資料夾（選一次永久記住）。資料夾內有 <b>.atc</b> 時進入<b>文章卷模式</b>：每局隨機抽出一整篇，全文連續漢字作答（標點自動剝除、滿行不插空格）；無 .atc 則照舊 <b>.txt 詞池</b>。兩種模式互斥，重新選取即切換。<br>• .atc 檔之自訂標頭（#／@／--- 開首行）自動忽略，內文連標點皆可，程式只取字庫內漢字。<br>• 本機另可放 words_dict.js（window.EXTERNAL_WORDS="詞1 詞2 …"）自動載入。<br>• http:// 部署時自動依序偵測 pool.txt、words.txt、questions.txt、*.atc 等。
+• 按<b>選擇題庫資料夾</b>一鍵匯入整個資料夾（選一次永久記住）。資料夾內有 <b>.atc</b> 時進入<b>文章卷模式</b>：每局隨機抽出一整篇，全文連續漢字作答（標點自動剝除、滿行不插空格）；無 .atc 則照舊 <b>.txt 詞池</b>。兩種模式互斥，重新選取即切換。<br>• .atc 檔之自訂標頭（#／@／--- 開首行）自動忽略，內文連標點皆可，程式只取字庫內漢字。<br>• 本機另可放 words_dict.js（window.EXTERNAL_WORDS="詞1 詞2 …"）自動載入。<br>• http:// 部署時自動依序偵測 pool.txt、words.txt、questions.txt、*.atc 等。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 公平計分</div>
 • 測驗中使用 <b>Z 萬用鍵</b>時，程式<b>不會</b>自動把目標字排到候選首位——須看清單以 <b>1-9</b> 手動選字（貼近真實輸入法行為，防止 Space 保送拿分）。不含 Z 的正常輸入仍自動首選，速度體驗不變。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 關於排行榜資料的儲存</div>
@@ -240,7 +244,7 @@ html.js #jsNote{display:none}
 <div class="tut-h y">四、取碼五原則（每字唯一正確碼）</div>
 <div style="margin-top:4px;font-size:13px">① <b>精簡</b>：王=MG(一土) 非 MMM｜共=TC(廿金)<br>② <b>完整（先繁後簡）</b>：丰=QJ(手十)｜夫=QO(手人)｜青=QMB(手一月)<br>③ <b>字型特徵</b>：轉角處不切斷——力=KS｜九=KN｜永=INE｜也=PD｜申=LWL(中田中)｜由=LW(中田)｜甲=WL(田中)<br>④ <b>省略</b>：字首最多2碼、字身最多3碼，中間省去——點=WFYR｜醒字首「酉」取MW(一田)<br>⑤ <b>複合字首</b>：慣用偏旁視為整體取首尾——鬼=HI｜門=AN｜鬥=LN｜行=HOMN｜衣=YHV｜虍=YPH｜隹=OG</div>
 <div class="tut-h o">五、特殊字（重疊字形）</div>
-<div style="margin-top:4px;font-size:13px">當「<b>木、火、大、心、戈</b>」被其他字形<b>橫貫重疊</b>時，<b>先取特殊字，再取重疊其上的字形</b>：<br>東=DW(木田)｜束=DL(木中)｜末=DJ(木十)｜來=DOO｜秉=HDL(竹木中)｜乘=HDP｜脊=FCB(火金月)｜拳=FQQ(火手手)｜夷=KN(大弓)｜屯=PU(心山)</div>
+<div style="margin-top:4px;font-size:13px">當<b>木、火、大、心、戈</b>被其他字形<b>橫貫重疊</b>時，<b>先取特殊字，再取重疊其上的字形</b>：<br>東=DW(木田)｜束=DL(木中)｜末=DJ(木十)｜來=DOO｜秉=HDL(竹木中)｜乘=HDP｜脊=FCB(火金月)｜拳=FQQ(火手手)｜夷=KN(大弓)｜屯=PU(心山)</div>
 <div class="tut-h o">六、難字（X 難字鍵）</div>
 <div style="margin-top:4px;font-size:13px">難取部分以 X 代替，分兩型：<br>• <b>首難尾型</b>：首尾好取、中間難——臼=HX｜兼=TXC｜慶=IXE｜淵=EXBT｜肅=LX｜齊=YX｜龜=NXU<br>• <b>首難型</b>：只有首碼好取——兒=HXU｜學=HBND｜興=HXTC｜濟=EYX｜齋=YXHF<br>⚠ 約 95% 字可依規則取碼，難字數量有限，記熟即可。</div>
 <div class="tut-h g">七、易錯字形辨析</div>
@@ -258,7 +262,7 @@ html.js #jsNote{display:none}
 </div>
 </div>
 <div class="dos-footer" id="bottomFooterBar">
-<div style="display:flex;gap:12px"><div class="key-button" id="btnEnter">Enter</div><div class="key-button" id="btnEsc">Esc</div></div>
+<div style="display:flex;gap:12px"><div class="key-button" id="btnEnter">Enter</div><div class="key-button" id="btnEsc">Esc</div><div class="key-button" id="btnDlHtmlFooter" style="color:#004000">💾 下載 .html</div></div>
 <div id="footerHint" style="font-size:12px;color:#333;flex:1;text-align:center">↑↓ 選擇，Enter 進入</div>
 <div style="display:flex;gap:6px"><div class="key-button" id="btnUp">↑</div><div class="key-button" id="btnDown">↓</div></div>
 </div>
@@ -290,18 +294,89 @@ alarm(){if(!this.en)return;this._clear();this.beep(880,.15);this._tone(880,.15,"
 const CJM={A:"日",B:"月",C:"金",D:"木",E:"水",F:"火",G:"土",H:"竹",I:"戈",J:"十",K:"大",L:"中",M:"一",N:"弓",O:"人",P:"心",Q:"手",R:"口",S:"尸",T:"廿",U:"山",V:"女",W:"田",X:"難",Y:"卜",Z:"重"};
 let KP_LAYOUT="ABC";
 function initKeypads(){
-  const r1='<div class="tk-row">'+[1,2,3,4,5,6,7,8,9].map(n=>`<button class="tk-btn" data-k="${n}">${n}</button>`).join("")+'<button class="tk-btn" data-k="BACKSPACE" style="flex:1.5;color:#800">⌫</button></div>',
-  r5='<div class="tk-row"><button class="tk-btn" data-k=" " style="flex:3;color:#008">[Space]</button><button class="tk-btn" data-k="[">[</button><button class="tk-btn" data-k="]">]</button><button class="tk-btn" data-k="?">?</button><button class="tk-btn" data-k="ESC" style="color:#800">Esc</button></div>',
-  rows=["QWERTYUIOP","ASDFGHJKL","ZXCVBNM"],
-  mk=rad=>r1+rows.map((s,i)=>'<div class="tk-row">'+[...s].map(k=>rad?`<button class="tk-btn col" data-k="${k}"><span class="kb-rad">${CJM[k]}</span><span class="kb-key">${k}</span></button>`:`<button class="tk-btn" data-k="${k}">${k}</button>`).join("")+(i===2?'<button class="tk-btn" data-k="ENTER" style="flex:1.5;color:#008">Enter</button>':'')+'</div>').join("")+r5;
+  const sp=f=>`<div class="tk-sp" style="flex:${f}"></div>`,
+  kb=(k,rad)=>rad?`<button class="tk-btn col" data-k="${k}"><span class="kb-rad">${CJM[k]}</span><span class="kb-key">${k}</span></button>`:`<button class="tk-btn" data-k="${k}">${k}</button>`,
+  r1='<div class="tk-row">'+sp(.5)+[1,2,3,4,5,6,7,8,9].map(n=>`<button class="tk-btn" data-k="${n}">${n}</button>`).join("")+sp(.5)+'</div>',
+  r5='<div class="tk-row"><button class="tk-btn" data-k="ESC" style="flex:1.15;color:#800">Esc</button>'+sp(.35)+'<button class="tk-btn" data-k=" " style="flex:4;color:#008">[Space]</button><button class="tk-btn" data-k="PAGEUP" style="flex:.9;font-size:13px">PU</button><button class="tk-btn" data-k="PAGEDOWN" style="flex:.9;font-size:13px">PD</button><button class="tk-btn" data-k="?" style="flex:.9">?</button><button class="tk-btn" data-k="ENTER" style="flex:1.3;color:#008">Enter</button></div>',
+  mk=rad=>r1
+    +'<div class="tk-row">'+[..."QWERTYUIOP"].map(k=>kb(k,rad)).join("")+'</div>'
+    +'<div class="tk-row">'+sp(.5)+[..."ASDFGHJKL"].map(k=>kb(k,rad)).join("")+sp(.5)+'</div>'
+    +'<div class="tk-row">'+sp(1.5)+[..."ZXCVBNM"].map(k=>kb(k,rad)).join("")+'<button class="tk-btn" data-k="BACKSPACE" style="flex:1.5;color:#800">⌫</button></div>'
+    +r5;
   $("kpAbc").innerHTML=mk(0);$("kpRad").innerHTML=mk(1);
 }
 function toggleKeypad(){KP_LAYOUT=KP_LAYOUT==="ABC"?"RAD":"ABC";const a=$("kpAbc"),r=$("kpRad"),l=$("kpModeLabel");if(a)a.style.display=KP_LAYOUT==="ABC"?"block":"none";if(r)r.style.display=KP_LAYOUT==="RAD"?"block":"none";if(l)l.textContent=KP_LAYOUT==="ABC"?"⇄ 字根":"⇄ ABC";schedScale()}
 
+/* ================= 虛擬鍵盤：正規化 + 統一入口 + 委派 ================= */
+function normalizeKpKey(raw){
+  if(raw==null)return"";
+  let k=String(raw).replace(/？/g,"?").replace(/　/g," ").trim();
+  const up=k.toUpperCase();
+  const ALIAS={
+    PU:"PAGEUP",PGUP:"PAGEUP",UP:"PAGEUP",
+    PD:"PAGEDOWN",PGDN:"PAGEDOWN",DN:"PAGEDOWN",
+    DEL:"BACKSPACE",BKSP:"BACKSPACE",
+    SPACE:" ",ESCAPE:"ESC",RETURN:"ENTER"
+  };
+  if(ALIAS[up])return ALIAS[up];
+  return k.length===1?up:up;
+}
+
+function practiceNext(){
+  const it=S.list[S.charIndex%20];
+  if(!it)return;
+  if(++S.charIndex>=20)return practiceDone();
+  renderPractice();updatePStats();
+}
+function practicePrev(){
+  if(S.charIndex<=0){sound.err();return}
+  S.charIndex--;
+  renderPractice();updatePStats();
+}
+
+function dispatchVirtualKey(k,ev){
+  if(!k)return;
+  const now=Date.now();
+  const win=(k===" "||k==="ENTER"||k==="BACKSPACE")?50:80;
+  const st=dispatchVirtualKey;
+  if(st._k===k&&now-(st._t||0)<win)return;
+  st._k=k;st._t=now;
+
+  if(S.view==="EXAM"){
+    if(k==="ESC")return exitExam();
+    return examKey(k);
+  }
+  if(S.view==="PRACTICE"){
+    if(k==="ESC")return S.buf?clearSlots():setView("MENU");
+    if(k==="ENTER")return practiceKey("ENTER");
+    if(k==="PAGEUP"){sound.nav();return practicePrev()}
+    if(k==="PAGEDOWN"){sound.nav();return practiceNext()}
+    if(k==="?"){sound.key();return doPQuery()}
+    return practiceKey(k);
+  }
+}
+
+function bindVirtualKeypad(){
+  const tkEl=$("touchKeypad");
+  if(!tkEl||tkEl._vkBound)return;
+  tkEl._vkBound=true;
+  const onPad=safe(ev=>{
+    const b=ev.target.closest&&ev.target.closest(".tk-btn");
+    if(!b||!tkEl.contains(b))return;
+    if(ev.cancelable)ev.preventDefault();
+    const raw=b.dataset.k;
+    const k=normalizeKpKey(raw);
+    if(k!==raw)b.dataset.k=k;
+    dispatchVirtualKey(k,ev);
+  });
+  tkEl.addEventListener("pointerdown",onPad);
+  tkEl.addEventListener("touchstart",onPad,{passive:false});
+}
+
 const unpack=s=>{const o={};for(const p of s.split(" "))o[p[0]]=p.slice(1).includes("/")?p.slice(1).split("/"):p.slice(1);return o};
-const T1000=unpack("快PDK 樂VID 學HBND 習SMHA 倉OIAR 頡GRMBC 輸JJOMN 入OH 法EGI 電MBWU 腦BVVW 科HDYJ 技QJE 網VFBTV/VFBLV 絡VFMER 資IOBUC 訊YRNJ 時AGDI 代OIP 發NONHE 展STAV 社IFG 會OMWA 進YOG 步YLMH 文YK 化OP 育YIB 知OKR 識YRYIA 智OKRA 慧QJSMP 創ORLN 新YDHML 思WP 維VFOOG 理MGBG 想DUP 目BU 標DMWF 努VKSHL 力KS 奮KOGW 鬥LN 成IHS 功MKS 勝BFQKS 利HDLN 光FMU 明AB 前TBLN 途YOMD 希KKLB 望YBMG 未JD 來DOO 世PT 界WOLL 和HDR 平MFJ 友KE 誼YRJBM 合OMR 作OHS 團WJI 結VFGR 互MVM 助BMKS 關ANVIS/ANVIT 懷PYWV 愛BBME 護YRTOE 環MGWLV 境GYTU 保ORD 生HQM 態IPP 自HBU 然BKF 風HNHLI/HNMLI 景AYRF 優OMBVO 美TGK 健ONKQ 康IILE 運YBJJ 動HGKS 體BBTWT 魄HAHI 精FDQMB 神IFLWL 滿ETLB 熱GIF/GIPF/GTKF 誠YRIHS 服BHSLE 務NHOKS 認YRSIP 真JBMC 負NBUC 責QMWJC 度ITE 禮IFTW 貌BHHAU 師HRMLB 長SMV 孝JKND 父CK 母WYI 家JMSO 庭INKG 溫EABT/EWOT 幸GTJ 福IFMRW 安JV 定JMYO 繁OKVIF/VHFV 榮FFBD 經VFMVM 濟EYX 貿HHBUC 易APHH 融MBLMI 商YCBCR 業TCTD 管HJRR 交YCK 通YNIB 建NKQ 設YRHNE 規QOBU 劃LGWLN 醫SEMCW 療KIKCF 衛HODN 藝TGIMI/TGGII/TGGI 術HOICN 音YTA 書LGA 畫LGWM 閱ANCRU 讀YRGWC 寫JMHXF/JBHXF 練VFDW 測EBCI 試YRIPM 績VFQMC 良IAV 高YRBR 率YIOJ 準EOG 確MROBG 速YDL 清EQMB 楚DDNYO 白HA 簡HANA 單RRWJ 容JCOR 包HPRU 忍SIP 耐MBDI 堅SELG 持QGDI 毅YTHNE 勇NIBKS 敢MJOK 果WD 斷VIHML 策HBDB 雙OGE 全OMG 春QKA 夏MUHE 秋HDF 冬HEY 四WC 季HDND 氣ONFD 候OLNK 變VFOK 陽NLAMH 燦FYED 爛FANW 微HOUSK 笑HDIK 喜GRR 悅PCRU 歡TGNO 欣HMLO 鼓GJRHE 舞OTNI 讚YRHUC 賞FRBUC 肯YMB 川LLL 河EMNR 流EYIU 海EOWY 洋ETQ 廣IATC 闊ANEHR 天MK 空JCM 蔚TSBDI 藍TSIT 飛NOHTO 翔TQSMM 旅YSOHV 遊YYSB 探QBCD 索JBVI 現MGBUU 奇KMR 蹟RMQMC 歷MHDLM 史JLK 傳OJMII 統VFYIU 論YROMB 實JMWJC 踐RMII 驗SFOOM 豐TWTM 富JMRW 品RRR 質HHLBC 卓YAJ 越GIV 領OIMBC 先HGMU 告HGR 骨BB 直JBMM 昍AA 占YR 計YRJ 效YKOK 雲MBMMI 彩BDHHH 順LLMBC 尊TWDI 教JDOK 敬TROK 落TEHER 石MR 出UU 水E 心P 港ETCS 灣ETVV 香HDA 情PQMB 感IRRP 緒VFJKA 物HBUHL 事JLLN 歲YMIU 年OQ 慶IXE 朋BB 親YDBUU 暖ABME 意YAP 義TGHQI 深EBCD 遠YGRV 星AHQM 辰MMMV 亮YRBUN 柔NHD 細VFW 雨MBYL 島HAYU 嶼UHXYC 森DDD 林DD 樹DGTI 花TOP 草TAJ 魚NWF 鳥HAYF 蟲LILII 獸RMIK 雪MBSM 菇TVJR 鯉NFWG 為IKNF 語YRMMR 回WR 王MG 求IJE 一M 乙NU/N 二MM 十J 丁MN 廠IML 七JU 乃NHS 人O 八HO 九KN 几HN 刀SH 匕P 又NK 三MMM 下MY 土G 士JM 夕NI 大K 女V 子ND 寸DI 小NC 工MLM 己SU 已SU 巳RU 巾LB 干MJ 弓N 戈I 支JE 斤HML 方YHS 日A 曰A 月B 木D 欠NO 止YLM 歹MNI 比PP 毛HQU 氏HVP 火F 爪HLO 牛HQ 犬IK 玉MGI 瓜HVO 瓦MVN 甘TMM 用BQ 田W 皮DHE 皿BT 矛NIH 矢OK 示MMF 禾HD 穴JCO 立YT 竹H 米FD 糸VIF 羊TQ 羽SMIM 老JKP 而MBLL 耳SJ 肉OBO 臣SLSL 至MIG 臼HX 舌HJR 舟HBY 艮AV 色NAU 血HBT 行HOMN 衣YHV 見BUHU 角NBG 言YMMR 谷COR 豆MRT 貝BUC 赤GLC 走GYO 足RYO 身HXH 車JWJ 辛YTJ 里WG 金C 門AN 頁MBC 食OIAV 首THBU 馬SQSF 鬼HI 鹿IXP 麥JONI 麻IDD 黃TMWC/TC 黑WGF/WGTF 鼠HXVYV 鼎BUVML 鼻HUWML 齊YX 齒YMUO 辵HHRYO/HHHO/YHO 靑QMB 決EDK 嘅RAIU 喺ROHF 睇BUCNH 嘢RWGN 咗RKM 哋RGPD 咁RTMM/RTM 點WFYR 邊YVHH 搵QABT 諗YROIP 冇KB 拗QVIS 氹NE 邨PUNL 埗GYLH 㗎RKRD/RKRU 喎RBBR 嘞RTJS 咪RFD 糉FDJCE 鰂NFBCN 嗰ROWR 啲RHAI 靚QBBUU 畀WML 嬲WVSW 嫲VIDD 爺CKSJL 仔OND 囡WV 囝WND 叻RKS 呃RMSU 唔RMMR 佢OSS 俾OHWJ 攰JEKS 瞓BULLL 唞RQYJ 晏AJV 忟PYK 憎PCWA 煲ODF 涌ENIB 劏FWLN 埞GJMO 掟QJMO 揼QMRE 撳QCNO 嚡RTJG 啫RJKA 嘥RHOO 啱RUMR 唓RJWJ 噏RORY/ROMR 戇YJKP 嘩RTMJ 吖RMH 呀RMVH 吓RMY 嚟RHHE 掂QIYR 偈OAPV 喼RNSP 嘭RGTH 曱WML/AL 甴LWM/LA 仝OM 同BMR 亡YV 死MNP 存KND 龍YBYSP 龜NXU 針CH 燕TLKF 虎YPHU 兩MOOB 睛BUQM 蟬LIRRJ 鵲TAHAF 雀FOG 百MA 千HJ 上YM 地GPD 也PD 久NO 字JND 才DH 吉GR 相DBU 公CIR 正MLM 私HDIR 五MDM 西MCW 東DW 京YRF 涼EYRF 冰IME 湖EJRB 投QHNE 苦TJR 共TC 若TKR 市YLB 味RJD 分CSH 秒HDFH 必PH 之INO 多NINI 少FH 在KLG 受BE 及HE 從HOOO 往OYG 等HGDI 命OMRL 守JDI 眼BUAV 似OVIO 厚MAND 淺EII 更MLK 紅VFM 原MHAF 源EMHAF 飲OINO 積HDQMC 累WVIF 異WMTC 志GP 城GIS 磊MRMRM 君SKR 歌MRNO 泣EYT 面MYSW 藥TVID 葉TPTD 說YRCRU 息HUP 由LW 萬TWLB 驚TROKQ 鳴RHAF 外NIY 哄RTC 堂FBG 孔NDU 恆PMAM 眾OOO 所HSHML 周BGR 其MMC 名NIR 造YHGR 近YHML 阻NLBM 無OOTF 奈KMMF 放YSOK 妙VFH 筆HQ 章YTAJ 油ELW 加KS 得OAMI 財BUDH 太KI 國WIRM 民RVP 有KB 恙TQP 聞ANSJ 如VR 故JROK 鹹YWIHR 戩MAI 雜YDOG 是AMYO 可MNR 開ANMT 強NILI 謙YRTXC 虛YPPU 常FBRLB 信OYMR 好VND 華TMTJ 麗MMBBP 離YBOG 假ORYE 返YHE 晒ADU 戲YTI 茶TOD 街HOGGN 裏YMWGV 錦CHAB 矚BUSYY 撓QGGU 顢TLMBC 道YTHU 曹TWA 匹SC 只RC 休OD 尚FBR 寺GDI 形MTHHH 店IYR 去GI 冠BMBU 肌BHN 肚BG 恭TCP 句PR 打QMN 青QMB 區SRR 巨SS 革TLJ 凶UK 收VLOK 內OB 謝YRHHI 丰QJ 夫QO 申LWL 甲WL 束DL 末DJ 秉HDL 乘HDP 脊FCB 拳FQQ 夷KN 屯PU 兼TXC 淵EXBT 肅LX 兒HXU 興HXTC 齋YXHF 達YGQ 過YBBR 述YIJC 問ANR 病KMOB 痛KNB 症KMM 污EMMS 冊BT 啟HROK"),
+const T1000=unpack("快PDK 樂VID 學HBND 習SMHA 倉OIAR 頡GRMBC 輸JJOMN 入OH 法EGI 電MBWU 腦BVVW 科HDYJ 技QJE 網VFBTV/VFBLV 絡VFMER 資IOBUC 訊YRNJ 時AGDI 代OIP 發NONHE 展STAV 社IFG 會OMWA 進YOG 步YLMH 文YK 化OP 育YIB 知OKR 識YRYIA 智OKRA 慧QJSMP 創ORLN 新YDHML 思WP 維VFOOG 理MGBG 想DUP 目BU 標DMWF 努VKSHL 力KS 奮KOGW 鬥LN 成IHS 功MKS 勝BFQKS 利HDLN 光FMU 明AB 前TBLN 途YOMD 希KKLB 望YBMG 未JD 來DOO 世PT 界WOLL 和HDR 平MFJ 友KE 誼YRJBM 合OMR 作OHS 團WJI 結VFGR 互MVM 助BMKS 關ANVIS/ANVIT 懷PYWV 愛BBME 護YRTOE 環MGWLV 境GYTU 保ORD 生HQM 態IPP 自HBU 然BKF 風HNHLI/HNMLI 景AYRF 優OMBVO 美TGK 健ONKQ 康IILE 運YBJJ 動HGKS 體BBTWT 魄HAHI 精FDQMB 神IFLWL 滿ETLB 熱GIF/GIPF/GTKF 誠YRIHS 服BHSLE 務NHOKS 認YRSIP 真JBMC 負NBUC 責QMWJC 度ITE 禮IFTW 貌BHHAU 師HRMLB 長SMV 孝JKND 父CK 母WYI 家JMSO 庭INKG 溫EABT/EWOT 幸GTJ IFMRW 安JV 定JMYO 繁OKVIF/VHFV 榮FFBD 經VFMVM 濟EYX 貿HHBUC 易APHH 融MBLMI 商YCBCR 業TCTD 管HJRR 交YCK 通YNIB 建NKQ 設YRHNE 規QOBU 劃LGWLN 醫SEMCW 療KIKCF 衛HODN 藝TGIMI/TGGII/TGGI 術HOICN 音YTA 書LGA 畫LGWM 閱ANCRU 讀YRGWC 寫JMHXF/JBHXF 練VFDW 測EBCI 試YRIPM 績VFQMC 良IAV 高YRBR 率YIOJ 準EOG 確MROBG 速YDL 清EQMB 楚DDNYO 白HA 簡HANA 單RRWJ 容JCOR 包HPRU 忍SIP 耐MBDI 堅SELG 持QGDI 毅YTHNE 勇NIBKS 敢MJOK 果WD 斷VIHML 策HBDB 雙OGE 全OMG 春QKA 夏MUHE 秋HDF 冬HEY 四WC 季HDND 氣ONFD 候OLNK 變VFOK 陽NLAMH 燦FYED 爛FANW 微HOUSK 笑HDIK 喜GRR 悅PCRU 歡TGNO 欣HMLO 鼓GJRHE 舞OTNI 讚YRHUC 賞FRBUC 肯YMB 川LLL 河EMNR 流EYIU 海EOWY 洋ETQ 廣IATC 闊ANEHR 天MK 空JCM 蔚TSBDI 藍TSIT 飛NOHTO 翔TQSMM 旅YSOHV 遊YYSB 探QBCD 索JBVI 現MGBUU 奇KMR 蹟RMQMC 歷MHDLM 史JLK 傳OJMII 統VFYIU 論YROMB 實JMWJC 踐RMII 驗SFOOM 豐TWTM 富JMRW 品RRR 質HHLBC 卓YAJ 越GIV 領OIMBC 先HGMU 告HGR 骨BB 直JBMM 昍AA 占YR 計YRJ 效YKOK 雲MBMMI 彩BDHHH 順LLMBC 尊TWDI 教JDOK 敬TROK 落TEHER 石MR 出UU 水E 心P 港ETCS 灣ETVV 香HDA 情PQMB 感IRRP 緒VFJKA 物HBUHL 事JLLN 歲YMIU 年OQ 慶IXE 朋BB 親YDBUU 暖ABME 意YAP 義TGHQI 深EBCD 遠YGRV 星AHQM 辰MMMV 亮YRBUN 柔NHD 細VFW 雨MBYL 島HAYU 嶼UHXYC 森DDD 林DD 樹DGTI 花TOP 草TAJ 魚NWF 鳥HAYF 蟲LILII 獸RMIK 雪MBSM 菇TVJR 鯉NFWG 為IKNF 語YRMMR 回WR 王MG 求IJE 一M 乙NU/N 二MM 十J 丁MN 廠IML 七JU 乃NHS 人O 八HO 九KN 几HN 刀SH 匕P 又NK 三MMM 下MY 土G 士JM 夕NI 大K 女V 子ND 寸DI 小NC 工MLM 己SU 已SU 巳RU 巾LB 干MJ 弓N 戈I 支JE 斤HML 方YHS 日A 曰A 月B 木D 欠NO 止YLM 歹MNI 比PP 毛HQU 氏HVP 火F 爪HLO 牛HQ 犬IK 玉MGI 瓜HVO 瓦MVN 甘TMM 用BQ 田W 皮DHE 皿BT 矛NIH 矢OK 示MMF 禾HD 穴JCO 立YT 竹H 米FD 糸VIF 羊TQ 羽SMIM 老JKP 而MBLL 耳SJ 肉OBO 臣SLSL 至MIG 臼HX 舌HJR 舟HBY 艮AV 色NAU 血HBT 行HOMN 衣YHV 見BUHU 角NBG 言YMMR 谷COR 豆MRT 貝BUC 赤GLC 走GYO 足RYO 身HXH 車JWJ 辛YTJ 里WG 金C 門AN 頁MBC 食OIAV 首THBU 馬SQSF 鬼HI 鹿IXP 麥JONI 麻IDD 黃TMWC/TC 黑WGF/WGTF 鼠HXVYV 鼎BUVML 鼻HUWML 齊YX 齒YMUO 辵HHRYO/HHHO/YHO 靑QMB 決EDK 嘅RAIU 喺ROHF 睇BUCNH 嘢RWGN 咗RKM 哋RGPD 咁RTMM/RTM 點WFYR 邊YVHH 搵QABT 諗YROIP 冇KB 拗QVIS 氹NE 邨PUNL 埗GYLH 㗎RKRD/RKRU 喎RBBR 嘞RTJS 咪RFD 糉FDJCE 鰂NFBCN 嗰ROWR 啲RHAI 靚QBBUU 畀WML 嬲WVSW 嫲VIDD 爺CKSJL 仔OND 囡WV 囝WND 叻RKS 呃RMSU 唔RMMR 佢OSS 俾OHWJ 攰JEKS 瞓BULLL 唞RQYJ 晏AJV 忟PYK 憎PCWA 煲ODF 涌ENIB 劏FWLN 埞GJMO 掟QJMO 揼QMRE 撳QCNO 嚡RTJG 啫RJKA 嘥RHOO 啱RUMR 唓RJWJ 噏RORY/ROMR 戇YJKP 嘩RTMJ 吖RMH 呀RMVH 吓RMY 嚟RHHE 掂QIYR 偈OAPV 喼RNSP 嘭RGTH 曱WML/AL 甴LWM/LA 仝OM 同BMR 亡YV 死MNP 存KND 龍YBYSP 龜NXU 針CH 燕TLKF 虎YPHU 兩MOOB 睛BUQM 蟬LIRRJ 鵲TAHAF 雀FOG 百MA 千HJ 上YM 地GPD 也PD 久NO 字JND 才DH 吉GR 相DBU 公CIR 正MLM 私HDIR 五MDM 西MCW 東DW 京YRF 涼EYRF 冰IME 湖EJRB 投QHNE 苦TJR 共TC 若TKR 市YLB 味RJD 分CSH 秒HDFH 必PH 之INO 多NINI 少FH 在KLG 受BE 及HE 從HOOO 往OYG 等HGDI 命OMRL 守JDI 眼BUAV 似OVIO 厚MAND 淺EII 更MLK 紅VFM 原MHAF 源EMHAF 飲OINO 積HDQMC 累WVIF 異WMTC 志GP 城GIS 磊MRMRM 君SKR 歌MRNO 泣EYT 面MYSW 藥TVID 葉TPTD 說YRCRU 息HUP 由LW 萬TWLB 驚TROKQ 鳴RHAF 外NIY 哄RTC 堂FBG 孔NDU 恆PMAM 眾OOO 所HSHML 周BGR 其MMC 名NIR 造YHGR 近YHML 阻NLBM 無OOTF 奈KMMF 放YSOK 妙VFH 筆HQ 章YTAJ 油ELW 加KS 得OAMI 財BUDH 太KI 國WIRM 民RVP 有KB 恙TQP 聞ANSJ 如VR 故JROK 鹹YWIHR 戩MAI 雜YDOG 是AMYO 可MNR 開ANMT 強NILI 謙YRTXC 虛YPPU 常FBRLB 信OYMR 好VND 華TMTJ 麗MMBBP 離YBOG 假ORYE 返YHE 晒ADU 戲YTI 茶TOD 街HOGGN 裏YMWGV 錦CHAB 矚BUSYY 撓QGGU 顢TLMBC 道YTHU 曹TWA 匹SC 只RC 休OD 尚FBR 寺GDI 形MTHHH 店IYR 去GI 冠BMBU 肌BHN 肚BG 恭TCP 句PR 打QMN 青QMB 區SRR 巨SS 革TLJ 凶UK 收VLOK 內OB 謝YRHHI 丰QJ 夫QO 申LWL 甲WL 束DL 末DJ 秉HDL 乘HDP 脊FCB 拳FQQ 夷KN 屯PU 兼TXC 淵EXBT 肅LX 兒HXU 興HXTC 齋YXHF 達YGQ 過YBBR 述YIJC 問ANR 病KMOB 痛KNB 症KMM 污EMMS 冊BT 啟HROK"),
 SIMP=unpack("国WMGI/WGI 东KD 学FBND 爱BBME 门ILS/LS 问ILSR/LSR 这YIK/YYK 头YK 车JQ 马NVSM 鸟HVSM 鱼NWM 话IVHJ 铁OVHQO/OPHQO/CHQO 红VMM 给VOMR 写BYSM/BMYSM 风HNK/HNIK 见BLU 龙IKP 邓WL 韦QS/FJQ 开MJ 长LHMO 书LGA/IDS 买NUK/NYK 实JYK 与YSM/LSM 专QII/QNI 丛SSW/OOM 丝VVM 丢HGI 两MOOB/MBOO 严MFMH 丧GCSV 个OL/O 丰QJJ/QJ 临LLOS 为IKSI/IKNF 丽MMBB 举FCHQ/FCQ 义IK/IKI 乐HVD/HVF 欢ENO 么VI 产YTMH/YTHM 亲YTD 仅ONE 伟OQS 传OQMI/OQNI 伤OOKS 伦OOMB 伪OIKF 价OOLL 众OOO 优OIKU 伙OF 会OMMI 伯OHA 估OJR 伴OFQ 伶OOII 伸OLWL 伺OSMR 位OYT 低OHPM 住OYG 佐OKM 体ODM 何OMNR 佛OLLN 作OHS 佣OBQ 佩OHNML 佳OGG 使OJLK 侄OMIG 侦OYBC 侧OBCLN 侨OHKLL 侮OWYI 侯ONMK 侵OSME 便OMLK 促ORYO 俊OICE 俗OCOR 保ORD 信OYMR 俩OMBOO 俭OOMC 修OOLH 俯OIODI 俱OBMC 俸OQKQ 俺OKLWU 倍OYTR 倒OMGLN 倔OSUU 倘OFBR 候OLNK 倚OKMR 借OTA 倡OAA 倦OFQU 倩OQMB 倪OHXHU 债OQMBC 值OJBM 倾OPMBC 假ORYE 偎OWMV 偏OHSB 做OJROK 停OYRMN 健ONKQ 偶OWLB 偷OOMN 偿OFBMI 傀OHI 傅OIBII 傍OYBS 储OIVKA 催OUOG 傲OGSOK 傻OHCE 像ONAO 僚OKCF 僧OCWA 僵OMWM 僻OSRJ 仪OIK/OYI 亿ON 仁OMM 什OJ 仇OKN 今OIN 介OLL 仍ONHS 从OO 仑OMP 仓OSU 仕OJM 他OPD 仗OJK 付ODI 仙OU 代OIP 令OIN 以VIO"),
-WORDS="快快樂樂 一心一意 水落石出 海闊天空 風和日麗 春暖花開 萬眾一心 自強不息 實事求是 勇往直前 光明磊落 全心全意 成千上萬 日新月異 百花齊放 全力以赴 高瞻遠矚 大公無私 見義勇為 推陳出新 精益求精 溫故知新 舉一反三 學無止境 集思廣益 持之以恆 腳踏實地 身體健康 萬事大吉 心想事成 笑容滿面 和氣生財 古往今來 四海為家 天長地久 白雲藍天 青山綠水 鳥語花香 風調雨順 國泰民安 山明水秀 五湖四海 千變萬化 有口皆碑 名副其實 出類拔萃 力爭上游 一日千里 前程似錦 蒸蒸日上 欣欣向榮 百折不撓 同心協力 守望相助 相親相愛 飲水思源 知足常樂 平易近人 謙虛謹慎 光明正大 堂堂正正 言行一致 一視同仁 開門見山 倉頡輸入 電腦科技 資訊網絡 智慧時代 社會發展 文化教育 知識創新 思維理想 目標努力 奮鬥成功 勝利光明 前途希望 未來世界 和平友誼 合作團結 互助關懷 愛護環境 保護自然 風景優美 運動精神 熱誠服務 認真負責 態度謙虛 禮貌師長 孝順父母 家庭溫馨 幸福安定 繁榮經濟 貿易商業 管理交通 建設規劃 醫療衛生 藝術音樂 書畫閱讀 寫作練習 測試成績 優良效率 準確速度 清楚簡單 勇敢堅持 微笑喜悅 蔚藍旅遊 探索發現 歷史傳統 品質卓越 香港九龍 新界離島 茶餐廳裏 唔該晒你 真係好靚 今日放假 邊度搵食 傾偈飲茶 行街睇戲 準時返學 車水馬龍 畫龍點睛 一石二鳥 百聞不如一見 一見如故 無中生有 無可奈何 妙筆生花 下筆成章 妙手回春 出口成章 一鳴驚人 花容月貌 喜出望外 哄堂大笑 分甘同味 可歌可泣 樂在其中 樂不可支 助人為樂 自由自在 自言自語 自高自大 自作自受 自食其力 安然無恙 天下無雙 天下太平 天造地設 日久天長 月白風清 月下老人 平安無事 平心而論 蟬不知雪 語重心長 同甘共苦 同舟共濟 和風細雨 春風化雨 風花雪月 風雨無阻 春花秋月 冬暖夏涼 冰天雪地 水深火熱 山高水長 江山如畫 名山大川 高山流水 源遠流長 川流不息 力所能及 力不從心 一字千金 一言九鼎 言而有信 一孔之見 一技之長 一無所知 一無所有 一分一秒 一生一世 九牛一毛 九死一生 生死存亡 一路平安 一路順風 上行下效 上下其手 上下一心 目中無人 一目十行 耳目一新 眼高手低 低三下四 情同手足 深情厚誼 深入淺出 深入人心 眾志成城 眾所周知 公正無私 公私分明 正人君子 一身正氣 身體力行 心滿意足 心平氣和 心安理得 心直口快 好自為之 自告奮勇 奮發向上 高人一等 相安無事 望子成龍 吉人天相 萬事如意 大吉大利 多才多藝 見多識廣 五花八門 五體投地 五光十色 四面八方 四海一家 千辛萬苦 千方百計 萬水千山 千秋萬代 百發百中 一五一十 十全十美 十年樹木 百年樹人 春華秋實 秋風落葉 一葉知秋 日落西山 日積月累 誠心誠意".split(" "),
+WORDS="快快樂樂 一心一意 水落石出 海闊天空 風和日麗 春暖花開 萬眾一心 自強不息 實事求是 勇往直前 光明磊落 全心全意 成千上萬 日新月異 百花齊放 全力以赴 高瞻遠矚 大公無私 見義勇為 推陳出新 精益求精 溫故知新 舉一反三 學無止境 集思廣益 持之以恆 腳踏實地 身體健康 萬事大吉 心想事成 笑容滿面 和氣生財 古往今來 四海為家 天長地久 白雲藍天 青山綠水 鳥語花香 風調雨順 國泰民安 山明水秀 五湖四海 千變萬化 有口皆碑 名副其實 出類拔萃 力爭上游 一日千里 前程似錦 蒸蒸日上 欣欣向榮 百折不撓 同心協力 守望相助 相親相愛 飲水思源 知足常樂 平易近人 謙虛謹慎 光明正大 堂堂正正 言行一致 一視同仁 開門見山 倉頡輸入 電腦科技 資訊網絡 智慧時代 社會發展 文化教育 知識創新 思維理想 目標努力 奮鬥成功 勝利光明 前途希望 未來世界 和平友誼 合作團結 互助關懷 愛護環境 保護自然 風景優美 運動精神 熱誠服務 認真負責 態度謙虛 禮貌師長 孝順父母 家庭溫馨 幸福安定 繁榮經濟 貿易商業 管理交通 建設規劃 醫療衛生 藝術音樂 書畫閱讀 寫作練習 測試成績 優良效率 準確速度 清楚簡單 勇敢堅持 微笑喜悅 蔚藍旅遊 探索發現 歷史傳統 品質卓越 香港九龍 新界離島 茶餐廳裏 唔該晒你 真係好靚 今日放假 邊度搵食 傾偈飲茶 行街睇戲 準時返學 車水馬龍 畫龍點睛 一石二鳥 百聞不如一見 一見如故 無中生有 無可奈何 妙筆生花 下筆成章 妙手回春 出口成章 一鳴驚人 花容月貌 喜出望外 哄堂大笑 分甘同味 可歌可泣 樂在其中 樂不可支 助人為樂 自由自在 自言自語 自高自大 自作自受 自食其力 安然無恙 天下無雙 天下太平 天造地設 日久天長 月白風清 月下老人 平安無事 平心而論 蟬不知雪 語重心長 同甘共苦 同舟共濟 和風細雨 春風化雨 風花雪月 風雨無阻 春花秋月 冬暖夏涼 冰天雪地 水深火熱 山高水長 江山如畫 名山大川 高山流水 源遠流長 川流不息 力所能及 力不從心 一字千金 一言九鼎 言而有信 一孔之見 一技之長 一無所有 一無所有 一分一秒 一生一世 九牛一毛 九死一生 生死存亡 一路平安 一路順風 上行下效 上下其手 上下一心 目中無人 一目十行 耳目一新 眼高手低 低三下四 情同手足 深情厚誼 深入淺出 深入人心 眾志成城 眾所周知 公正無私 公私分明 正人君子 一身正氣 身體力行 心滿意足 心平氣和 心安理得 心直口快 好自為之 自告奮勇 奮發向上 高人一等 相安無事 望子成龍 吉人天相 萬事如意 大吉大利 多才多藝 見多識廣 五花八門 五體投地 五光十色 四面八方 四海一家 千辛萬苦 千方百計 萬水千山 千秋萬代 百發百中 一五一十 十全十美 十年樹木 百年樹人 春華秋實 秋風落葉 一葉知秋 日落西山 日積月累 誠心誠意".split(" "),
 FALLBACK_URL="https://gist.githubusercontent.com/emisjerry/7a1e72688bfc4d4b5c0f9f16f1b84424/raw/cj_jerry.txt",
 POOL_CANDIDATES=["words.txt","questions.txt","vocab.txt","idioms.txt","words.atc","questions.atc","vocab.atc","idioms.atc"],
 HINT="按「?」可反查字碼",COLS=32,GROUPS=7,
@@ -329,6 +404,7 @@ DICT=buildDict().dict;rebuild();
 
 const filterCJK=s=>[...String(s||"")].filter(c=>DICT[c]).join(""),
 filterWords=s=>String(s||"").split(/[\s,.;:!?、，。；：！？「」『』（）()\[\]·—\-…\r\n\t]+/).map(filterCJK).filter(Boolean),
+isTypeable=c=>!!DICT[c],
 matchBuf=(code,buf)=>!buf.includes("Z")?code===buf:new RegExp("^"+buf.split("Z").join(".*")+"$").test(code),
 hasZMatch=buf=>buf.includes("Z")&&Object.keys(REV).some(c=>new RegExp("^"+buf.split("Z").join(".*")).test(c));
 function candidates(buf,tc){if(!buf.length)return[];let out=buf.includes("Z")?Object.keys(REV).filter(c=>matchBuf(c,buf)).flatMap(c=>REV[c]):REV[buf]?.slice()||[];const u=[...new Set(out)];if(tc&&u.indexOf(tc)>0&&!buf.includes("Z")){u.splice(u.indexOf(tc),1);u.unshift(tc)}return u.slice(0,90)}
@@ -378,7 +454,8 @@ window.visualViewport?.addEventListener("resize",schedScale);
 const normKey=k=>k.length===1?k.toUpperCase():({Backspace:"BACKSPACE",PageUp:"PAGEUP",PageDown:"PAGEDOWN",Escape:"ESC",Enter:"ENTER",Tab:"TAB"})[k]||k;
 function resolveKey(e,isIn){
   if(!isIn&&e.code){if(/^Key[A-Z]$/.test(e.code))return e.code.slice(3);if(/^Digit[1-9]$/.test(e.code)&&!e.shiftKey)return e.code.slice(5);if(e.code==="Slash"&&e.shiftKey)return"?";if(e.code==="BracketLeft")return"[";if(e.code==="BracketRight")return"]";if(e.code==="Space")return" "}
-  return normKey(e.key);
+  const k=normKey(e.key);
+  return k==="？"?"?":k;
 }
 
 const VIEWS={MENU:"mainMenuPanel",EXIT_CONFIRM:"exitConfirmDialog",DOS_EXIT:"dosExitScreen",EXAM_SETUP:"examSetupDialog",EXAM:"exam18Screen",RESULT:"resultView",PRACTICE:"practiceWindow",QUERY:"queryWindow",LEADERBOARD:"leaderboardWindow",ABOUT:"aboutWindow",TUTORIAL:"tutorialWindow"};
@@ -432,9 +509,14 @@ function updatePracticeScopeUI(){
 }
 function setPracticeScope(scope){if(scope==="COMMON"&&(!window.__HAS_LIMIT_JS()||!getCommonChars()?.length))return sound.err();S.practiceScope=scope;updatePracticeScopeUI();if(S.view==="PRACTICE")startPractice()}
 const mkItem=c=>({char:c,code:DICT[c][0],codes:DICT[c],maxLen:Math.max(...DICT[c].map(x=>x.length))});
+const isSingleHan=c=>typeof c==="string"&&[...c].length===1&&!!DICT[c];
 function pool(){
-  if(S.practiceScope==="COMMON"){const cs=getCommonChars();if(cs?.length){const src=shuffle(cs);return Array.from({length:20},(_,i)=>mkItem(src[i%src.length]))}S.practiceScope="ALL";updatePracticeScopeUI()}
-  return shuffle(Object.keys(DICT).filter(c=>!SIMP[c]&&c!=="難"&&c!=="重"&&c.codePointAt(0)<0x20000&&DICT[c][0].length>=2)).slice(0,20).map(mkItem);
+  if(S.practiceScope==="COMMON"){
+    const cs=(getCommonChars()||[]).filter(isSingleHan);
+    if(cs.length){const src=shuffle(cs);return Array.from({length:20},(_,i)=>mkItem(src[i%src.length]))}
+    S.practiceScope="ALL";updatePracticeScopeUI();
+  }
+  return shuffle(Object.keys(DICT).filter(c=>isSingleHan(c)&&!SIMP[c]&&c!=="難"&&c!=="重"&&c.codePointAt(0)<0x20000&&DICT[c][0].length>=2)).slice(0,20).map(mkItem);
 }
 function startPractice(){Object.assign(S,{charIndex:0,buf:"",start:null,done:0,keys:0,errs:0,list:pool()});clearTimeout(S.advTimer);S.advTimer=null;renderPractice();$("dispPrompt").textContent="按 A-Z 輸入字碼，打滿後按 Space 確認";$("rtSpeed").textContent="0.0";$("rtAcc").textContent="100%"}
 const slots=n=>$("codeSlotContainer").innerHTML=Array.from({length:n},(_,i)=>`<div class="p-slot" id="ps${i}">_</div>`).join("");
@@ -459,7 +541,24 @@ function examWords(mins){let p=S.compPool?.length?S.compPool.slice():WORDS.filte
 function wordsToLines(ws){const chunks=[],lines=[];for(const w of ws){const cs=[...w];for(let i=0;i<cs.length;i+=COLS)chunks.push(cs.slice(i,i+COLS))}let cur=[];for(const cs of chunks)if(cur.length+cs.length>COLS){while(cur.length<COLS)cur.push(" ");lines.push(cur);cur=cs.slice()}else cur=cur.concat(cs);if(cur.length){while(cur.length<COLS)cur.push(" ");lines.push(cur)}return lines}
 function pushPages(lines){for(let i=0;i<lines.length;i+=GROUPS){const pg=lines.slice(i,i+GROUPS);while(pg.length<GROUPS)pg.push(new Array(COLS).fill(" "));S.pages.push(pg.flat());S.typed.push(new Array(COLS*GROUPS).fill(""))}}
 function appendPages(n){for(let k=0;k<n;k++){const tgt=COLS*GROUPS,ws=[];let tot=0,g=0;while(tot<tgt&&g++<500&&S.examSrc.length){const w=S.examSrc[S.srcIdx++%S.examSrc.length];ws.push(w);tot+=[...w].length}if(!ws.length)break;pushPages(wordsToLines(ws))}}
-function prepExam(mins){let ws=S.articleMode?[filterCJK(S.atcArticle||"")]:S.type==="CUSTOM"?filterWords(S.txtContent||$("customInputString").value):examWords(mins);if(!ws.filter(Boolean).length)ws=["倉頡輸入法"];S.examSrc=ws;S.srcIdx=0;S.pages=[];S.typed=[];pushPages(wordsToLines(ws));Object.assign(S,{p:0,g:0,c:0,cbuf:"",cand:[],cpage:0,ok:0,bad:0,fin:false})}
+
+/* prepExam：保留標點及字庫外字元，只剝換行 */
+function prepExam(mins){
+  let ws;
+  if(S.articleMode){
+    ws=[String(S.atcArticle||"").replace(/^\uFEFF/,"").replace(/[\r\n]+/g,"")];
+  }else if(S.type==="CUSTOM"){
+    ws=String(S.txtContent||$("customInputString").value).split(/\s+/).filter(Boolean);
+  }else{
+    ws=examWords(mins);
+  }
+  if(!ws.some(w=>[...w].some(isTypeable)))ws=["倉頡輸入法"];
+  S.examSrc=ws;S.srcIdx=0;S.pages=[];S.typed=[];
+  pushPages(wordsToLines(ws));
+  Object.assign(S,{p:0,g:0,c:0,cbuf:"",cand:[],cpage:0,ok:0,bad:0,fin:false});
+  if(S.pages.length)nextNonSpace();
+}
+
 function startExam(){
   if(S.type==="CUSTOM"&&filterCJK(S.txtContent||$("customInputString").value).length<5){$("examSetupMsg").textContent="⚠️ 自訂文字可用漢字不足五個（部分字不在字庫）";return sound.err()}
   S.articleMode=false;S.atcArticle=null;
@@ -473,12 +572,25 @@ const elapsed=()=>S.tRun&&S.tStart?Math.max(1e3,Date.now()-S.tStart)/6e4:1/60;
 function updateTimer(){$("exam18Timer").textContent=`剩餘時間：${String(S.rem/60|0).padStart(2,"0")}:${String(S.rem%60).padStart(2,"0")}${S.tRun?"":"（按首碼開始計時）"}`;updateStats()}
 function updateStats(){const t=S.ok+S.bad;$("exam18Stats").innerHTML=`已輸入：${t}（正確：${S.ok} 錯誤：${S.bad}）｜準確率：${t>0?Math.round(S.ok/t*100):0}%｜速度：${S.tRun?(S.ok/elapsed()).toFixed(1):"0.0"}字/分`}
 const target=()=>(S.pages[S.p]||[])[S.g*COLS+S.c]||"";
+
+/* renderExam：標點／英文／字庫外字元以中灰色顯示（無底色），不需輸入 */
 function renderExam(){
   const ct=$("exam7GroupsContainer"),pa=S.pages[S.p]||[],ta=S.typed[S.p]||[];
   let h="";
   for(let g=0;g<GROUPS;g++){
     let tr="",pr="";
-    for(let c=0;c<COLS;c++){const i=g*COLS+c,t=ta[i]||"",p=pa[i]||"";tr+=`<div class="char-cell${t?(t===p?" correct":" wrong"):""}${g===S.g&&c===S.c&&i<pa.length?" active-cursor":""}">${esc(t)}</div>`;pr+=`<div class="char-cell">${esc(p)}</div>`}
+    for(let c=0;c<COLS;c++){
+      const i=g*COLS+c;
+      const p=pa[i]||"";
+      const deco = p && p!==" " && !isTypeable(p);
+      let t = deco ? p : (ta[i]||"");
+      let cls = "char-cell";
+      if(deco) cls += " skipped";
+      else if(t) cls += (t===p ? " correct" : " wrong");
+      if(g===S.g && c===S.c && i<pa.length && isTypeable(p)) cls += " active-cursor";
+      tr += `<div class="${cls}">${esc(t)}</div>`;
+      pr += `<div class="char-cell${deco?" skipped":""}">${esc(p)}</div>`;
+    }
     h+=`<div style="display:flex;flex-direction:column;flex:2;min-height:0"><div class="char-grid-row typed-row">${tr}</div><div class="char-grid-row prompt-row">${pr}</div></div>`;
   }
   ct.innerHTML=h;
@@ -494,12 +606,29 @@ function renderExam(){
   if(disp.length)ps.textContent=disp[0]+(tot>1?"▾":"");else if(S.cbuf)ps.textContent=hasPre?"…":"？";else ps.innerHTML="&nbsp;";
   updateStats();
 }
-function backSpace(){const mv=()=>{if(S.c>0)S.c--;else if(S.g>0){S.g--;S.c=COLS-1}else if(S.p>0){S.p--;const li=S.pages[S.p].length-1;S.g=li/COLS|0;S.c=li%COLS}else return false;return true};while(mv()){const i=S.g*COLS+S.c,prev=S.typed[S.p][i];if(prev){prev===S.pages[S.p][i]?S.ok=Math.max(0,S.ok-1):S.bad=Math.max(0,S.bad-1);S.typed[S.p][i]=""}if(target()!==" ")break}renderExam()}
+
+function backSpace(){
+  const mv=()=>{if(S.c>0)S.c--;else if(S.g>0){S.g--;S.c=COLS-1}else if(S.p>0){S.p--;const li=S.pages[S.p].length-1;S.g=li/COLS|0;S.c=li%COLS}else return false;return true};
+  while(mv()){
+    const i=S.g*COLS+S.c,prev=S.typed[S.p][i];
+    if(prev){prev===S.pages[S.p][i]?S.ok=Math.max(0,S.ok-1):S.bad=Math.max(0,S.bad-1);S.typed[S.p][i]=""}
+    const t=target();
+    if(t!==" "&&isTypeable(t))break;
+  }
+  renderExam();
+}
 function examKey(k){
   if(S.escSt===1)resetEsc();
+  const tc0=target();
+  if(tc0&&!isTypeable(tc0)){nextNonSpace();renderExam();return}
   if(k==="BACKSPACE"){sound.key();if(S.cbuf){S.cbuf=S.cbuf.slice(0,-1);updateCand();renderExam()}else backSpace();return}
   const tc=target();if(!tc)return sound.nav();
-  if(k==="["||k==="PAGEUP"||k==="]"||k==="PAGEDOWN"){const p=Math.ceil(S.cand.length/9);if(p>1){sound.nav();S.cpage=(S.cpage+(k==="["||k==="PAGEUP"?-1:1)+p)%p;renderExam()}return}
+  if(k==="["||k==="PAGEUP"||k==="]"||k==="PAGEDOWN"){
+    const p=Math.ceil(S.cand.length/9);
+    if(p>1){sound.nav();S.cpage=(S.cpage+(k==="["||k==="PAGEUP"?-1:1)+p)%p;renderExam()}
+    else if(k==="PAGEUP"||k==="PAGEDOWN"){sound.err()}
+    return;
+  }
   const disp=S.cand.slice(S.cpage*9,S.cpage*9+9);
   if(/^[1-9]$/.test(k)){const i=+k-1;if(i<disp.length){startTimer();sound.key();commit(disp[i])}else sound.err();return}
   if(k===" "||k==="ENTER"){if(!S.cbuf)return;startTimer();if(!disp.length){sound.err();if((S.cbuf.includes("Z")&&hasZMatch(S.cbuf))||PREF.has(S.cbuf))showHint("⚠️ 前綴不完整，請繼續輸入或按 Backspace 修正");else{showHint("⚠️ 此碼無匹配字，請按 Backspace 修正");S.cbuf="";updateCand();renderExam()}return}sound.ok();commit(disp[0]);return}
@@ -508,7 +637,18 @@ function examKey(k){
 }
 function showHint(msg){clearTimeout(S.hintTimer);$("line18HintMsg").textContent=msg;S.hintTimer=setTimeout(()=>{$("line18HintMsg").textContent=HINT;S.hintTimer=null},3500)}
 function updateCand(){S.cpage=0;S.cand=candidates(S.cbuf,target())}
-function nextNonSpace(){let i=S.g*COLS+S.c;const pa=S.pages[S.p]||[];while(i<pa.length&&pa[i]===" ")i++;if(i>=pa.length){if(S.p<S.pages.length-1){S.p++;S.g=0;S.c=0;nextNonSpace()}else if(S.tRun&&S.rem>0){appendPages(1);S.p++;S.g=0;S.c=0;nextNonSpace()}else endExam();return}S.g=i/COLS|0;S.c=i%COLS}
+function nextNonSpace(){
+  let i=S.g*COLS+S.c;
+  const pa=S.pages[S.p]||[];
+  while(i<pa.length&&(pa[i]===" "||!isTypeable(pa[i])))i++;
+  if(i>=pa.length){
+    if(S.p<S.pages.length-1){S.p++;S.g=0;S.c=0;nextNonSpace()}
+    else if(S.tRun&&S.rem>0){appendPages(1);S.p++;S.g=0;S.c=0;nextNonSpace()}
+    else endExam();
+    return;
+  }
+  S.g=i/COLS|0;S.c=i%COLS;
+}
 function commit(out){const t=target(),i=S.g*COLS+S.c;S.typed[S.p][i]=out;out===t?S.ok++:S.bad++;S.cbuf="";S.cand=[];S.cpage=0;const ni=i+1,pa=S.pages[S.p]||[];if(S.p>=S.pages.length-1&&ni>=pa.length){if(S.tRun&&S.rem>0){appendPages(1);S.p++;S.g=0;S.c=0;nextNonSpace();renderExam();return}return endExam()}if(ni>=pa.length){S.p++;S.g=0;S.c=0;nextNonSpace()}else{if(++S.c>=COLS){S.c=0;S.g++}nextNonSpace()}renderExam()}
 function endExam(){if(S.fin)return;S.fin=true;S.saved=false;clearInterval(S.tInt);const sp=S.tRun?Math.round(S.ok/elapsed()):0,t=S.ok+S.bad,ac=t>0?Math.round(S.ok/t*100):0;S.result={speed:sp,acc:ac,duration:S.dur+"分鐘",mode:S.articleMode?"測驗(文章)":S.type==="COMPUTER"?"測驗(電腦)":"測驗(自訂)"};$("resTableHeader").textContent=t===0?"成績（未作答）":"您的成績";$("resSpeed").textContent=sp;$("resAccuracy").textContent=ac;setView("RESULT")}
 function resetEsc(){S.escSt=0;clearTimeout(S.escTimer);S.escTimer=null;$("exam18Title").textContent=S.examTitle}
@@ -517,8 +657,16 @@ function exitExam(){if(S.cbuf){sound.nav();S.cbuf="";updateCand();renderExam();r
 function doQuery(ch){const t=[...(ch||"")].find(isHanX)||"",d=$("queryDetails");if(!t){d.style.display="none";return}d.style.display="flex";const codes=DICT[t];if(codes){$("qResRadicals").textContent=`「${t}」主碼：${codes[0]} [ ${[...codes[0]].map(c=>`${CJM[c]}(${c})`).join("＋")} ]`;$("qResStruct").textContent=codes.length>1?"容錯碼："+codes.slice(1).join("、"):"單一標準碼"}else{$("qResRadicals").textContent=`查無「${t}」`;$("qResStruct").textContent="字庫未收此字（可上傳 chinese.tt 擴充字庫）"}}
 function renderLB(){const b=$("lbTableBody"),l=getLB();b.innerHTML=l.length?l.map((it,i)=>`<tr${S.scoreId&&it.id===S.scoreId?' class="latest-score-row"':""}><td>${i+1}</td><td style="color:#ff5;font-weight:bold">${esc(it.name||"匿名")}</td><td>${esc(it.mode)}</td><td>${esc(it.duration)}</td><td style="color:#5f5;font-weight:bold">${+it.speed||0}</td><td style="color:#5ff">${it.acc||0}%</td><td>${esc(it.date)}</td></tr>`).join(""):'<tr><td colspan="7" style="color:#ff5;text-align:center">尚無紀錄</td></tr>'}
 
-const dlFile=(s,fn,mime)=>{try{const u=URL.createObjectURL(new Blob([s],{type:mime})),a=document.createElement("a");a.href=u;a.download=fn;a.style.display="none";document.body.appendChild(a);a.click();$("lbStatusHint").textContent=`✅ 已匯出 ${fn}（${Object.keys(DICT).length} 字）`;setTimeout(()=>{try{a.remove()}catch(e){}URL.revokeObjectURL(u)},1e3)}catch(e){$("lbStatusHint").textContent="⚠️ 匯出失敗（瀏覽器限制）"}};
+const dlFile=(s,fn,mime)=>{try{const u=URL.createObjectURL(new Blob([s],{type:mime})),a=document.createElement("a");a.href=u;a.download=fn;a.style.display="none";document.body.appendChild(a);a.click();const h=$("lbStatusHint");if(h)h.textContent=`✅ 已匯出 ${fn}`;sfxToast(`✅ 已匯出下載：${fn}`,true);setTimeout(()=>{try{a.remove()}catch(e){}URL.revokeObjectURL(u)},1e3)}catch(e){sfxToast("⚠️ 匯出失敗（環境限制）")}};
 function exportDict(isJs){const ks=Object.keys(DICT);if(!ks.length)return $("lbStatusHint").textContent="⚠️ 無字碼可匯出";let s="# 倉頡三代碼表\n";ks.forEach(c=>DICT[c].forEach(v=>s+=`${c} ${v}\n`));isJs?dlFile(`/* chinese_dict.js */\nwindow.EXTERNAL_CHINESE_TT=${JSON.stringify(s)};`,"chinese_dict.js","text/javascript;charset=utf-8"):dlFile(s,"chinese.tt","text/plain;charset=utf-8")}
+function exportSelfHtml(){
+  sound.ok();
+  const clone=document.documentElement.cloneNode(true);
+  clone.classList.remove("js");
+  const tk=clone.querySelector("#touchKeypad"),ka=clone.querySelector("#kpAbc"),kr=clone.querySelector("#kpRad"),eb=clone.querySelector("#errorBanner"),ds=clone.querySelector("#dosScreen");
+  if(tk)tk.style.display="none";if(ka)ka.innerHTML="";if(kr)kr.innerHTML="";if(eb)eb.style.display="none";if(ds)ds.style.transform="";
+  dlFile("<!DOCTYPE html>\n"+clone.outerHTML,"cangjie.html","text/html;charset=utf-8");
+}
 
 function applyDict(raw){const res=buildDict(raw);DICT=res.dict;rebuild();S.list.forEach(it=>{if(DICT[it.char])Object.assign(it,mkItem(it.char))});updatePracticeScopeUI();if(S.view==="PRACTICE"&&S.list.length)renderPractice();const s=$("dictSizeDisplay");if(s)s.textContent=Object.keys(DICT).length;return res.extCount}
 
@@ -557,11 +705,7 @@ const bootApp=()=>{
     $("mainMenuPanel").addEventListener("click",menuEv(2));
     setView("MENU");try{scaleScreen()}catch(e){}
     window.addEventListener("touchstart",()=>{_hadTouch=true;S.hasPhys=false;if(S.view==="EXAM"||S.view==="PRACTICE"){const tk=$("touchKeypad");if(tk&&tk.style.display!=="flex"){tk.style.display="flex";schedScale()}}},{passive:true});
-    document.querySelectorAll(".tk-btn").forEach(b=>{
-      let last=0;
-      const fire=safe(ev=>{if(ev?.cancelable)ev.preventDefault();const now=Date.now();if(now-last<100)return;last=now;const k=b.dataset.k;if(S.view==="EXAM")k==="ESC"?exitExam():examKey(k);else if(S.view==="PRACTICE"){if(k==="ESC")return S.buf?clearSlots():setView("MENU");if(k==="ENTER")return practiceKey("ENTER");if(k==="?"){sound.key();return doPQuery()}practiceKey(k)}});
-      b.addEventListener("touchstart",fire,{passive:false});b.addEventListener("pointerdown",fire);b.addEventListener("click",fire);
-    });
+    bindVirtualKeypad();
     let kpTouch=null;const tkEl=$("touchKeypad");
     if(tkEl){
       tkEl.addEventListener("touchstart",e=>{if(e.touches.length===1){const t=e.touches[0];kpTouch={x:t.clientX,y:t.clientY,t:Date.now()}}},{passive:true});
@@ -597,6 +741,8 @@ const bootApp=()=>{
     $("btnCancelExamSetup").addEventListener("click",safe(()=>setView("MENU")));
     $("exportDictBtn").addEventListener("click",safe(()=>exportDict(0)));
     $("exportDictJsBtn").addEventListener("click",safe(()=>exportDict(1)));
+    $("exportSelfHtmlBtn")?.addEventListener("click",safe(exportSelfHtml));
+    $("btnDlHtmlFooter")?.addEventListener("click",safe(exportSelfHtml));
     $("queryBtnDo").addEventListener("click",safe(()=>doQuery($("queryCharInput").value)));
     ["closeQueryBtn","closeAboutBtn","closeTutorialBackBtn","closeLbBtn"].forEach(id=>$(id).addEventListener("click",safe(()=>setView("MENU"))));
     $("closeTutorialBtn").addEventListener("click",safe(()=>setView("PRACTICE")));
