@@ -11,6 +11,9 @@
 https://ck-from-hk.github.io/-/
 ^按此即可遊玩
 
+亦可下載後離線使用
+字庫和詞庫可用generator2.html生成
+
 [繁體中文](#繁體中文) ｜ [English](#english)
 
 ---
@@ -45,6 +48,8 @@ https://ck-from-hk.github.io/-/
 | `chinese.tt` | ⬜ 選配 | 純文字碼表（每行「字 碼」，UTF-8 或 Big5）；http(s) 部署時同目錄自動讀取，本機可經「測驗設定」上傳（存入 IndexedDB，選一次永久記住） |
 | `.nojekyll` | ⬜ 建議（GitHub Pages） | 空檔案，令 GitHub Pages 跳過 Jekyll 處理，避免 `_` 開頭資源被忽略 |
 | `words.txt` / `*.atc` | ⬜ 選配 | 自訂命題題庫純文字檔（一行一詞或整段文章皆可），經「📂 選擇題庫資料夾」一鍵整夾匯入 |
+| `limit.js` | ⬜ 建議 | 依此檔設定常用字範圍 |
+
 
 > 排行榜頁「匯出 .js」可直接把當前生效的字庫（內建＋已載入擴充碼）包裝成 `chinese_dict.js` 下載，連同 HTML 一併分發即可毋須再設定。
 
