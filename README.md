@@ -198,14 +198,19 @@ Released under the [MIT License](LICENSE). The Cangjie method itself carries no 
 
 ---
 
-以上都係AI gen出嚟
+**以上都係AI gen出嚟**
 
 項目擁有人唔識programming
 
-只係間中去吓HKEPC偷師
+只係間中去吓HKEPC偷師所以又未至於係電腦白痴
 
-如有問題自己fork自己叫AI改即可
+而家跨平台用到絕對係已經超額完成
 
-90年代.ATC格式檔案請自備
+如果有問題自己fork自己叫AI改即可
 
-無編碼的字同標點會自動skip
+90年代嘅.ATC格式檔案可以自備
+明嘅就明
+
+無編碼的字同標點會自動灰走唔使打
+
+**作為七日鮮project唔會有乜maintain計劃**
