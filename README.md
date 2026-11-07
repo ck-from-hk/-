@@ -50,7 +50,7 @@ https://ck-from-hk.github.io/-/
 | `.nojekyll` | ⬜ 建議（GitHub Pages） | 空檔案，令 GitHub Pages 跳過 Jekyll 處理，避免 `_` 開頭資源被忽略 |
 | `words.txt` / `*.atc` | ⬜ 選配 | 自訂命題題庫純文字檔（一行一詞或整段文章皆可），經「📂 選擇題庫資料夾」一鍵整夾匯入 |
 | `limit.js` | ⬜ 建議 | 依此檔設定常用字範圍 |
-| `generator.html` | ⬜ 選配 | 三合一生成器，生成以上　.js和 .txt檔 |
+| `generator.html` | ⬜ 選配 | 三合一生成器，生成以上　.js / .tt / .txt檔 |
 
 
 > 排行榜頁「匯出 .js」可直接把當前生效的字庫（內建＋已載入擴充碼）包裝成 `chinese_dict.js` 下載，連同 HTML 一併分發即可毋須再設定。
