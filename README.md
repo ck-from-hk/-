@@ -12,7 +12,8 @@ https://ck-from-hk.github.io/-/
 ^按此即可遊玩
 
 亦可下載後離線使用
-字庫和詞庫可用generator2.html生成
+
+字庫和詞庫等可用generator.html生成
 
 [繁體中文](#繁體中文) ｜ [English](#english)
 
