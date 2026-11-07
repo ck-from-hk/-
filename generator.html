@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>快快快樂學倉頡 — 生成器</title>
+<script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/cn2t.js"></script>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#111;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:8px;font-family:"BiauKaiHK","DFKai-SB","標楷體","Microsoft JhengHei",serif;overflow-x:hidden}
+input,textarea{font-family:inherit}
+.dos-screen{width:960px;background:#005a52;border:3px solid #808080;box-shadow:0 0 25px rgba(0,0,0,.9);display:flex;flex-direction:column}
+.dos-header{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0;border-bottom:2px solid #003d38}
+.slop-logo{display:flex;align-items:center;justify-content:center;width:80px;height:26px}
+.title-group{display:flex;align-items:center;flex:1;justify-content:center;gap:12px}
+.magenta-double-line{flex:1;height:6px;border-top:3px solid #f0f;border-bottom:3px solid #f0f}
+.dos-main-title{color:#ff0;font-size:20px;font-weight:bold;letter-spacing:4px;text-shadow:1px 1px #000;white-space:nowrap}
+.dos-subtitle{color:#0ff;font-size:12px;letter-spacing:2px;margin-left:8px}
+.dos-stage{padding:6px;display:flex;flex-direction:column;gap:6px}
+.panel{background:#c0c0c0;border:3px solid;border-color:#fff #404040 #404040 #fff;display:flex;flex-direction:column;min-width:0}
+.panel-row{display:flex;gap:6px}
+.panel-row>.panel{flex:1 1 0;min-width:0}
+.panel-head{padding:3px 10px;font-size:13px;font-weight:bold;color:#ff5;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.panel.tt .panel-head{background:#5a3a00}
+.panel.wd .panel-head{background:#003d00}
+.panel.limit .panel-head{background:#000080}
+.panel-body{padding:6px 8px;display:flex;flex-direction:column;gap:5px;font-size:12px;color:#000;flex:1;min-height:0}
+.hint{font-size:10.5px;color:#555;line-height:1.35;background:rgba(0,0,0,.06);padding:3px 6px;border-left:2px solid #888;border-radius:2px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:11.5px}
+.row>strong{color:#800000;font-size:11.5px}
+.row label{cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:3px}
+.row input[type=radio],.row input[type=checkbox]{accent-color:#000080;margin:0}
+.srcRow{display:flex;align-items:center;gap:6px;padding:3px 6px;background:rgba(255,255,255,.7);border:1px solid #a0a0a0;border-radius:2px;font-size:11.5px}
+.srcRow>.lbl{flex:1;min-width:0;line-height:1.3}
+.srcRow>.lbl strong{font-size:12px;color:#000}
+.srcRow>.lbl small{color:#666;font-size:10.5px;display:block;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rankSel{font-size:11px;background:#fff;border:1px solid #404040;color:#000;padding:1px 2px;flex-shrink:0}
+.rankSel.r1{background:#ffe600;font-weight:bold}
+.credBtn{font-size:10px;background:rgba(0,0,0,.1);border:1px solid rgba(0,0,0,.25);color:#000;padding:0 4px;cursor:pointer;flex-shrink:0;line-height:1.5}
+.credDiv{background:#fff;color:#555;border-left:3px solid #888;padding:4px 8px;margin:0 0 2px 8px;font-size:10.5px;display:none;white-space:pre-wrap;line-height:1.35}
+.panel.tt .credDiv{border-left-color:#5a3a00}
+.panel.wd .credDiv{border-left-color:#003d00}
+.manualOpts{display:none;padding:4px 6px;background:rgba(255,255,255,.85);border:1px dashed #666;border-radius:2px;font-size:11.5px}
+.manualOpts input[type=text]{width:100%;font-size:11.5px;padding:2px 5px;border:1px solid #808080;background:#fff;margin-top:2px;font-family:Consolas,monospace}
+.fileBtn{display:inline-block;font-size:11.5px;background:#808080;color:#fff;border:2px solid;border-color:#fff #404040 #404040 #fff;padding:2px 8px;cursor:pointer;font-weight:bold}
+.fileBtn:hover{background:#606060}
+.fileBtn input{display:none}
+.fileName{font-size:10.5px;color:#555;margin-left:4px}
+.btn-main{font-size:13px;font-weight:bold;color:#000;background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;padding:4px 14px;cursor:pointer;letter-spacing:1px;font-family:inherit}
+.btn-main:hover{background:#a8a8a8}
+.btn-main:active{border-color:#404040 #fff #fff #404040;background:#909090}
+.btn-main:disabled{color:#888;cursor:wait;background:#d0d0d0}
+.panel.tt .btn-main{background:#ffcc66}
+.panel.tt .btn-main:hover:not(:disabled){background:#e6b84a}
+.panel.wd .btn-main{background:#88dd88}
+.panel.wd .btn-main:hover:not(:disabled){background:#66cc66}
+.panel.limit .btn-main{background:#88aaff}
+.panel.limit .btn-main:hover:not(:disabled){background:#6a8fff}
+.dl{display:none;font-size:12px;color:#000080;text-decoration:underline;margin:2px 4px;cursor:pointer}
+.dl:hover{color:#ff0}
+.dl.ready{font-weight:bold;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.log{white-space:pre-wrap;background:#000;color:#0f0;padding:6px 8px;border:2px solid;border-color:#404040 #fff #fff #404040;font-family:Consolas,monospace;font-size:11px;min-height:100px;max-height:140px;overflow-y:auto;line-height:1.35}
+.panel.tt .log{color:#fc6}
+.panel.wd .log{color:#6f6}
+.panel.limit .log{color:#6cf}
+.dos-footer{height:34px;background:#c0c0c0;border-top:2px solid #fff;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:11.5px;color:#333;flex-shrink:0}
+.dos-footer .tip{color:#800000;font-weight:bold}
+.dos-footer .ver{color:#555;font-family:Consolas,monospace}
+.limRow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:11.5px;background:rgba(255,255,255,.7);padding:4px 8px;border:1px solid #a0a0a0}
+.limRow>strong{color:#000080;font-size:11.5px}
+.limRow label{cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:3px}
+.limRow input[type=radio]{accent-color:#000080;margin:0}
+.limTextarea{width:100%;font-size:12px;padding:4px 6px;border:2px solid;border-color:#404040 #fff #fff #404040;background:#fff;resize:vertical;min-height:54px;font-family:inherit}
+.limInput{width:100%;font-size:12px;padding:3px 6px;border:2px solid;border-color:#404040 #fff #fff #404040;background:#fff;font-family:Consolas,monospace}
+.mixRow{background:#ffd;border:1px dashed #b8860b;padding:3px 8px;font-size:11.5px;border-radius:2px}
+.mixRow label{cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.mixRow input[type=checkbox]{accent-color:#b8860b;margin:0}
+.mixRow small{color:#666;display:block;font-size:10px;margin-top:1px;line-height:1.3;padding-left:16px}
+.resetBtn{font-size:10.5px;background:rgba(0,0,0,.12);border:1px solid #555;color:#000;padding:1px 6px;cursor:pointer;margin-left:4px;font-family:inherit}
+.resetBtn:hover{background:rgba(0,0,0,.25)}
+@media(max-width:980px){.dos-screen{width:100%;max-width:960px}}
+@media(max-width:720px){.panel-row{flex-direction:column}.dos-main-title{font-size:15px;letter-spacing:2px}.dos-header{padding:0 8px}}
+@media(max-width:480px){html,body{padding:2px}.panel-body{padding:4px 6px;font-size:11px}.log{font-size:10px;min-height:70px;max-height:100px}.dos-footer{font-size:10.5px;height:auto;padding:4px 8px;flex-wrap:wrap;gap:2px}}
+</style>
+</head>
+<body>
+<div class="dos-screen">
+<div class="dos-header">
+<div class="slop-logo"><svg viewBox="0 0 120 40" width="80" height="26"><ellipse cx="60" cy="20" rx="55" ry="16" fill="none" stroke="#0ff" stroke-width="2"/><text x="50%" y="62%" text-anchor="middle" fill="#f0f" font-size="20" font-weight="900" font-style="italic" font-family="Arial">SLOP</text></svg></div>
+<div class="title-group"><div class="magenta-double-line"></div><div class="dos-main-title">快快快樂學倉頡<span class="dos-subtitle">生成器</span></div><div class="magenta-double-line"></div></div>
+</div>
+<div class="dos-stage">
+<div class="panel-row">
+<div class="panel tt">
+<div class="panel-head"><span>📕 chinese.tt — 倉頡碼表</span><span style="font-size:10px;opacity:.85">→ tt / js / rime</span></div>
+<div class="panel-body">
+<div class="row"><strong>重複處理：</strong><label><input type="radio" name="dupMode" value="ignore"> 忽略較後</label><label><input type="radio" name="dupMode" value="merge" checked> 容錯合併</label></div>
+<div class="row"><strong>輸出方式：</strong><label><input type="radio" name="outMode" value="replace" checked> 取代</label><label><input type="radio" name="outMode" value="append"> 疊加</label><button class="resetBtn" id="clearAcc">🧹 重設基底</button></div>
+<div class="mixRow"><label><input type="checkbox" id="mixCj35"> 混合編碼（三代＋五碼並存）</label><small>勾選並選 Cangjie5_HK 時自動追加三代擴展。</small></div>
+<div id="srcList"></div>
+<div class="manualOpts" id="mFileBox"><strong>本機檔案</strong><br><label class="fileBtn">📁 選擇檔案<input type="file" id="manualFile" accept=".txt,.tsv,.csv,.yaml,.json"></label><span class="fileName" id="mFileName">未選擇檔案</span></div>
+<div class="manualOpts" id="mUrlBox"><strong>URL</strong><br><input type="text" id="manualUrl" placeholder="https://…"></div>
+<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:2px">
+<button class="btn-main" id="go" disabled>生成字庫</button>
+<a id="dl" class="dl" download="chinese.tt">⬇ chinese.tt</a>
+<a id="dljs" class="dl" download="chinese_dict.js">⬇ chinese_dict.js</a>
+<a id="dlRime" class="dl" download="cangjie_generated.dict.yaml" style="display:none">⬇ RIME .dict.yaml</a>
+</div>
+<div class="log" id="log">就緒。為來源選定次序後按「生成字庫」。</div>
+</div>
+</div>
+<div class="panel wd">
+<div class="panel-head"><span>📗 words.txt — 詞語/成語表</span><span style="font-size:10px;opacity:.85">→ txt / js</span></div>
+<div class="panel-body">
+<div class="row"><strong>簡繁：</strong><label><input type="radio" name="wconv" value="conv" checked> 轉繁</label><label><input type="radio" name="wconv" value="keep"> 保留原樣</label></div>
+<div class="row"><strong>重複處理：</strong><label><input type="radio" name="wdupMode" value="ignore"> 忽略較後</label><label><input type="radio" name="wdupMode" value="merge" checked> 容錯合併</label></div>
+<div class="row"><strong>輸出方式：</strong><label><input type="radio" name="woutMode" value="replace" checked> 取代</label><label><input type="radio" name="woutMode" value="append"> 疊加</label><button class="resetBtn" id="wclearAcc">🧹 重設基底</button></div>
+<div class="limRow"><strong>輸入方式：</strong><label><input type="radio" name="wInput" value="sources" checked> 來源列表</label><label><input type="radio" name="wInput" value="text"> 文本框貼上</label></div>
+<div id="wTextBox" style="display:none"><textarea class="limTextarea" id="wText" rows="3" placeholder="貼上詞語或文章內容，每行一個詞語…"></textarea></div>
+<div id="wSourcesBox">
+<div id="wsrcList"></div>
+<div class="manualOpts" id="wmFileBox"><strong>本機檔案</strong><br><label class="fileBtn">📁 選擇檔案<input type="file" id="wmanualFile" accept=".txt,.csv,.json"></label><span class="fileName" id="wmFileName">未選擇檔案</span></div>
+<div class="manualOpts" id="wmUrlBox"><strong>URL</strong><br><input type="text" id="wmanualUrl" placeholder="https://…"></div>
+</div>
+<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:2px">
+<button class="btn-main" id="wgo" disabled>生成詞語表</button>
+<button class="btn-main" id="dlAtcZip" style="background:#ffcc66">📦 .atc示範題庫包</button>
+<a id="wdl" class="dl" download="words.txt">⬇ words.txt</a>
+<a id="wdljs" class="dl" download="words_dict.js">⬇ words_dict.js</a>
+</div>
+<div class="hint">📦 .atc示範題庫包：解壓後於主程式「電腦命題」選資料夾，即隨機抽整篇文章測驗。</div>
+<div class="log" id="wlog">就緒。為來源選定次序後按「生成詞語表」。</div>
+</div>
+</div>
+</div>
+<div class="panel limit">
+<div class="panel-head"><span>📘 limit.js — 常用字範圍（打字練習「常用字」限定）</span><span style="font-size:10px;opacity:.85">→ js</span></div>
+<div class="panel-body">
+<div class="limRow"><strong>輸入方式：</strong><label><input type="radio" name="limInput" value="text" checked> 文本框</label><label><input type="radio" name="limInput" value="file"> 本機 .txt</label><label><input type="radio" name="limInput" value="folder"> 目錄 .atc／.txt</label><label><input type="radio" name="limInput" value="url"> URL</label><label><input type="radio" name="limInput" value="ckpreset"> 預設範圍</label></div>
+<div id="limTextBox"><textarea class="limTextarea" id="limText" rows="3" placeholder="貼上詞庫或文章內容…"></textarea></div>
+<div id="limFileBox" style="display:none"><label class="fileBtn">📁 選擇檔案<input type="file" id="limFile" accept=".txt"></label><span class="fileName" id="limFileName">未選擇檔案</span></div>
+<div id="limFolderBox" style="display:none"><label class="fileBtn">📂 選擇目錄<input type="file" id="limFolder" webkitdirectory directory multiple accept=".atc,.txt"></label><span class="fileName" id="limFolderName">未選擇目錄</span></div>
+<div id="limUrlBox" style="display:none"><input class="limInput" type="text" id="limUrl" placeholder="https://…"></div>
+<div class="limRow"><strong>範圍：</strong><label><input type="radio" name="limRange" value="bmp" checked> 只保留 BMP</label><label><input type="radio" name="limRange" value="all"> 含擴展區</label><strong style="margin-left:8px">排序：</strong><label><input type="radio" name="limSort" value="cp" checked> 按碼點</label><label><input type="radio" name="limSort" value="freq"> 按頻率</label></div>
+<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+<button class="btn-main" id="lgo">生成 limit.js</button>
+<a id="ldl" class="dl" download="limit.js">⬇ limit.js</a>
+</div>
+<div class="log" id="llog">就緒。輸入內容或選目錄後按「生成 limit.js」。</div>
+</div>
+</div>
+</div>
+<div class="dos-footer">
+<span class="tip">⚠ 行動端：iOS 預覽可能停用 JS，請改用 Safari 開啟</span>
+<span class="ver">v1.0</span>
+</div>
+</div>
+<script>
+const isHan=c=>{if(!c||[...c].length!==1)return false;const cp=c.codePointAt(0);return(cp>=0x3400&&cp<=0x9FFF)||(cp>=0xF900&&cp<=0xFAFF)||(cp>=0x20000&&cp<=0x323AF)};
+const isBMPHan=c=>{const cp=c.codePointAt(0);return(cp>=0x3400&&cp<=0x9FFF)||(cp>=0xF900&&cp<=0xFAFF)};
+const isWord=w=>{if(!w)return false;const chars=[...w];return chars.length>=2&&chars.length<=8&&chars.every(isHan)};
+function hanCmp(a,b){const A=[...a],B=[...b],m=Math.min(A.length,B.length);for(let i=0;i<m;i++){const d=A[i].codePointAt(0)-B[i].codePointAt(0);if(d)return d}return A.length-B.length}
+const TEXT_CACHE=new Map();
+function makeList(container,sources,opts){const selects={};function syncManual(){if(!opts.manualBoxes)return;for(const id in opts.manualBoxes){const box=document.getElementById(opts.manualBoxes[id]);if(box)box.style.display=(selects[id]&&selects[id].value!=='0')?'block':'none'}}
+sources.forEach(s=>{const row=document.createElement('div');row.className='srcRow';const lbl=document.createElement('div');lbl.className='lbl';lbl.innerHTML=`<strong>${s.name}</strong><small>${s.note}</small>`;const btn=document.createElement('button');btn.className='credBtn';btn.textContent='ℹ';btn.type='button';const sel=document.createElement('select');sel.className='rankSel';sel.innerHTML='<option value="0">無</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>';selects[s.id]=sel;if(opts.selMap)opts.selMap[s.id]=sel;const cd=document.createElement('div');cd.className='credDiv';cd.textContent=s.cred;btn.onclick=()=>cd.style.display=cd.style.display==='block'?'none':'block';row.append(lbl,btn,sel);container.append(row,cd)});
+container.addEventListener('change',e=>{const sel=e.target;if(!sel.classList||!sel.classList.contains('rankSel'))return;if(sel.value!=='0'){for(const id in selects){if(selects[id]===sel)continue;if(selects[id].value===sel.value){const v=sel.value;sel.value='0';opts.log('⚠ 第 '+v+' 位已被佔用');break}}}for(const id in selects){selects[id].classList.toggle('r1',selects[id].value==='1')}syncManual();opts.btn.disabled=getRanked().length===0});
+function getRanked(){const arr=[];for(const id in selects){const v=+selects[id].value;if(v>=1&&v<=3)arr.push({id,rank:v})}arr.sort((a,b)=>a.rank-b.rank);const seen=new Set(),out=[];for(const it of arr){if(seen.has(it.rank))continue;seen.add(it.rank);out.push(it.id)}return out}return getRanked}
+async function fetchText(url,ms=20000){if(TEXT_CACHE.has(url))return TEXT_CACHE.get(url);const ac=new AbortController();const t=setTimeout(()=>ac.abort(),ms);try{const r=await fetch(url,{signal:ac.signal});if(!r.ok)throw new Error('HTTP '+r.status);const text=await r.text();TEXT_CACHE.set(url,text);return text}catch(e){if(e.name==='AbortError')throw new Error('逾時');throw e}finally{clearTimeout(t)}}
+async function readFileCached(file){const key='file:'+file.name+':'+file.size+':'+file.lastModified;if(TEXT_CACHE.has(key))return TEXT_CACHE.get(key);const text=await file.text();TEXT_CACHE.set(key,text);return text}
+function bindFileName(fi,ns){fi.addEventListener('change',()=>{ns.textContent=fi.files[0]?fi.files[0].name:'未選擇檔案'})}
+function setBlobHref(a,blob){if(a.href.startsWith('blob:'))URL.revokeObjectURL(a.href);a.href=URL.createObjectURL(blob);a.style.display='inline';a.classList.add('ready')}
+function hideDl(){for(const a of arguments){a.classList.remove('ready');a.style.display='none';if(a.href&&a.href.startsWith('blob:')){URL.revokeObjectURL(a.href);a.removeAttribute('href')}}}
+
+(function(){
+const d={};const CJ=/^[A-Z]{1,5}$/;const log=s=>{document.getElementById('log').textContent+=s+"\n"};
+let dupMode='merge',outMode='replace',curRank=1,skipCnt=0,xzSkip=0;const xzSkipped=[];
+const getDupMode=()=>document.querySelector('input[name=dupMode]:checked').value;
+const getOutMode=()=>document.querySelector('input[name=outMode]:checked').value;
+let lastD=null,lastSrcs=[],lastCreds=[],lastBuiltIn=new Set(),lastFiles=new Set(),lastUrls=new Set();
+const selMap={};const fileKey=f=>`${f.name}:${f.size}:${f.lastModified}`;
+const HKSCS_URL='https://www.digitalpolicy.gov.hk/open_data/ccli/HKSCS2016.json';
+function parseHKSCSJson(arr,tag='[HKSCS]'){if(!Array.isArray(arr))throw new Error('JSON 並非陣列');let n=0,noCj=0;for(const it of arr){if(!it||typeof it!=='object')continue;let ch=(typeof it.char==='string'?it.char:'').trim();if(!ch&&it.codepoint){const cp=parseInt(String(it.codepoint).replace(/^U\+/i,''),16);if(!Number.isNaN(cp)&&cp>0)ch=String.fromCodePoint(cp)}if(!isHan(ch))continue;const rawCj=String(it.cangjie||'').trim();if(!rawCj){noCj++;continue}for(const c of rawCj.split(/[,，、/\s]+/)){if(addChar(ch,c))n++}}log(`${tag} 處理 ${n} 條${noCj?'（略過無碼 '+noCj+' 條）':''}`);return n}
+async function fetchHKSCS(url){const proxies=[u=>u,u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),u=>'https://corsproxy.io/?url='+encodeURIComponent(u)];let lastErr=null;for(let i=0;i<proxies.length;i++){try{if(i>0)log(`ℹ 嘗試備用通道 #${i} …`);const txt=await fetchText(proxies[i](url),25000);const arr=JSON.parse(txt.replace(/^\uFEFF/,''));if(Array.isArray(arr))return arr}catch(e){lastErr=e}}throw new Error((lastErr?lastErr.message:'下載失敗')+'（可另存後以本機檔案載入）')}
+const SOURCES=[
+{id:'cj3plus',name:'Cangjie3-Plus（三代補完）',note:'cj3.txt；同時提供 RIME 方案與微軟替換文件',cred:`Arthurmcarthur — Cangjie3-Plus（倉頡三代補完計劃）
+https://github.com/Arthurmcarthur/Cangjie3-Plus
+cj3.txt — 三代码表`,load:async()=>loadTextUrl('https://raw.githubusercontent.com/Arthurmcarthur/Cangjie3-Plus/master/cj3.txt','[Cangjie3-Plus]')},
+{id:'cj5hk',name:'Cangjie5_HK（五代香港字形）',note:'Cangjie5_HK.txt；傳統漢字優先，偏好香港用字',cred:`Jackchows — Cangjie5（倉頡五代補完計劃）
+https://github.com/Jackchows/Cangjie5
+Cangjie5_HK.txt — 香港字形優先`,load:async()=>loadTextUrl('https://raw.githubusercontent.com/Jackchows/Cangjie5/master/Cangjie5_HK.txt','[Cangjie5_HK]')},
+{id:'hkscs',name:'HKSCS-2016 官方',note:'數字政策辦公室開放數據，香港增補字符集',cred:`香港特區政府數字政策辦公室 — HKSCS-2016
+${HKSCS_URL}`,load:async()=>{log('下載 HKSCS-2016 …');parseHKSCSJson(await fetchHKSCS(HKSCS_URL),'[HKSCS]')}},
+{id:'mfile',name:'本機檔案',note:'「字 碼」、「碼 字」或 HKSCS JSON',cred:`使用者自選——請自行確認授權。`,load:async()=>{const f=document.getElementById('manualFile').files[0];if(!f)throw new Error('請選擇檔案');log('完整讀入 '+f.name+' …');processText(await readFileCached(f),'[本機：'+f.name+']')}},
+{id:'murl',name:'網址（URL）',note:'輸入 URL 下載碼表',cred:`使用者自選 URL——請自行確認授權。`,load:async()=>{const url=document.getElementById('manualUrl').value.trim();if(!url)throw new Error('請輸入 URL');log('完整下載 → 寫入緩存 …');processText(await fetchText(url),'[URL]')}}
+];
+function addChar(ch,code){code=(code||'').toUpperCase().trim();if(!isHan(ch)||!CJ.test(code))return false;if(/^[XZ]/.test(code)){xzSkip++;if(xzSkipped.length<5)xzSkipped.push(ch+'='+code);return false}const rank=curRank;if(dupMode==='ignore'&&d[ch]){if(rank>d[ch].rank){skipCnt++;return false}if(rank<d[ch].rank){d[ch]={codes:new Set([code]),rank};return true}}if(!d[ch])d[ch]={codes:new Set(),rank};const isNew=!d[ch].codes.has(code);d[ch].codes.add(code);d[ch].rank=Math.min(d[ch].rank,rank);return isNew}
+function processText(txt,tag){const trimmed=txt.replace(/^\uFEFF/,'').trim();if(trimmed.startsWith('[')){try{const arr=JSON.parse(trimmed);if(Array.isArray(arr)){parseHKSCSJson(arr,tag);return}}catch(e){}}let n=0,inYamlHeader=false;for(let line of txt.split(/\r?\n/)){if(line.trim()==='---'){inYamlHeader=true;continue}if(inYamlHeader){if(line.trim()==='...'||line.trim()==='---')inYamlHeader=false;continue}line=line.replace(/^[#;].*$/,'').trim();if(!line)continue;const p=line.split(/[\s,，\t]+/).map(x=>x.replace(/^["']+|["']+$/g,'')).filter(Boolean);if(p.length<2)continue;if(/^[A-Za-z]{1,5}$/.test(p[0])&&isHan(p[1])){if(addChar(p[1],p[0]))n++}else if(isHan(p[0])){for(let i=1;i<p.length;i++){if(/^[A-Za-z]{1,5}$/.test(p[i])){if(addChar(p[0],p[i]))n++}else break}}}log(`${tag} 處理 ${n} 條`)}
+async function loadTextUrl(url,tag){log('完整下載 '+url.slice(-50)+' …');processText(await fetchText(url),tag)}
+async function appendCj3Extension(){try{log('── 追加三代擴展（rime-cangjie3-extension）──');const txt=await fetchText('https://raw.githubusercontent.com/kennethso168/rime-cangjie3-extension/master/cangjie3-extension.txt');processText(txt,'[三代擴展]')}catch(e){log('⚠ 三代擴展載入失敗：'+e.message+'（跳過）')}}
+const getRanked=makeList(document.getElementById('srcList'),SOURCES,{btn:document.getElementById('go'),log,selMap,manualBoxes:{mfile:'mFileBox',murl:'mUrlBox'}});
+bindFileName(document.getElementById('manualFile'),document.getElementById('mFileName'));
+document.getElementById('clearAcc').onclick=()=>{lastD=null;lastSrcs=[];lastCreds=[];lastBuiltIn.clear();lastFiles.clear();lastUrls.clear();log('🧹 疊加基底已重設。')};
+function emitRimeDict(keys){let yaml=`---\nname: cangjie_generated\nversion: "1.0"\nsort: by_weight\ncolumns:\n  - text\n  - code\n  - weight\n...\n`;for(const ch of keys){for(const code of [...d[ch].codes].sort())yaml+=`${ch}\t${code}\t1\n`}return yaml}
+function emit(ids,baseCharCnt){
+const app=outMode==='append';const keys=Object.keys(d).sort(hanCmp);
+if(app&&baseCharCnt>0)log(`ℹ 疊加完成：基底 ${baseCharCnt} 字 → 現共 ${keys.length} 字。`);
+let srcs=ids.map(id=>SOURCES.find(s=>s.id===id).name);
+let creds=ids.map(id=>SOURCES.find(s=>s.id===id).cred);
+if(app&&lastSrcs.length){srcs=[...new Set(lastSrcs.concat(srcs))];const seenC=new Set();creds=lastCreds.concat(creds).filter(c=>!seenC.has(c)&&seenC.add(c))}
+const modeTxt=dupMode==='ignore'?'忽略較後來源':'容錯合併';
+const outTxt=app?'疊加（含基底）':'取代（僅本次來源）';
+let tt=`# chinese.tt — 倉頡碼表（多來源合併）\n# 來源：${srcs.join(' → ')}\n# 生成：${new Date().toISOString()}\n# 輸出方式：${outTxt}\n# 重複處理：${modeTxt}\n#\n${creds.map(c=>'# '+c.split('\n').join('\n# ')).join('\n#\n')}\n\n`;
+let lineCnt=0;for(const ch of keys){for(const code of [...d[ch].codes].sort()){tt+=ch+' '+code+'\n';lineCnt++}}
+let js=`/* chinese_dict.js — 倉頡碼表（生成器匯出） */\nwindow.EXTERNAL_CHINESE_TT=${JSON.stringify(tt)};\n`;
+log(`共 ${keys.length} 字（${lineCnt} 碼）。`);
+if(dupMode==='ignore'&&skipCnt>0)log(`ℹ 「忽略較後」共略過 ${skipCnt} 字次。`);
+if(xzSkip>0)log(`ℹ 已略過 X/Z 首碼 ${xzSkip} 條。`);
+lastD={};for(const ch in d)lastD[ch]=[...d[ch].codes];
+lastSrcs=srcs;lastCreds=creds;
+if(!app){lastBuiltIn.clear();lastFiles.clear();lastUrls.clear()}
+for(const id of ids){if(id!=='mfile'&&id!=='murl')lastBuiltIn.add(id)}
+if(ids.includes('mfile')){const f=document.getElementById('manualFile').files[0];if(f)lastFiles.add(fileKey(f))}
+if(ids.includes('murl')){const u=document.getElementById('manualUrl').value.trim();if(u)lastUrls.add(u)}
+const dl=document.getElementById('dl'),dljs=document.getElementById('dljs'),dlRime=document.getElementById('dlRime');
+setBlobHref(dl,new Blob([tt],{type:'text/plain;charset=utf-8'}));
+setBlobHref(dljs,new Blob([js],{type:'application/javascript;charset=utf-8'}));
+setBlobHref(dlRime,new Blob([emitRimeDict(keys)],{type:'text/yaml;charset=utf-8'}));
+log('✅ 已生成 chinese.tt、chinese_dict.js 與 RIME .dict.yaml。');
+log('▶ Windows 替換：下載 Cangjie3-Plus 或 Cangjie5 Releases 的 MSCJData 包，用 chinese.tt 替換碼表。');
+log('▶ RIME（Mac/iOS/Android）：將 .dict.yaml 放入 RIME 用戶資料夾，配合方案 .schema.yaml 部署。');
+log('▶ Gboard（Android）：勾選「混合編碼」生成三代+五代 chinese.tt，再用深藍詞庫轉換為 user_dict_3_3 導入。');
+}
+document.getElementById('go').onclick=async()=>{
+const btn=document.getElementById('go');btn.disabled=true;document.getElementById('log').textContent='';
+hideDl(document.getElementById('dl'),document.getElementById('dljs'),document.getElementById('dlRime'));
+for(const k of Object.keys(d))delete d[k];
+dupMode=getDupMode();outMode=getOutMode();skipCnt=0;xzSkip=0;xzSkipped.length=0;
+log('輸出方式：'+(outMode==='append'?'疊加':'取代'));
+log('重複處理：'+(dupMode==='ignore'?'忽略較後':'容錯合併'));
+try{
+let ids=getRanked();if(ids.length===0)throw new Error('未選任何來源');
+if(outMode==='append'&&lastD){
+const drop=new Set();for(const id of ids){if(lastBuiltIn.has(id))drop.add(id)}
+if(ids.includes('mfile')){const f=document.getElementById('manualFile').files[0];if(f&&lastFiles.has(fileKey(f)))drop.add('mfile')}
+if(ids.includes('murl')){const u=document.getElementById('manualUrl').value.trim();if(u&&lastUrls.has(u))drop.add('murl')}
+for(const id of drop){if(selMap[id]){selMap[id].value='0';selMap[id].classList.remove('r1')}log(`⚠ 來源已包含於基底，已取消選取`)}
+if(drop.size){ids=ids.filter(x=>!drop.has(x));if(ids.length===0)throw new Error('所選來源均已包含於基底——請改用「取代」或重設基底')}
+}
+const baseCharCnt=(outMode==='append'&&lastD)?Object.keys(lastD).length:0;
+if(baseCharCnt>0){for(const ch in lastD)d[ch]={codes:new Set(lastD[ch]),rank:0};log(`ℹ 已載入基底：${baseCharCnt} 字`)}
+const loadedIds=[];
+for(let i=0;i<ids.length;i++){const s=SOURCES.find(x=>x.id===ids[i]);curRank=i+1;log(`── 第 ${i+1} 位：${s.name} ──`);try{await s.load();loadedIds.push(ids[i])}catch(e){log('⚠ '+s.name+'：'+e.message+'（跳過）')}}
+if(loadedIds.length===0||Object.keys(d).length===0)throw new Error('本次無任何來源成功載入');
+if(document.getElementById('mixCj35').checked&&loadedIds.includes('cj5hk')){await appendCj3Extension()}
+emit(loadedIds,baseCharCnt);
+}catch(e){log('❌ '+e.message)}
+btn.disabled=getRanked().length===0;
+};
+})();
+
+(function(){
+const LU_IDIOMS=["按部就班","拔苗助長","班門弄斧","半途而廢","包羅萬象","暴風驟雨","杯弓蛇影","杯水車薪","卑躬屈膝","背水一戰","閉門造車","鞭長莫及","變本加厲","不言而喻","不一而足","不遺餘力","不約而同","不足掛齒","才高八斗","唇齒相依","唇亡齒寒","綽綽有餘","從善如流","摧枯拉朽","打草驚蛇","大而化之","大腹便便","大器晚成","大相徑庭","大智若愚","呆若木雞","待價而沽","當仁不讓","道不拾遺","得心應手","得意忘形","德高望重","登堂入室","飛短流長","飛黃騰達","分崩離析","分庭抗禮","豐衣足食","風起雲湧","風雨飄搖","風雨同舟","扶搖直上","浮光掠影","負荊請罪","負隅頑抗","改弦更張","感激涕零","綱舉目張","革故鼎新","管中窺豹","華而不實","李代桃僵","愛不釋手","標新立異","別開生面","並行不悖","撥亂反正","波瀾壯闊","不偏不倚","不求甚解","不屈不撓","不修邊幅","不學無術","出言不遜","初出茅廬","觸類旁通","隔靴搔癢","姑息養奸","孤陋寡聞","顧影自憐"];
+let s2t=null,conv=true;const cv=w=>conv?s2t(w):w;const words=new Set();const wordOwner=new Map();
+let dupMode='merge',outMode='replace',curRank=1,skipCnt=0;
+const log=s=>{document.getElementById('wlog').textContent+=s+"\n"};
+const getDupMode=()=>document.querySelector('input[name=wdupMode]:checked').value;
+const getConv=()=>document.querySelector('input[name=wconv]:checked').value==='conv';
+const getOutMode=()=>document.querySelector('input[name=woutMode]:checked').value;
+const getWInput=()=>document.querySelector('input[name=wInput]:checked').value;
+let lastWords=null,lastSrcs=[],lastCreds=[],lastBuiltIn=new Set(),lastFiles=new Set(),lastUrls=new Set();
+const selMap={};const fileKey=f=>`${f.name}:${f.size}:${f.lastModified}`;
+function addWord(w){w=(w||'').trim();if(!isWord(w))return false;if(dupMode==='ignore'){const owner=wordOwner.get(w);if(owner!==undefined){if(curRank>owner){skipCnt++;return false}if(curRank===owner)return false}const isNew=!words.has(w);wordOwner.set(w,curRank);words.add(w);return isNew}const isNew=!words.has(w);words.add(w);return isNew}
+function initOpenCC(){if(!conv){s2t=x=>x;log('ℹ 不轉繁。');return}if(typeof OpenCC==='undefined'){log('⚠ OpenCC 未載入');s2t=x=>x;return}s2t=OpenCC.Converter({from:'cn',to:'t'});log('✓ OpenCC 就緒')}
+document.querySelectorAll('input[name=wInput]').forEach(r=>{r.addEventListener('change',()=>{const v=getWInput();document.getElementById('wSourcesBox').style.display=v==='sources'?'block':'none';document.getElementById('wTextBox').style.display=v==='text'?'block':'none';document.getElementById('wgo').disabled=(v==='sources'&&getRanked().length===0)})});
+const SOURCES=[
+{id:'lnu',name:'嶺南大學成語表（內嵌部分）',note:'PDF 無法完整提取',cred:'嶺南大學中國語文教學與測試中心',load:async()=>{let n=0;for(const w of LU_IDIOMS){if(addWord(w))n++}log(`[嶺南] ${n} 條`)}},
+{id:'crazywhale',name:'idiom-database（30,000+）',note:'簡體源，MIT License',cred:'crazywhalecc — MIT\nhttps://github.com/crazywhalecc/idiom-database',load:async()=>{const arr=JSON.parse(await fetchText('https://raw.githubusercontent.com/crazywhalecc/idiom-database/master/data/idiom.json'));let n=0;for(const it of arr){if(addWord(cv(it.word||'')))n++}log(`[idiom-db] ${n} 條`)}},
+{id:'mfile',name:'本機檔案',note:'.txt／.csv／.json',cred:'使用者自選——請自行確認授權。',load:async()=>{const f=document.getElementById('wmanualFile').files[0];if(!f)throw new Error('請選擇檔案');await processAny(await readFileCached(f),'[本機]')}},
+{id:'murl',name:'網址（URL）',note:'輸入 URL 下載詞語檔',cred:'使用者自選 URL——請自行確認授權。',load:async()=>{const url=document.getElementById('wmanualUrl').value.trim();if(!url)throw new Error('請輸入 URL');await processAny(await fetchText(url),'[URL]')}}
+];
+async function processAny(txt,tag){let n=0;try{const j=JSON.parse(txt);if(Array.isArray(j)){for(const it of j){const w=typeof it==='string'?it:(it&&(it.word||it.ci||it.idiom||it.text));if(typeof w==='string'&&addWord(cv(w)))n++}}else if(j&&typeof j==='object'){for(const k of Object.keys(j)){if(addWord(cv(k)))n++}}}catch(e){for(const line of txt.split(/\r?\n/)){if(/^[#;]/.test(line.trim()))continue;const csvLike=/[,\t]/.test(line);const cleanedLine=line.replace(/[(（【\[].*?[)）】\]]/g,' ');const p=cleanedLine.split(/[,，、;；\t\s「」『』"'*]+/).map(x=>x.replace(/^[0-9.．、]+/,'').trim()).filter(Boolean);let taken=0;for(const raw of p){if([...raw].length>8)break;const w=cv(raw);if(isWord(w)){if(addWord(w))n++;taken++}if(csvLike&&taken>0)break}}}log(`${tag} ${n} 條`)}
+const getRanked=makeList(document.getElementById('wsrcList'),SOURCES,{btn:document.getElementById('wgo'),log,selMap,manualBoxes:{mfile:'wmFileBox',murl:'wmUrlBox'}});
+bindFileName(document.getElementById('wmanualFile'),document.getElementById('wmFileName'));
+document.getElementById('wclearAcc').onclick=()=>{lastWords=null;lastSrcs=[];lastCreds=[];lastBuiltIn.clear();lastFiles.clear();lastUrls.clear();log('🧹 基底已重設。')};
+function emit(ids,baseWordCnt){const app=outMode==='append';const arr=[...words].sort(hanCmp);if(app&&baseWordCnt>0)log(`ℹ 疊加完成：基底 ${baseWordCnt} → 現共 ${arr.length} 詞。`);let srcs=ids.map(id=>SOURCES.find(s=>s.id===id).name);let creds=ids.map(id=>SOURCES.find(s=>s.id===id).cred);if(app&&lastSrcs.length){srcs=[...new Set(lastSrcs.concat(srcs))];const seenC=new Set();creds=lastCreds.concat(creds).filter(c=>!seenC.has(c)&&seenC.add(c))}const modeTxt=dupMode==='ignore'?'忽略較後':'容錯合併';const convTxt=conv?'簡→繁':'保留簡體';const outTxt=app?'疊加':'取代';let tt=`# words.txt\n# 來源：${srcs.join(' → ')}\n# 生成：${new Date().toISOString()}\n# ${convTxt}｜${modeTxt}｜${outTxt}\n\n${arr.join('\n')}\n`;let js=`window.EXTERNAL_WORDS=${JSON.stringify(arr.join(' '))};`;log(`共 ${arr.length} 詞。`);lastWords=[...words];lastSrcs=srcs;lastCreds=creds;if(!app){lastBuiltIn.clear();lastFiles.clear();lastUrls.clear()}for(const id of ids){if(id!=='mfile'&&id!=='murl')lastBuiltIn.add(id)}if(ids.includes('mfile')){const f=document.getElementById('wmanualFile').files[0];if(f)lastFiles.add(fileKey(f))}if(ids.includes('murl')){const u=document.getElementById('wmanualUrl').value.trim();if(u)lastUrls.add(u)}setBlobHref(document.getElementById('wdl'),new Blob([tt],{type:'text/plain;charset=utf-8'}));setBlobHref(document.getElementById('wdljs'),new Blob([js],{type:'application/javascript;charset=utf-8'}));log('✅ 已生成 words.txt 與 words_dict.js。')}
+document.getElementById('wgo').onclick=async()=>{const btn=document.getElementById('wgo');btn.disabled=true;document.getElementById('wlog').textContent='';hideDl(document.getElementById('wdl'),document.getElementById('wdljs'));words.clear();wordOwner.clear();conv=getConv();dupMode=getDupMode();outMode=getOutMode();skipCnt=0;initOpenCC();log('輸出方式：'+(outMode==='append'?'疊加':'取代'));try{
+const inputType=getWInput();
+if(inputType==='text'){
+const t=document.getElementById('wText').value;
+if(!t.trim())throw new Error('文本框為空');
+log('📥 文本框貼上模式');
+await processAny(t,'[文本框]');
+if(words.size===0)throw new Error('未提取到任何詞語');
+emit(['text'],0);
+} else {
+let ids=getRanked();if(ids.length===0)throw new Error('未選來源');
+if(outMode==='append'&&lastWords){const drop=new Set();for(const id of ids){if(lastBuiltIn.has(id))drop.add(id)}if(ids.includes('mfile')){const f=document.getElementById('wmanualFile').files[0];if(f&&lastFiles.has(fileKey(f)))drop.add('mfile')}if(ids.includes('murl')){const u=document.getElementById('wmanualUrl').value.trim();if(u&&lastUrls.has(u))drop.add('murl')}if(drop.size){ids=ids.filter(x=>!drop.has(x));if(ids.length===0)throw new Error('所選來源均已包含於基底')}}
+const baseWordCnt=(outMode==='append'&&lastWords)?lastWords.length:0;
+if(baseWordCnt>0){for(const w of lastWords){words.add(w);wordOwner.set(w,0)}log(`ℹ 基底 ${baseWordCnt} 詞`)}
+const loadedIds=[];for(let i=0;i<ids.length;i++){const s=SOURCES.find(x=>x.id===ids[i]);curRank=i+1;log(`── ${s.name} ──`);try{await s.load();loadedIds.push(ids[i])}catch(e){log('⚠ '+e.message)}}
+if(loadedIds.length===0||words.size===0)throw new Error('無來源成功載入');
+emit(loadedIds,baseWordCnt);
+}
+}catch(e){log('❌ '+e.message)}btn.disabled=(getWInput()==='sources')&&getRanked().length===0};
+document.getElementById('dlAtcZip')?.addEventListener('click', async () => {
+const btn = document.getElementById('dlAtcZip');
+if (btn.disabled) return;
+const old = btn.textContent;
+btn.disabled = true;
+btn.textContent = '⏳ 下載中…';
+log('📦 開始下載 .atc示範題庫包 …');
+const repo = 'https://raw.githubusercontent.com/ck-from-hk/-/';
+let blob = null;
+try {
+for (const br of ['main', 'master']) {
+try {
+const r = await fetch(repo + br + '/atc.zip', { cache: 'no-store' });
+if (r.ok) { blob = await r.blob(); break; }
+} catch (e) {}
+}
+if (!blob) throw new Error('找不到 atc.zip');
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url; a.download = 'atc.zip'; a.style.display = 'none';
+document.body.appendChild(a); a.click();
+setTimeout(() => { try { a.remove(); } catch(e){} URL.revokeObjectURL(url); }, 1500);
+log(`✅ 已下載 atc.zip（${(blob.size/1024).toFixed(1)} KB）——解壓後於「電腦命題」選資料夾即用。`);
+btn.textContent = '✅ 已下載';
+setTimeout(() => { btn.textContent = old; btn.disabled = false; }, 2500);
+} catch (e) {
+log('❌ 下載失敗：' + e.message);
+btn.textContent = '❌ 失敗';
+setTimeout(() => { btn.textContent = old; btn.disabled = false; }, 2500);
+}
+});
+})();
+
+const CK_FROM_HK_CHARLIST = ["一","乙","丁","七","乃","九","了","二","人","儿","入","八","几","刀","刁","力","匕","十","卜","又","三","下","丈","上","丫","丸","凡","久","么","也","乞","于","亡","兀","刃","勺","千","叉","口","土","士","夕","大","女","子","孑","孓","寸","小","尢","尸","山","川","工","己","已","巳","巾","干","廾","弋","弓","才","丑","丐","不","中","丰","丹","之","尹","予","云","井","互","五","亢","仁","什","仃","仆","仇","仍","今","介","仄","元","允","內","六","兮","公","冗","凶","分","切","刈","勻","勾","勿","化","匹","午","升","卅","卞","厄","友","及","反","壬","天","夫","太","夭","孔","少","尤","尺","屯","巴","幻","廿","弔","引","心","戈","戶","手","扎","支","文","斗","斤","方","日","曰","月","木","欠","止","歹","毋","比","毛","氏","水","火","爪","父","爻","片","牙","牛","犬","王","丙","世","丕","且","丘","主","乍","乏","乎","以","付","仔","仕","他","仗","代","令","仙","仞","充","兄","冉","冊","冬","凹","出","凸","刊","加","功","包","匆","北","匝","仟","半","卉","卡","占","卯","卮","去","可","古","右","召","叮","叩","叨","叼","司","叵","叫","另","只","史","叱","台","句","叭","叻","四","囚","外","央","失","奴","奶","孕","它","尼","巨","巧","左","市","布","平","幼","弁","弘","弗","必","戊","打","扔","扒","扑","斥","旦","朮","本","未","末","札","正","母","民","氐","永","汁","汀","氾","犯","玄","玉","瓜","瓦","甘","生","用","甩","田","由","甲","申","疋","白","皮","皿","目","矛","矢","石","示","禾","穴","立","丞","丟","乒","乓","乩","亙","交","亦","亥","仿","伉","伙","伊","伕","伍","伐","休"];
+(function(){
+const log=s=>{document.getElementById('llog').textContent+=s+"\n"};
+const lgo=document.getElementById('lgo'),ldl=document.getElementById('ldl'),limText=document.getElementById('limText'),limFile=document.getElementById('limFile'),limFileName=document.getElementById('limFileName'),limFolder=document.getElementById('limFolder'),limFolderName=document.getElementById('limFolderName'),limUrl=document.getElementById('limUrl');
+document.querySelectorAll('input[name=limInput]').forEach(r=>{r.addEventListener('change',()=>{const v=document.querySelector('input[name=limInput]:checked').value;document.getElementById('limTextBox').style.display=v==='text'?'block':'none';document.getElementById('limFileBox').style.display=v==='file'?'block':'none';document.getElementById('limFolderBox').style.display=v==='folder'?'block':'none';document.getElementById('limUrlBox').style.display=v==='url'?'block':'none'})});
+limFile.addEventListener('change',()=>{limFileName.textContent=limFile.files[0]?.name||'未選擇檔案'});
+limFolder.addEventListener('change',()=>{const n=limFolder.files.length;limFolderName.textContent=n>0?`已選 ${n} 個檔案`:'未選擇目錄'});
+function stripATCHeader(text){return text.replace(/^\uFEFF/,'').split(/\r?\n/).filter(l=>!/^\s*(#|;|@|---)/.test(l)).join('\n')}
+lgo.addEventListener('click',async()=>{
+lgo.disabled=true;document.getElementById('llog').textContent='';ldl.classList.remove('ready');ldl.style.display='none';
+if(ldl.href&&ldl.href.startsWith('blob:')){URL.revokeObjectURL(ldl.href);ldl.removeAttribute('href')}
+const inputType=document.querySelector('input[name=limInput]:checked').value,
+rangeMode=document.querySelector('input[name=limRange]:checked').value,
+sortMode=document.querySelector('input[name=limSort]:checked').value;
+log('輸入方式：'+({text:'文本框',file:'本機',folder:'目錄',url:'URL',ckpreset:'預設範圍'}[inputType]));
+log('字元範圍：'+(rangeMode==='bmp'?'BMP':'含擴展'));
+log('排序：'+(sortMode==='cp'?'碼點':'頻率'));
+try{
+const inputs=[];
+if(inputType==='text'){const t=limText.value;if(!t.trim())throw new Error('文本框為空');inputs.push({tag:'[文本框]',text:t})}
+else if(inputType==='file'){const f=limFile.files[0];if(!f)throw new Error('請選擇檔案');log('完整讀入 '+f.name+' …');inputs.push({tag:'['+f.name+']',text:await readFileCached(f)})}
+else if(inputType==='folder'){const files=[...limFolder.files].filter(f=>/\.(atc|txt)$/i.test(f.name));if(!files.length)throw new Error('目錄內無 .atc／.txt');log(`批次讀取 ${files.length} 個檔案 …`);const texts=await Promise.all(files.map(f=>readFileCached(f)));for(let i=0;i<files.length;i++)inputs.push({tag:'['+files[i].name+']',text:texts[i]})}
+else if(inputType==='url'){const url=limUrl.value.trim();if(!url)throw new Error('請輸入 URL');log('完整下載 …');inputs.push({tag:'[URL]',text:await fetchText(url)})}
+else if(inputType==='ckpreset'){log('📥 預設範圍常用字表（內嵌，'+CK_FROM_HK_CHARLIST.length+' 字）…');inputs.push({tag:'[預設範圍]',text:CK_FROM_HK_CHARLIST.join('')})}
+log('── 統一解析 ──');
+const counts=new Map();let totalOccur=0;
+for(const {tag,text} of inputs){const clean=stripATCHeader(text);let n=0;for(const ch of clean){if(isHan(ch)){counts.set(ch,(counts.get(ch)||0)+1);totalOccur++;n++}}log(`${tag} 提取 ${n} 字`)}
+let chars=[...counts.keys()];
+if(rangeMode==='bmp'){const before=chars.length;chars=chars.filter(c=>isBMPHan(c));if(before-chars.length>0)log(`ℹ 已過濾 ${before-chars.length} 擴展字`)}
+if(!chars.length)throw new Error('未提取到任何漢字');
+if(sortMode==='cp')chars.sort(hanCmp);
+else chars.sort((a,b)=>(counts.get(b)||0)-(counts.get(a)||0)||hanCmp(a,b));
+const arr=chars.map(c=>JSON.stringify(c)).join(',');
+const js=`const charList=[${arr}];\n`;
+log(`✅ 共 ${chars.length} 個不重複漢字（總出現 ${totalOccur} 次）`);
+const blob=new Blob([js],{type:'application/javascript;charset=utf-8'});
+ldl.href=URL.createObjectURL(blob);ldl.style.display='inline';ldl.classList.add('ready');
+}catch(e){log('❌ '+e.message)}
+lgo.disabled=false;
+});
+})();
+</script>
+</body>
+</html>
