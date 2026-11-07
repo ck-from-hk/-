@@ -222,13 +222,21 @@ html.js #jsNote{display:none}
 • 按<b>選擇題庫資料夾</b>一鍵匯入整個資料夾（選一次永久記住）。資料夾內有 <b>.atc</b> 時進入<b>文章卷模式</b>：每局隨機抽出一整篇，全文連續漢字作答（標點自動剝除、滿行不插空格）；無 .atc 則照舊 <b>.txt 詞池</b>。兩種模式互斥，重新選取即切換。<br>• .atc 檔之自訂標頭（#／@／--- 開首行）自動忽略，內文連標點皆可，程式只取字庫內漢字。<br>• 本機另可放 words_dict.js（window.EXTERNAL_WORDS="詞1 詞2 …"）自動載入。<br>• http:// 部署時自動依序偵測 pool.txt、words.txt、questions.txt、*.atc 等。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 公平計分</div>
 • 測驗中使用 <b>Z 萬用鍵</b>時，程式<b>不會</b>自動把目標字排到候選首位——須看清單以 <b>1-9</b> 手動選字（貼近真實輸入法行為，防止 Space 保送拿分）。不含 Z 的正常輸入仍自動首選，速度體驗不變。
+<div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 配套生成器</div>
+配套生成器能合併多來源 chinese.tt 倉頡碼表與 words.txt 詞庫，並自訂 limit.js 常用字範圍；一鍵輸出與本程式相容的 chinese_dict.js、words_dict.js，亦支援 .atc／.txt 目錄批量處理——詳見 generator.html。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 關於排行榜資料的儲存</div>
 • 排行榜成績<b>只儲存在本機瀏覽器內（localStorage）</b>，不會上傳到任何伺服器，也不會同步到其他裝置或瀏覽器。<br>• 換裝置、換瀏覽器（或經不同方式開啟，如內建瀏覽器 vs Safari）所見的排行榜互不相通。<br>• 若清除瀏覽器的「網站資料／歷史記錄」，排行榜紀錄即會消失，請自行留意外。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 其他</div>
 • 畫面底部之 Enter／Esc／↑↓ 按鈕等同實體鍵盤；偵測到實體鍵盤輸入後，虛擬鍵盤自動隱藏，<b>再點觸螢幕即自動喚回</b>——實體／虛擬鍵盤可隨時交替使用，毋須重新整理。<br>• 主選單第 7 項「音效」之方格亮燈（青點）即代表音效開啟。
 <div style="margin-top:14px;text-align:right"><a href="https://github.com/ck-from-hk/-" target="_blank" rel="noopener" style="color:#5ff;font-weight:bold;text-decoration:none">🔗 專案主頁</a></div>
 </div>
-<div style="text-align:right"><button class="key-button" id="closeAboutBtn">確定 [Enter]</button></div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px">
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="key-button" id="btnDlSelfAbout" style="color:#004000">💾 下載本 HTML</button>
+<button class="key-button" id="btnDlRemoteAbout" style="color:#004080">🌐 從專案下載最新版</button>
+</div>
+<button class="key-button" id="closeAboutBtn">確定 [Enter]</button>
+</div>
 </div>
 <div class="sub-window" id="tutorialWindow" style="max-width:780px">
 <div class="sub-win-title"><span>📖 倉頡入門與拆字指南</span><span style="font-size:13px;color:#aaa">[Enter] 開始練習 [Esc] 返回</span></div>
@@ -262,7 +270,7 @@ html.js #jsNote{display:none}
 </div>
 </div>
 <div class="dos-footer" id="bottomFooterBar">
-<div style="display:flex;gap:12px"><div class="key-button" id="btnEnter">Enter</div><div class="key-button" id="btnEsc">Esc</div><div class="key-button" id="btnDlHtmlFooter" style="color:#004000">💾 下載 .html</div></div>
+<div style="display:flex;gap:12px"><div class="key-button" id="btnEnter">Enter</div><div class="key-button" id="btnEsc">Esc</div></div>
 <div id="footerHint" style="font-size:12px;color:#333;flex:1;text-align:center">↑↓ 選擇，Enter 進入</div>
 <div style="display:flex;gap:6px"><div class="key-button" id="btnUp">↑</div><div class="key-button" id="btnDown">↓</div></div>
 </div>
@@ -310,7 +318,11 @@ function toggleKeypad(){KP_LAYOUT=KP_LAYOUT==="ABC"?"RAD":"ABC";const a=$("kpAbc
 /* ================= 虛擬鍵盤：正規化 + 統一入口 + 委派 ================= */
 function normalizeKpKey(raw){
   if(raw==null)return"";
-  let k=String(raw).replace(/？/g,"?").replace(/　/g," ").trim();
+  // 全角問號→半角
+  let k=String(raw).replace(/？/g,"?");
+  // 全角空格→半角；半角空格保留（不可 trim 掉！）
+  if(k==="\u3000"||k==="　")k=" ";
+  else if(k!==" ")k=k.trim();
   const up=k.toUpperCase();
   const ALIAS={
     PU:"PAGEUP",PGUP:"PAGEUP",UP:"PAGEUP",
@@ -366,7 +378,7 @@ function bindVirtualKeypad(){
     if(ev.cancelable)ev.preventDefault();
     const raw=b.dataset.k;
     const k=normalizeKpKey(raw);
-    if(k!==raw)b.dataset.k=k;
+    if(k&&k!==raw)b.dataset.k=k;
     dispatchVirtualKey(k,ev);
   });
   tkEl.addEventListener("pointerdown",onPad);
@@ -542,7 +554,6 @@ function wordsToLines(ws){const chunks=[],lines=[];for(const w of ws){const cs=[
 function pushPages(lines){for(let i=0;i<lines.length;i+=GROUPS){const pg=lines.slice(i,i+GROUPS);while(pg.length<GROUPS)pg.push(new Array(COLS).fill(" "));S.pages.push(pg.flat());S.typed.push(new Array(COLS*GROUPS).fill(""))}}
 function appendPages(n){for(let k=0;k<n;k++){const tgt=COLS*GROUPS,ws=[];let tot=0,g=0;while(tot<tgt&&g++<500&&S.examSrc.length){const w=S.examSrc[S.srcIdx++%S.examSrc.length];ws.push(w);tot+=[...w].length}if(!ws.length)break;pushPages(wordsToLines(ws))}}
 
-/* prepExam：保留標點及字庫外字元，只剝換行 */
 function prepExam(mins){
   let ws;
   if(S.articleMode){
@@ -573,7 +584,6 @@ function updateTimer(){$("exam18Timer").textContent=`剩餘時間：${String(S.r
 function updateStats(){const t=S.ok+S.bad;$("exam18Stats").innerHTML=`已輸入：${t}（正確：${S.ok} 錯誤：${S.bad}）｜準確率：${t>0?Math.round(S.ok/t*100):0}%｜速度：${S.tRun?(S.ok/elapsed()).toFixed(1):"0.0"}字/分`}
 const target=()=>(S.pages[S.p]||[])[S.g*COLS+S.c]||"";
 
-/* renderExam：標點／英文／字庫外字元以中灰色顯示（無底色），不需輸入 */
 function renderExam(){
   const ct=$("exam7GroupsContainer"),pa=S.pages[S.p]||[],ta=S.typed[S.p]||[];
   let h="";
@@ -668,6 +678,41 @@ function exportSelfHtml(){
   dlFile("<!DOCTYPE html>\n"+clone.outerHTML,"cangjie.html","text/html;charset=utf-8");
 }
 
+function downloadBlob(blob, filename){
+  return new Promise(res => {
+    const u = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = u;
+    a.download = filename;
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { try { a.remove(); } catch(e){} URL.revokeObjectURL(u); res(); }, 1200);
+  });
+}
+async function downloadRemoteLatest(){
+  const btn = $("btnDlRemoteAbout");
+  if (btn && btn.disabled) return;
+  if (btn) btn.disabled = true;
+  sfxToast("⏳ 正在從專案下載最新版…", true);
+  const repo = "https://raw.githubusercontent.com/ck-from-hk/-/";
+  let ok = 0;
+  try {
+    let branch = null;
+    for (const br of ["main", "master"]) {
+      try { const r = await fetch(repo + br + "/index.html", { cache: "no-store" }); if (r.ok) { branch = br; break; } } catch(e){}
+    }
+    if (!branch) { sfxToast("❌ 無法連接專案網址——請手動前往 GitHub 專案主頁", true); return; }
+    try { const r = await fetch(repo + branch + "/index.html", { cache: "no-store" }); if (r.ok) { await downloadBlob(await r.blob(), "index.html"); ok++; } } catch(e){}
+    await new Promise(res => setTimeout(res, 600));
+    for (const name of ["generator.html", "generator2.html"]) {
+      try { const r = await fetch(repo + branch + "/" + name, { cache: "no-store" }); if (r.ok) { await downloadBlob(await r.blob(), "generator.html"); ok++; break; } } catch(e){}
+    }
+    if (ok >= 1) sfxToast(`✅ 已從專案下載 ${ok} 個檔案`, true);
+    else sfxToast("❌ 下載失敗——請手動前往 GitHub 專案主頁", true);
+  } finally { if (btn) setTimeout(() => { btn.disabled = false; }, 2000); }
+}
+
 function applyDict(raw){const res=buildDict(raw);DICT=res.dict;rebuild();S.list.forEach(it=>{if(DICT[it.char])Object.assign(it,mkItem(it.char))});updatePracticeScopeUI();if(S.view==="PRACTICE"&&S.list.length)renderPractice();const s=$("dictSizeDisplay");if(s)s.textContent=Object.keys(DICT).length;return res.extCount}
 
 async function initSys(){
@@ -742,7 +787,8 @@ const bootApp=()=>{
     $("exportDictBtn").addEventListener("click",safe(()=>exportDict(0)));
     $("exportDictJsBtn").addEventListener("click",safe(()=>exportDict(1)));
     $("exportSelfHtmlBtn")?.addEventListener("click",safe(exportSelfHtml));
-    $("btnDlHtmlFooter")?.addEventListener("click",safe(exportSelfHtml));
+    $("btnDlSelfAbout")?.addEventListener("click",safe(exportSelfHtml));
+    $("btnDlRemoteAbout")?.addEventListener("click",safe(downloadRemoteLatest));
     $("queryBtnDo").addEventListener("click",safe(()=>doQuery($("queryCharInput").value)));
     ["closeQueryBtn","closeAboutBtn","closeTutorialBackBtn","closeLbBtn"].forEach(id=>$(id).addEventListener("click",safe(()=>setView("MENU"))));
     $("closeTutorialBtn").addEventListener("click",safe(()=>setView("PRACTICE")));
