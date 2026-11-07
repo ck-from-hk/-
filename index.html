@@ -153,7 +153,7 @@ html.js #jsNote{display:none}
 </div>
 <div id="customTextInputGroup" style="display:none;flex-direction:column;gap:6px;background:#b0b0b0;padding:8px;border:1px inset #808080">
 <input type="file" id="localTxtFileInput" accept=".txt,text/plain" style="font-size:16px;width:200px">
-<input type="text" id="customInputString" class="dialog-input" value="快快樂樂 學習 倉頡 輸入 電腦" maxlength="500">
+<input type="text" id="customInputString" class="dialog-input" value="快快樂樂 快快快樂 學習 倉頡 輸入 電腦 示範題目 打完第一頁之後會重覆" maxlength="500">
 </div>
 <div style="border-top:1px solid #888;margin:4px 0;padding-top:6px">
 <div style="display:flex;align-items:center;gap:8px"><input type="file" id="cangjieTtFileInput" accept=".txt,.tt,text/plain,*/*" style="font-size:14px;width:190px"><span style="font-size:12px;color:#333">字庫：<span id="dictSizeDisplay">—</span> 字</span></div>
@@ -207,9 +207,9 @@ html.js #jsNote{display:none}
 <div class="sub-window" id="aboutWindow" style="max-width:640px">
 <div class="sub-win-title"><span>軟體簡介</span><span style="font-size:13px;color:#aaa">[Esc] 返回</span></div>
 <div style="font-size:15px;color:#fff;line-height:1.8;margin:20px 0;max-height:330px;overflow-y:auto;padding-right:6px">
-本作「致敬」九十年代風行之 DOS 打字教學程式。內建字庫以標準三代倉頡為主碼，部份字附有容錯碼，並只含五代部分字碼；收錄部份成語及香港用語詞彙作為命題題材。如需更完整或不同版本之字碼，可自行準備 chinese.tt 替代碼表上傳載入（每行「字 碼」，UTF-8 或 Big5 皆可，支援同行多碼「字 碼1 碼2 …」）。<br>
+本作「致敬」九十年代風行之 DOS 打字教學程式。內建字庫以標準三代倉頡為主碼，部份字附有容錯碼，並只含五代部分字碼；收錄部份成語及香港用語詞彙作為命題題材。如需更準確更完整或不同版本之字碼，可自行準備 chinese.tt 替代碼表上傳載入（每行「字 碼」，UTF-8 或 Big5 皆可，支援同行多碼「字 碼1 碼2 …」）。<br>
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 手機／平板開啟方式</div>
-• iOS 從 WhatsApp／Mail／檔案 App 直接點開本檔時，系統預覽器會停用 JavaScript，只見靜態畫面而無法操作——此屬 iOS 安全限制，並非程式故障，且無法於預覽內解除。<br>• iOS 建議做法：<b>改用網頁版</b>——以 Safari 開啟本程式之部署網址，即可完整執行；或將本檔<b>下載／傳送至電腦</b>（Mac／PC），以瀏覽器開啟使用。<br>• Android 以 Chrome／內建瀏覽器開啟本檔即可完整執行。<br>• 進入練習或測驗時，螢幕底部會自動出現虛擬鍵盤，毋須外接實體鍵盤。
+• iOS / iPadOS 從 WhatsApp／Mail／檔案 App 直接點開本檔時，系統預覽器會停用 JavaScript，只見靜態畫面而無法操作——此屬 iOS 安全限制，並非程式故障，且無法於預覽內解除。<br>• iOS 建議做法：<b>改用網頁版</b>——以 Safari 開啟本程式之部署網址，即可完整執行；或將本檔<b>下載／傳送至電腦</b>（Mac／PC），以瀏覽器開啟使用。<br>• Android 以 Chrome／內建瀏覽器開啟本檔即可完整執行。<br>• 進入練習或測驗時，螢幕底部會自動出現虛擬鍵盤，毋須外接實體鍵盤。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 中文字根鍵盤（虛擬鍵盤）</div>
 • 觸屏鍵盤支援<b>雙佈局</b>：ABC 字母鍵盤與「中文字根鍵盤」——字根鍵<b>完全依照英文 QWERTY 鍵位</b>排列（Q手 W田 E水 R口 T廿 Y卜 U山 I戈 O人 P心／A日 S尸 D木 F火 G土 H竹 J十 K大 L中／Z重 X難 C金 V女 B月 N弓 M一），與實體鍵盤一一對應。<br>• 於鍵盤上<b>橫掃</b>（向左或向右），或<b>點擊鍵盤右上角懸浮的「⇄」小藥丸</b>，即可切換佈局。<br>• 字根鍵輸出與字母鍵完全相同（日=A｜月=B｜…｜難=X｜重=Z），練習與測驗計分不受影響——新手可直接以字根拆字，毋須背誦「字根→字母」對照，同時不知不覺記熟實體鍵位。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 練習範圍（打字練習頁）</div>
@@ -244,7 +244,7 @@ html.js #jsNote{display:none}
 <div class="tut-h y">一、倉頡字母（廿四基本字根）＋輔助字形</div>
 <div style="margin-top:4px;font-size:13px">哲理類：日月金木水火土（A-G）｜筆畫類：竹戈十大中一弓（H-N）｜人體類：人心手口（O-R）｜字形類：尸廿山女田卜（S-Y）。<br>每個字母除「基本形」外，另有一組<b>輔助字形</b>——形狀相近、取碼相同的變形字根（詳見下節速查）。規則：<br>• 字母<b>基本形獨立成字取一碼</b>：日=A｜月=B｜金=C｜木=D｜水=E｜火=F｜土=G<br>• <b>輔助字形獨立成字須正常拆碼</b>，不享一碼優惠：乙=NU（弓山）<br>• <b>同鍵多形任你用</b>：拆字時見到輔助形之一，即取該鍵——「溫」左旁氵=E｜「們」左旁亻=O｜「忙」左旁忄=P<br>• <b>判斷要訣</b>：形狀輪廓近於該字母（直曲、開口方向）即取該鍵，毋須死背清單。</div>
 <div class="tut-h y">一之二、輔助字形速查（同鍵異形）</div>
-<div style="margin-top:4px;font-size:13px">拆字時見到任一輔助形，即取該鍵；同鍵諸形共用一碼。<br><b>A 日</b>：日、曰（曹＝TWA）<br><b>B 月</b>：月、冂內有物之框（用＝BQ）、肉字旁（肌＝BHN 之 B、肚＝BG 之 B）<br><b>C 金</b>：金、儿（匹＝SC）、八字底（只＝RC 之 C、共＝TC 之 C）<br><b>D 木</b>：木、朩（休＝OD）、十字交叉短橫（東＝DW）<br><b>E 水</b>：水、氵（溫＝EABT）、氺（求＝IJE）<br><b>F 火</b>：火、灬、小／⺌（尚＝FBR）、小底（京＝YRF）<br><b>G 土</b>：土、士（志＝GP 之 G、寺＝GDI）<br><b>H 竹</b>：竹、⺮（等＝HGDI 之 H）、丿斜撇（千＝HJ）、彡（形＝MTHHH）<br><b>I 戈</b>：戈、丶（玉＝MGI）、广（店＝IYR）、厶（去＝GI）<br><b>J 十</b>：十、宀（安＝JV）、冖（冠＝BMBU 之 J）<br><b>K 大</b>：大、乂（交＝YCK 之 K）、疒病字頭（病＝KMOB 之 K、痛＝KNB）<br><b>L 中</b>：中、丨直筆（巾＝LB）<br><b>M 一</b>：一、厂（原＝MHAF）、長橫筆<br><b>N 弓</b>：弓、乙（乙＝NU）、亅（丁＝MN）、乛（書＝LGA 之鈎）<br><b>O 人</b>：人、亻（他＝OPD）、入（內＝OB）、𠆢（會＝OMWA）、⺈（負＝NBUC）<br><b>P 心</b>：心、忄（快＝PDK）、⺗（恭＝TCP）、勹（句＝PR）<br><b>Q 手</b>：手、扌（打＝QMN）、龶（青＝QMB 上部）<br><b>R 口</b>：口（無輔助形；囗內有物之外框歸「田」W）<br><b>S 尸</b>：尸、匚／匸（區＝SRR、巨＝SS）、乚右彎鈎<br><b>T 廿</b>：廿、艹（草＝TAJ）、卄（革＝TLJ 之 T）<br><b>U 山</b>：山、凵（凶＝UK）<br><b>V 女</b>：女、長曲交叉（收＝VLOK 之 V）、曲筆（及＝HE）<br><b>W 田</b>：田、囗（因＝WK、國＝WIRM）<br><b>Y 卜</b>：卜、辶（達＝YGQ，辶取卜於末碼）、⺊（卓＝YAJ）<br><div style="margin-top:4px;color:#fa5">⚠ 複合字首（勿逐筆拆）：衣＝YHV｜門＝AN｜鬼＝HI｜鬥＝LN｜行＝HOMN｜隹＝OG｜阝＝NL（左右同）｜虍＝YPH</div></div>
+<div style="margin-top:4px;font-size:13px">拆字時見到任一輔助形，即取該鍵；同鍵諸形共用一碼。<br><b>A 日</b>：日、曰（曹＝TWA）<br><b>B 月</b>：月、冂內有物之框（用＝BQ）、肉字旁（肌＝BHN 之 B、肚＝BG 之 B）<br><b>C 金</b>：金、儿（匹＝SC）、八字底（只＝RC 之 C、共＝TC 之 C）<br><b>D 木</b>：木、朩（休＝OD）、十字交叉短橫（東＝DW）<br><b>E 水</b>：水、氵（溫＝EABT）、氺（求＝IJE）<br><b>F 火</b>：火、灬、小／⺌（尚＝FBR）、小底（京＝YRF）<br><b>G 土</b>：土、士（志＝GP 之 G、寺＝GDI）<br><b>H 竹</b>：竹、⺮（等＝HGDI 之 H）、丿斜撇（千＝HJ）、彡（形＝MTHHH）<br><b>I 戈</b>：戈、丶（玉＝MGI）、广（店＝IYR）、厶（去＝GI）<br><b>J 十</b>：十、宀（安＝JV）、冖（冠＝BMUI 之 J）<br><b>K 大</b>：大、乂（交＝YCK 之 K）、疒病字頭（病＝KMOB 之 K、痛＝KNB）<br><b>L 中</b>：中、丨直筆（巾＝LB）<br><b>M 一</b>：一、厂（原＝MHAF）、長橫筆<br><b>N 弓</b>：弓、乙（乙＝NU）、亅（丁＝MN）、乛（書＝LGA 之鈎）<br><b>O 人</b>：人、亻（他＝OPD）、入（內＝OB）、𠆢（會＝OMWA）、⺈（負＝NBUC）<br><b>P 心</b>：心、忄（快＝PDK）、⺗（恭＝TCP）、勹（句＝PR）<br><b>Q 手</b>：手、扌（打＝QMN）、龶（青＝QMB 上部）<br><b>R 口</b>：口（無輔助形；囗內有物之外框歸「田」W）<br><b>S 尸</b>：尸、匚／匸（區＝SRR、巨＝SS）、乚右彎鈎<br><b>T 廿</b>：廿、艹（草＝TAJ）、卄（革＝TLJ 之 T）<br><b>U 山</b>：山、凵（凶＝UK）<br><b>V 女</b>：女、長曲交叉（收＝VLOK 之 V）、曲筆（及＝HE）<br><b>W 田</b>：田、囗（因＝WK、國＝WIRM）<br><b>Y 卜</b>：卜、辶（達＝YGQ，辶取卜於末碼）、⺊（卓＝YAJ）<br><div style="margin-top:4px;color:#fa5">⚠ 複合字首（勿逐筆拆）：衣＝YHV｜門＝AN｜鬼＝HI｜鬥＝LN｜行＝HOMN｜隹＝OG｜阝＝NL（左右同）｜虍＝YPH</div></div>
 <div class="tut-h g">二、取碼次序：由上至下、由左至右、由外至內</div>
 <div style="margin-top:4px;font-size:13px">憑<b>視覺</b>（非筆順、非字義）分割：字首＝最左／最上／最外部分，其餘為字身。<br>• 上下形：想=DUP(木山心)｜安=JV(十女)<br>• 左右形：明=AB(日月)｜林=DD(木木)<br>• 內外形：回=WR(田口)｜國=WIRM(田戈口一)<br>原則：先分「字首」與「字身」，各自獨立取碼後合併。</div>
 <div class="tut-h g">三、連體字與分體字（碼數規則）</div>
@@ -450,7 +450,7 @@ const S={view:"MENU",sel:1,charIndex:0,buf:"",start:null,done:0,keys:0,errs:0,li
 LB_KEY="hcr_scores_v20";
 let LB=null;
 const sortLB=l=>l.slice().sort((a,b)=>(+b.speed||0)-(+a.speed||0)||(+b.acc||0)-(+a.acc||0)||String(b.date||"").localeCompare(a.date||""));
-function getLB(){try{const r=localStorage.getItem(LB_KEY);if(r){const p=JSON.parse(r);if(Array.isArray(p))return LB=sortLB(p)}}catch(e){}return LB?sortLB(LB):LB=sortLB([{id:"d1",name:"香港小學霸",mode:"測驗(電腦)",duration:"5分",speed:68,acc:99,date:"2026-11-01"},{id:"d2",name:"倉頡快打手",mode:"測驗(自訂)",duration:"5分",speed:58,acc:95,date:"2026-11-02"}])}
+function getLB(){try{const r=localStorage.getItem(LB_KEY);if(r){const p=JSON.parse(r);if(Array.isArray(p))return LB=sortLB(p)}}catch(e){}return LB?sortLB(LB):LB=sortLB([{id:"d1",name:"香港小學霸",mode:"測驗(電腦)",duration:"5分鐘",speed:68,acc:99,date:"2026-11-01"},{id:"d2",name:"倉頡快打手",mode:"測驗(自訂)",duration:"5分鐘",speed:58,acc:95,date:"2026-11-02"}])}
 function saveScore(it){if(S.saved)return;S.saved=true;const id="s"+Date.now();S.scoreId=id;LB=sortLB(getLB().concat([{...it,id}])).slice(0,30);try{localStorage.setItem(LB_KEY,JSON.stringify(LB))}catch(e){}}
 
 const mqT=q=>window.matchMedia(q).matches;
