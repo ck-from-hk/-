@@ -10,6 +10,7 @@
 技術所限，apk只能從main產出，故多開一個repo
 https://github.com/ck-from-hk/forapk
 
+一般不建議直接使用來歷不明的apk，自己用AI scan過源碼再build比較合理
 
 
 ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Offline-005a52)
