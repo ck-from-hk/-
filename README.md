@@ -4,7 +4,7 @@
 
 在核心的實力測驗系統上，本次改以「內建／外掛詞庫」加上四組預設外掛槽位（multi-1.js 至 multi-4.js）的「五選一題庫架構」取代舊有的動態目錄偵測。程式啟動時會自動讀取各槽位內定義的專屬顯示名稱與多篇文章陣列，選取後每局即可隨機抽取一整篇文本進行連續作答；未放入檔案的槽位則會自動顯示為無並反灰禁用。
 
-
+如不下載apk，當然作為.html+.js也可以直接使用。
 
 ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Offline-005a52)
 ![Size](https://img.shields.io/badge/size-~100%20KB%20HTML-informational)
