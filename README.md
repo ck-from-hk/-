@@ -6,6 +6,12 @@
 
 如不下載apk，當然作為.html+.js也可以直接使用。與main相比，這個已內置原為.atc的人工生成題庫，而其他.js仍可用main的生成器產生。
 
+注意以上為源碼
+技術所限，apk只能從main產出，故多開一個repo
+https://github.com/ck-from-hk/forapk
+
+
+
 ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Offline-005a52)
 ![Size](https://img.shields.io/badge/size-~100%20KB%20HTML-informational)
 ![License](https://img.shields.io/badge/license-MIT-green)
