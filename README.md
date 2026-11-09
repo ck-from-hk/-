@@ -13,7 +13,8 @@ https://ck-from-hk.github.io/-/
 
 亦可下載後離線使用
 
-字庫和詞庫等可用generator.html生成
+字庫和詞庫等可用generator/index.html生成
+生成器直接使用： https://ck-from-hk.github.io/-/generator
 
 [繁體中文](#繁體中文) ｜ [English](#english)
 
@@ -23,7 +24,7 @@ https://ck-from-hk.github.io/-/
 
 ### 簡介
 
-本作「致敬」九十年代風行之 DOS 打字教學程式（如松崗《快快樂樂》系列），以單一 HTML 檔重構其經典介面與操作邏輯。內建字庫以標準**三代倉頡**為主碼，部分字附容錯碼，並含五代部分字碼；收錄部分成語及香港用語詞彙作為命題題材。程式為純前端實作——無後端、無帳號、無任何資料上傳，離線開啟即可使用。
+本作「致敬」九十年代風行之 DOS 打字教學程式（如松崗《快快樂樂》系列），以單一 HTML 檔重構其經典介面與操作邏輯。內建字庫以標準**三代倉頡**為主碼，部分字附容錯碼，並含五代部分字碼（0.82版本起已盡量匯入，但錯漏難免還請見諒，選配字庫即自動覆蓋）；收錄部分成語及香港用語詞彙作為命題題材。程式為純前端實作——無後端、無帳號、無任何資料上傳，離線開啟即可使用。（匯入ATC題庫會有上傳提示，只傳至瀏覽器本機端。）
 
 ### 功能特色
 
@@ -50,7 +51,7 @@ https://ck-from-hk.github.io/-/
 | `.nojekyll` | ⬜ 建議（GitHub Pages） | 空檔案，令 GitHub Pages 跳過 Jekyll 處理，避免 `_` 開頭資源被忽略 |
 | `words.txt` / `*.atc` | ⬜ 選配 | 自訂命題題庫純文字檔（一行一詞或整段文章皆可），經「📂 選擇題庫資料夾」一鍵整夾匯入 |
 | `limit.js` | ⬜ 建議 | 依此檔設定常用字範圍 |
-| `generator.html` | ⬜ 選配 | 三合一生成器，生成以上　.js / .tt / .txt檔 |
+| `generator/index.html` | ⬜ 選配 | 三合一生成器，生成以上　.js / .tt / .txt檔 |
 
 
 > 排行榜頁「匯出 .js」可直接把當前生效的字庫（內建＋已載入擴充碼）包裝成 `chinese_dict.js` 下載，連同 HTML 一併分發即可毋須再設定。
@@ -200,7 +201,7 @@ Released under the [MIT License](LICENSE). The Cangjie method itself carries no 
 
 **以上都係AI gen出嚟**
 
-項目擁有人唔識programming
+項目擁有人並唔識programming
 
 只係間中去吓HKEPC偷師所以又未至於係電腦白痴
 
