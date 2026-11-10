@@ -16,6 +16,8 @@ https://ck-from-hk.github.io/-/
 字庫和詞庫等可用generator/index.html生成
 生成器直接使用： https://ck-from-hk.github.io/-/generator
 
+簡體倉頡教學及練習特別版(0.825限定)：　https://ck-from-hk.github.io/-/simp
+
 [繁體中文](#繁體中文) ｜ [English](#english)
 
 ---
