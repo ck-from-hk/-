@@ -99,7 +99,7 @@ body.handheld-land .dos-screen{transform-origin:top center}
 .sub-win-title{color:#ff5;font-size:20px;font-weight:bold;border-bottom:2px solid #5ff;padding-bottom:6px;display:flex;justify-content:space-between;align-items:center}
 .practice-char-box{width:160px;height:160px;border:2px solid #ff0;background:rgba(0,0,0,.45);margin:10px auto;display:flex;align-items:center;justify-content:center;font-size:105px;color:#fff;position:relative}
 .practice-code-slots{display:flex;gap:8px;justify-content:center;margin-top:6px}
-.p-slot{width:48px;height:50px;border:2px solid #5ff;background:#002220;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ff5;font-size:20px;font-weight:bold}
+.p-slot{width:48px;height:50px;border:2px solid #5ff;background:#002220;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ff5;font-size:18px;font-weight:bold;line-height:1.15}
 .p-slot.ok{border-color:#5f5;background:rgba(85,255,85,.2)}
 .p-slot.err{border-color:#f55;background:rgba(255,85,85,.25)}
 .retro-table{width:100%;border-collapse:collapse;color:#fff;font-size:14px;margin-top:8px}
@@ -191,9 +191,10 @@ html.js #jsNote{display:none}
 <button type="button" class="key-button" id="scopeCommonBtn" style="height:24px;font-size:13px">常用字</button>
 <button type="button" class="key-button" id="scopeAllBtn" style="height:24px;font-size:13px">全字庫</button>
 </div>
-<div>
+<div style="position:relative">
 <div class="practice-char-box" id="dispChar">港</div>
 <div class="practice-code-slots" id="codeSlotContainer"></div>
+<button type="button" class="key-button" id="btnToggleAuxMode" style="position:absolute;left:73%;top:50%;transform:translate(-50%,-50%);height:26px;font-size:12px;color:#000080;box-shadow:2px 2px 0 rgba(0,0,0,.4)">顯示字母/字根</button>
 <div style="display:flex;justify-content:center;gap:8px;margin-top:10px">
 <button class="key-button" id="practiceQueryBtn" style="height:26px;font-size:13px">🔍 查碼 [?]</button>
 <span id="practiceQueryResult" style="font-size:15px;color:#5ff;align-self:center;min-height:20px"></span>
@@ -237,7 +238,7 @@ html.js #jsNote{display:none}
 • 排行榜成績<b>只儲存在本機瀏覽器內（localStorage）</b>，不會上傳到任何伺服器，也不會同步到其他裝置或瀏覽器。<br>• 換裝置、換瀏覽器（或經不同方式開啟，如內建瀏覽器 vs Safari）所見的排行榜互不相通。<br>• 若清除瀏覽器的「網站資料／歷史記錄」，排行榜紀錄即會消失，請自行留意外。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 其他</div>
 • 畫面底部之 Enter／Esc／↑↓ 按鈕等同實體鍵盤；偵測到實體鍵盤輸入後，虛擬鍵盤自動隱藏，<b>再點觸螢幕即自動喚回</b>——實體／虛擬鍵盤可隨時交替使用，毋須重新整理。<br>• 主選單第 7 項「音效」之方格亮燈（青點）即代表音效開啟。
-<div style="margin-top:14px;text-align:right"><span style="color:#888;font-family:Consolas,monospace;margin-right:16px">v0.82</span><a href="https://github.com/ck-from-hk/-" target="_blank" rel="noopener" style="color:#5ff;font-weight:bold;text-decoration:none">🔗 專案主頁</a></div>
+<div style="margin-top:14px;text-align:right"><span style="color:#888;font-family:Consolas,monospace;margin-right:16px">v0.825</span><a href="https://github.com/ck-from-hk/-" target="_blank" rel="noopener" style="color:#5ff;font-weight:bold;text-decoration:none">🔗 專案主頁</a></div>
 </div>
 <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px">
 <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -573,11 +574,39 @@ function pool(){
   }
   return shuffle(Object.keys(DICT).filter(c=>isSingleHan(c)&&!SIMP[c]&&c!=="難"&&c!=="重"&&c.codePointAt(0)<0x20000&&DICT[c][0].length>=2)).slice(0,20).map(mkItem);
 }
+let AUX_MODE=0; // 0: 字母+字根, 1: 僅字母, 2: 僅字根(放大), 3: 關
+function cycleAuxMode(){
+  AUX_MODE=(AUX_MODE+1)%4;
+  sound.nav();
+  const it=S.list[S.charIndex%20];
+  if(it)syncSlots(it);
+}
 function startPractice(){Object.assign(S,{charIndex:0,buf:"",start:null,done:0,keys:0,errs:0,list:pool()});clearTimeout(S.advTimer);S.advTimer=null;renderPractice();$("dispPrompt").textContent="按 A-Z 輸入字碼，打滿後按 Space 確認";$("rtSpeed").textContent="0.0";$("rtAcc").textContent="100%"}
-const slots=n=>$("codeSlotContainer").innerHTML=Array.from({length:n},(_,i)=>`<div class="p-slot" id="ps${i}">_</div>`).join("");
-function renderPractice(){if(!S.list.length)S.list=pool();const it=S.list[S.charIndex%20];if(!it)return;$("dispChar").textContent=it.char;$("charTypeBadge").textContent=it.code.length+"碼";$("dispStruct").textContent="三代"+it.code.length+"碼";$("winProgress").textContent="進度："+(S.charIndex+1)+"/20";slots(it.maxLen);S.buf="";const r=$("practiceQueryResult");if(r)r.textContent=""}
-function syncSlots(it){for(let i=0;i<it.maxLen;i++){const s=$("ps"+i);if(s){s.textContent=i<S.buf.length?S.buf[i]:"_";s.className="p-slot"+(i<S.buf.length?(it.codes.some(c=>c.startsWith(S.buf.slice(0,i+1)))?" ok":" err"):"")}}}
-function clearSlots(){clearTimeout(S.advTimer);S.advTimer=null;const it=S.list[S.charIndex%20];S.buf="";if(it)slots(it.maxLen)}
+const slots=n=>$("codeSlotContainer").innerHTML=Array.from({length:n},(_,i)=>`<div class="p-slot" id="ps${i}"><span class="slot-let">_</span><span class="slot-rad" style="display:none"></span></div>`).join("");
+function renderPractice(){if(!S.list.length)S.list=pool();const it=S.list[S.charIndex%20];if(!it)return;$("dispChar").textContent=it.char;$("charTypeBadge").textContent=it.code.length+"碼";$("dispStruct").textContent="三代"+it.code.length+"碼";$("winProgress").textContent="進度："+(S.charIndex+1)+"/20";slots(it.maxLen);S.buf="";const r=$("practiceQueryResult");if(r)r.textContent="";syncSlots(it)}
+function syncSlots(it){
+  const showL=(AUX_MODE===0||AUX_MODE===1);
+  const showR=(AUX_MODE===0||AUX_MODE===2);
+  const bigR=(AUX_MODE===2);
+  for(let i=0;i<it.maxLen;i++){
+    const s=$("ps"+i);if(!s)continue;
+    const lEl=s.querySelector(".slot-let"),rEl=s.querySelector(".slot-rad");
+    const k=i<S.buf.length?S.buf[i]:"";
+    if(lEl){
+      lEl.textContent=k||"_";
+      lEl.style.display=showL?"inline":"none";
+    }
+    if(rEl){
+      const rad=k?CJM[k]||"":"";
+      rEl.textContent=rad;
+      rEl.style.display=showR&&rad?"block":"none";
+      rEl.style.fontSize=bigR?"22px":"10px";
+      rEl.style.color=bigR?"#ff5":"#5f5";
+    }
+    s.className="p-slot"+(k?(it.codes.some(c=>c.startsWith(S.buf.slice(0,i+1)))?" ok":" err"):"");
+  }
+}
+function clearSlots(){clearTimeout(S.advTimer);S.advTimer=null;const it=S.list[S.charIndex%20];S.buf="";if(it){slots(it.maxLen);syncSlots(it)}}
 const doPQuery=()=>{const out=$("practiceQueryResult"),it=S.list[S.charIndex%20];if(!out||!it)return;const c=it.codes,rad=[...c[0]].map(k=>CJM[k]||k).join("");out.style.color="#5ff";out.textContent=`「${it.char}」= ${rad}(${c[0]})${c.length>1?"（容錯："+c.slice(1).join("/")+"）":""}`};
 function practiceKey(k){
   clearTimeout(S.advTimer);S.advTimer=null;const it=S.list[S.charIndex%20];if(!it)return;const vc=it.codes;
@@ -800,6 +829,7 @@ const bootApp=()=>{
       tkEl.addEventListener("touchend",e=>{if(!kpTouch)return;const t=e.changedTouches[0],dx=t.clientX-kpTouch.x,dy=t.clientY-kpTouch.y;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.5&&Date.now()-kpTouch.t<600){sound.nav();toggleKeypad()}kpTouch=null},{passive:true});
     }
     $("practiceQueryBtn").addEventListener("click",safe(doPQuery));
+    $("btnToggleAuxMode")?.addEventListener("click",safe(cycleAuxMode));
     $("scopeCommonBtn").addEventListener("click",safe(()=>setPracticeScope("COMMON")));
     $("scopeAllBtn").addEventListener("click",safe(()=>setPracticeScope("ALL")));
     updatePracticeScopeUI();
