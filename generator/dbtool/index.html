@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>倉頡碼表合併工具 v0.825a — 快快快樂學倉頡/學簡倉配套工具</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#111;color:#fff;font-family:"BiauKaiHK","DFKai-SB","標楷體","Microsoft JhengHei",Consolas,monospace;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:18px 10px}
+.dos-frame{width:100%;max-width:980px;background:#005a52;border:3px solid #808080;box-shadow:0 0 25px rgba(0,0,0,.9);display:flex;flex-direction:column}
+.dos-header{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:2px solid #003833}
+.slop-logo{display:flex;align-items:center;justify-content:center;width:95px;height:32px;flex-shrink:0}
+.title-group{display:flex;align-items:center;flex:1;justify-content:center;gap:14px}
+.magenta-double-line{flex:1;height:8px;border-top:3px solid #f0f;border-bottom:3px solid #f0f}
+.dos-main-title{color:#ff0;font-size:26px;font-weight:bold;letter-spacing:4px;text-shadow:2px 2px #000;white-space:nowrap}
+.dos-stage{padding:14px 18px;display:flex;flex-direction:column;gap:14px}
+.dialog-box{background:#c0c0c0;color:#000;border:3px solid;border-color:#fff #404040 #404040 #fff;padding:12px 16px;box-shadow:4px 4px 0 rgba(0,0,0,.45)}
+.dialog-title{font-size:17px;font-weight:bold;color:#000080;border-bottom:2px solid #808080;padding-bottom:4px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.sub-window{background:#003833;border:3px double #5ff;padding:12px 16px;box-shadow:4px 4px 0 rgba(0,0,0,.5)}
+.sub-win-title{color:#ff5;font-size:18px;font-weight:bold;border-bottom:2px solid #5ff;padding-bottom:4px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.key-button{background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;color:#000080;font-weight:bold;font-size:13px;padding:4px 12px;cursor:pointer;font-family:Consolas,"Microsoft JhengHei",monospace;display:inline-flex;align-items:center;justify-content:center}
+.key-button:active:not(:disabled){border-color:#404040 #fff #fff #404040;background:#a8a8a8}
+.key-button:disabled{opacity:.45;cursor:not-allowed;color:#555}
+.key-button.primary{color:#800000;font-size:14px;padding:5px 16px}
+.key-button.sm{padding:2px 7px;font-size:12px;color:#800000}
+.dialog-input,select{border:2px solid;border-color:#404040 #fff #fff #404040;background:#fff;color:#000;font-weight:bold;font-size:13px;padding:2px 6px;font-family:inherit}
+input[type=number].dialog-input{width:72px;text-align:center}
+input[type=file]{font-size:12px;max-width:230px}
+.setup-table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}
+.setup-table th,.setup-table td{border:1px solid #808080;padding:5px 8px;text-align:left;vertical-align:middle}
+.setup-table th{background:#a8a8a8;color:#000080;white-space:nowrap}
+.retro-table{width:100%;border-collapse:collapse;color:#fff;font-size:13px;margin:6px 0 12px}
+.retro-table th,.retro-table td{border:1px solid #5ff;padding:4px 8px;text-align:left;vertical-align:top}
+.retro-table th{background:#002220;color:#ff5;white-space:nowrap;width:190px}
+.out-pre{background:#001a17;border:1px solid #5ff;color:#cfd8dc;padding:8px;max-height:110px;overflow:auto;font-size:12px;white-space:pre-wrap;word-break:break-all;margin:4px 0 8px;font-family:Consolas,monospace}
+.dos-footer{height:36px;background:#c0c0c0;border-top:2px solid #fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;color:#222;font-size:13px;font-weight:bold}
+.ok{color:#5f5;font-weight:bold}.warn{color:#ff5;font-weight:bold}.err{color:#ff6b6b;font-weight:bold}.mut{color:#8ab}
+.file-cell{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.badge{background:#004b45;border:1px solid #5ff;color:#ff5;font-size:12px;padding:1px 6px;margin-left:6px}
+</style>
+</head>
+<body>
+<div class="dos-frame">
+  <div class="dos-header">
+    <div class="slop-logo" title="SLOP 經典標誌">
+      <svg viewBox="0 0 120 40" width="95" height="32"><ellipse cx="60" cy="20" rx="55" ry="16" fill="none" stroke="#0ff" stroke-width="2"/><text x="50%" y="62%" text-anchor="middle" fill="#f0f" font-size="20" font-weight="900" font-style="italic" font-family="Arial">SLOP</text></svg>
+    </div>
+    <div class="title-group">
+      <div class="magenta-double-line"></div>
+      <div class="dos-main-title">倉頡碼表合併工具</div>
+      <div class="magenta-double-line"></div>
+    </div>
+    <span style="color:#5ff;font-size:12px;font-family:Consolas,monospace">v0.825a</span>
+  </div>
+
+  <div class="dos-stage">
+    <!-- 步驟 1：DOS 經典灰對話框 -->
+    <div class="dialog-box">
+      <div class="dialog-title">
+        <span>步驟 1：載入檔案、預期字數與合併模式</span>
+        <span style="font-size:12px;color:#444">自動偵測 UTF-8 / Big5 / GBK｜輸出 UTF-8(BOM)</span>
+      </div>
+      <div style="font-size:12px;color:#222;margin-bottom:8px;line-height:1.5">
+        💡 支援 <b>.txt/.tt</b>（「字 碼 [碼2]…」自動過濾 <code># ;</code> 註解）或 <b>.html</b>（自動抽取同名 <code>unpack</code> 字庫）。<b>X 正規化</b>：凡首碼有 X 一律剝除 X（不保留 X 前綴，自動去重）。<b>未選來源的字庫原封不動</b>（若主檔單行未閉合可自動修復）。
+      </div>
+      <div class="file-cell" style="background:#b0b0b0;padding:6px 10px;border:1px inset #808080;margin-bottom:8px">
+        <b style="color:#000080">主檔 index.html（必選）：</b>
+        <input type="file" id="fHtml" accept=".html,.txt,text/plain">
+        <button type="button" class="key-button sm" id="clrHtml" title="清除主檔">✕</button>
+        <span id="htmlStatus" style="font-size:12px;color:#004080;font-weight:bold">尚未載入</span>
+      </div>
+      <table class="setup-table">
+        <tr><th>目標字庫</th><th>來源檔（.txt / .tt / .html，可留空）</th><th>預期字數</th><th>合併模式</th></tr>
+        <tr>
+          <td><b>① T1000</b>（一級字/內建常用字）</td>
+          <td><div class="file-cell"><input type="file" id="fSrcT1000" accept=".txt,.tt,.html,text/plain"><button type="button" class="key-button sm" data-clr="T1000">✕</button></div></td>
+          <td><input type="number" id="expT1000" class="dialog-input" value="3500" min="0"></td>
+          <td><select id="modeT1000"><option value="replace">完全取代（舊庫獨有字保留）</option><option value="oldTol">舊碼視為容錯</option><option value="newTol">新碼視為容錯</option><option value="clear">清除舊碼（純來源重建）</option></select></td>
+        </tr>
+        <tr>
+          <td><b>② SIMP</b>（二級字/簡體字）</td>
+          <td><div class="file-cell"><input type="file" id="fSrcSIMP" accept=".txt,.tt,.html,text/plain"><button type="button" class="key-button sm" data-clr="SIMP">✕</button></div></td>
+          <td><input type="number" id="expSIMP" class="dialog-input" value="3000" min="0"></td>
+          <td><select id="modeSIMP"><option value="replace">完全取代（舊庫獨有字保留）</option><option value="oldTol">舊碼視為容錯</option><option value="newTol">新碼視為容錯</option><option value="clear">清除舊碼（純來源重建）</option></select></td>
+        </tr>
+        <tr>
+          <td><b>③ T5000</b>（三級字）</td>
+          <td><div class="file-cell"><input type="file" id="fSrcT5000" accept=".txt,.tt,.html,text/plain"><button type="button" class="key-button sm" data-clr="T5000">✕</button></div></td>
+          <td><input type="number" id="expT5000" class="dialog-input" value="1605" min="0"></td>
+          <td><select id="modeT5000"><option value="replace">完全取代（舊庫獨有字保留）</option><option value="oldTol">舊碼視為容錯</option><option value="newTol">新碼視為容錯</option><option value="clear">清除舊碼（純來源重建）</option></select></td>
+        </tr>
+      </table>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+        <span id="runHint" style="font-size:12px;color:#004080;font-weight:bold">請先選擇主檔 index.html</span>
+        <button type="button" class="key-button primary" id="btnRun" disabled>執行 [Enter]</button>
+      </div>
+      <div style="margin-top:8px;padding-top:6px;border-top:1px dashed #808080;display:flex;align-items:center;gap:6px">
+        <label style="font-size:12px;color:#000080;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+          <input type="checkbox" id="chkCrossArbitration" checked>
+          <b>跨庫智慧仲裁</b>：重複字只保留在最高級庫（T1000 &gt; SIMP &gt; T5000），較後次級庫拆碼自動轉為容錯碼排尾
+        </label>
+      </div>
+    </div>
+
+    <!-- 步驟 2：深青色子視窗報告 -->
+    <div class="sub-window">
+      <div class="sub-win-title">
+        <span>📊 步驟 2：合併與體檢報告</span>
+        <span class="badge" id="repSummaryBadge">待命中</span>
+      </div>
+      <div id="report" class="mut" style="font-size:13px">等待載入主檔並執行…</div>
+    </div>
+
+    <!-- 步驟 3：輸出與下載 -->
+    <div class="sub-window">
+      <div class="sub-win-title">
+        <span>💾 步驟 3：字庫預覽與檔案下載</span>
+        <button type="button" class="key-button primary" id="btnDl" disabled>⬇ 下載完整修復後 HTML</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><b style="color:#ff5;font-size:13px">T1000 新行</b><button type="button" class="key-button" id="dlT1000" disabled>下載 T1000.txt</button></div>
+          <pre class="out-pre" id="outT1000">—</pre>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><b style="color:#ff5;font-size:13px">SIMP 新行</b><button type="button" class="key-button" id="dlSIMP" disabled>下載 SIMP.txt</button></div>
+          <pre class="out-pre" id="outSIMP">—</pre>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><b style="color:#ff5;font-size:13px">T5000 新行</b><button type="button" class="key-button" id="dlT5000" disabled>下載 T5000.txt</button></div>
+          <pre class="out-pre" id="outT5000">—</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dos-footer">
+    <span></span>
+    <span id="footerMsg">支援 UTF-8(BOM)/Big5/GBK 自動識別 ｜ 擴展區代理對安全處理 ｜ 嚴格單行防截斷修復 ｜ 首碼 X 一律剝除去重與跨庫智慧仲裁</span>
+  </div>
+</div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id),NAMES=["T1000","SIMP","T5000"],
+MODE_LABEL={replace:"完全取代",oldTol:"舊碼視為容錯",newTol:"新碼視為容錯",clear:"清除舊碼",endfix:"僅修復結尾",arb:"跨庫仲裁更新"};
+let htmlText="",built=null;const src={T1000:null,SIMP:null,T5000:null},lines={};
+
+/* 跨平台讀檔：自動偵測 UTF-16 / UTF-8 / Big5 / GBK，剝 BOM，統一 LF */
+async function readSmart(file){
+  const buf=await file.arrayBuffer(),h=new Uint8Array(buf.slice(0,2)),
+  clean=s=>s.replace(/^\uFEFF/,"").replace(/\r\n?/g,"\n");
+  if(h[0]===0xFF&&h[1]===0xFE)return clean(new TextDecoder("utf-16le").decode(buf));
+  if(h[0]===0xFE&&h[1]===0xFF)return clean(new TextDecoder("utf-16be").decode(buf));
+  for(const d of["utf-8","big5","gbk"])try{return clean(new TextDecoder(d,{fatal:true}).decode(buf))}catch(e){}
+  return clean(new TextDecoder("utf-8").decode(buf));
+}
+
+function ready(){
+  $("btnRun").disabled=!htmlText;
+  const nSrc=NAMES.filter(n=>src[n]).length;
+  $("htmlStatus").textContent=htmlText?`✅ 已載入（${(htmlText.length/1024).toFixed(1)} KB）`:"尚未載入";
+  $("runHint").textContent=!htmlText?"請先選擇主檔 index.html":nSrc?`已選擇 ${nSrc} 個來源庫，按「執行」開始合併`:"未選來源檔 — 按「執行」可執行跨庫仲裁、檢查字數或修復單行截斷";
+}
+
+$("fHtml").addEventListener("change",async e=>{const f=e.target.files[0];htmlText=f?await readSmart(f):"";ready()});
+$("clrHtml").addEventListener("click",()=>{$("fHtml").value="";htmlText="";ready()});
+NAMES.forEach(n=>$("fSrc"+n).addEventListener("change",async e=>{const f=e.target.files[0];src[n]=f?await readSmart(f):null;ready()}));
+document.querySelectorAll("[data-clr]").forEach(b=>b.addEventListener("click",()=>{const n=b.dataset.clr;$("fSrc"+n).value="";src[n]=null;ready()}));
+
+/* 首碼有 X 一律剝除 X（若整串皆 X 則變空字串予以剔除） */
+const stripX=c=>c.toUpperCase().replace(/^X+/,"");
+
+/* 解析 .tt/.txt：逐行剝除 # 與 ; 註解，首碼 X 一律剝除 */
+function parseTT(text){
+  const map=new Map(),broken=[];let cur=null;
+  const declared=+(text.match(/共\s*(\d+)\s*字/)?.[1]||0)||null;
+  const clean=text.split("\n").map(l=>l.replace(/[#;].*$/,"").trim()).join(" ");
+  for(const tk of clean.split(/\s+/)){
+    if(!tk)continue;
+    if(/^[A-Za-z]{1,5}$/.test(tk)){
+      if(cur){const a=map.get(cur),u=tk.toUpperCase();if(!a.includes(u))a.push(u);}
+    }else if([...tk].length===1){
+      cur=tk;if(!map.has(cur))map.set(cur,[]);
+    }else{broken.push(`非單字已略過：「${tk}」`);cur=null;}
+  }
+  for(const[k,v]of map)if(!v.length){broken.push(`有字無碼已剔除：「${k}」`);map.delete(k);}
+  return{map,broken,declared};
+}
+
+/* 解析 unpack 字串 */
+function parsePack(s){
+  const map=new Map(),broken=[];
+  for(const p of s.split(" ")){
+    if(!p)continue;
+    const[k]=Array.from(p),v=p.slice(k.length);
+    const cs=v?v.split("/").map(c=>c.toUpperCase()).filter(c=>/^[A-Z]{1,5}$/.test(c)):[];
+    if(!cs.length){broken.push(`殘缺 token 已剔除：「${p}」`);continue;}
+    map.set(k,[...new Set(cs)]);
+  }
+  return{map,broken};
+}
+
+/* 單行安全抽取與替換：絕不跨行吞噬下方程式碼 */
+function extractMainDict(text,name){
+  let m=text.match(new RegExp(name+'\\s*=\\s*unpack\\("([^"\\r\\n]*)"\\)'));
+  if(m)return{str:m[1],trunc:false};
+  m=text.match(new RegExp(name+'\\s*=\\s*unpack\\("([^"\\r\\n]*)$','m'));
+  return m?{str:m[1],trunc:true}:null;
+}
+function replaceMainDictLine(out,name,line){
+  const reOk=new RegExp(`(${name}\\s*=\\s*unpack\\(")[^"\\r\\n]*("\\))`);
+  if(reOk.test(out))return out.replace(reOk,(_,a,b)=>a+line+b);
+  const reTr=new RegExp(`(${name}\\s*=\\s*unpack\\(")[^"\\r\\n]*$`,'m');
+  return out.replace(reTr,(_,a)=>a+line+'"),');
+}
+
+function detectSource(text,name){
+  if(/(?:T1000|SIMP|T5000)\s*=\s*unpack\(/.test(text)){
+    const ex=extractMainDict(text,name);
+    if(!ex)return{err:`來源為 HTML/JS，但找不到 ${name}=unpack(…)`};
+    const r=parsePack(ex.str);
+    if(ex.trunc)r.broken.push("來源字串單行未閉合——殘缺尾部已剔除");
+    return{type:`HTML 抽取（${name}${ex.trunc?"，截斷已修復":""}）`,map:r.map,broken:r.broken};
+  }
+  const r=parseTT(text);
+  return r.map.size?{type:"txt/tt 碼表",map:r.map,broken:r.broken,declared:r.declared}:{err:"來源檔解析失敗（無有效「字＋碼」對）"};
+}
+
+/* X 正規化：首碼有 X 一律剝除 X，不保留 X 碼，自動去重 */
+function normalizeList(codes,st){
+  const norm=[];
+  for(const raw of codes){
+    const c=stripX(raw);
+    if(!c)continue;
+    if(c!==raw)st.up.push(`${raw}→${c}`);
+    norm.includes(c)?st.dup++:norm.push(c);
+  }
+  return{norm,tol:[]};
+}
+function mergeChar(oc,sc,mode,st){
+  if(mode==="replace")return normalizeList(sc,st);
+  const[pri,sec,key]=mode==="oldTol"?[sc,oc,"tolOld"]:[oc,sc,"tolNew"];
+  const r=normalizeList(pri,st);
+  for(const raw of sec){
+    const c=stripX(raw);
+    if(!c)continue;
+    if(c!==raw)st.up.push(`${raw}→${c}`);
+    if(!r.norm.includes(c)&&!r.tol.includes(c)){r.tol.push(c);st[key]++;}
+  }
+  return r;
+}
+
+function processDict(name,srcText,mode,out){
+  const exp=+$("exp"+name).value||0,
+  rep={name,mode,exp,modified:false,err:null,status:"",warn:"",srcType:"",srcChars:0,declared:null,
+       oldChars:0,overlap:0,added:0,removed:0,kept:0,tolOld:0,tolNew:0,up:[],dup:0,xFixed:0,hasExt:false,line:null,fixes:[],diffs:[]};
+  const ex=extractMainDict(out,name);
+  if(!ex){rep.err=`主檔找不到 ${name}=unpack("…")`;return{rep,out};}
+  if(ex.trunc)rep.fixes.push(`主檔 ${name} 單行未閉合——已自動補齊結尾 "),`);
+  const po=parsePack(ex.str);rep.oldChars=po.map.size;
+  po.broken.forEach(b=>rep.fixes.push("舊庫："+b));
+
+  /* 舊庫首碼 X 一律剝除清理 */
+  for(const[ch,cs]of po.map){
+    if(ch.codePointAt(0)>0xFFFF)rep.hasExt=true;
+    const cleaned=[];
+    for(const c of cs){
+      const s=stripX(c);
+      if(s!==c)rep.xFixed++;
+      if(s&&!cleaned.includes(s))cleaned.push(s);
+    }
+    if(cleaned.length)po.map.set(ch,cleaned);else po.map.delete(ch);
+  }
+
+  if(!srcText){
+    if(ex.trunc||rep.xFixed>0){
+      const line=[...po.map].map(([ch,cs])=>ch+cs.join("/")).join(" ");
+      out=replaceMainDictLine(out,name,line);
+      Object.assign(rep,{modified:true,mode:"endfix",line});
+      if(rep.xFixed>0)rep.fixes.push(`舊庫首碼 X 自動剝除：共清理 ${rep.xFixed} 處`);
+    }else rep.status="未提供來源 — 原字庫保留不動";
+    return{rep,out};
+  }
+  const s=detectSource(srcText,name);
+  if(s.err){rep.err=s.err;return{rep,out};}
+  Object.assign(rep,{srcType:s.type,declared:s.declared||null,srcChars:s.map.size});
+  s.broken.forEach(b=>rep.fixes.push("來源："+b));
+  if(po.map.size&&Math.abs(s.map.size-po.map.size)/po.map.size>.2)
+    rep.warn=`來源字數(${s.map.size})與現有字數(${po.map.size})差異逾 20%，請確認檔案對應無誤`;
+  const st={up:[],dup:0,tolOld:0,tolNew:0},finalMap=new Map(),
+  chars=new Set(mode==="clear"?s.map.keys():[...po.map.keys(),...s.map.keys()]);
+  if(mode==="clear")po.map.forEach((_,ch)=>{if(!s.map.has(ch))rep.removed++;});
+  for(const ch of chars){
+    if(ch.codePointAt(0)>0xFFFF)rep.hasExt=true;
+    const sc=s.map.get(ch),oc=po.map.get(ch);
+    const r=sc&&oc?(rep.overlap++,mode==="clear"?normalizeList(sc,st):mergeChar(oc,sc,mode,st))
+           :sc?(rep.added++,normalizeList(sc,st)):(rep.kept++,normalizeList(oc,st));
+    const merged=r.norm.concat(r.tol);
+    if(merged.length){
+      finalMap.set(ch,merged);
+      if(rep.diffs.length<30){
+        if(!oc)rep.diffs.push(`【新增】${ch}:${merged.join("/")}`);
+        else if(oc.join("/")!==merged.join("/"))rep.diffs.push(`【變更】${ch}:${oc.join("/")}➔${merged.join("/")}`);
+      }
+    }
+  }
+  Object.assign(rep,st);
+  const line=[...finalMap].map(([ch,cs])=>ch+cs.join("/")).join(" ");
+  if(parsePack(line).map.size!==finalMap.size){rep.err="回讀驗證失敗";return{rep,out};}
+  out=replaceMainDictLine(out,name,line);
+  rep.modified=true;rep.line=line;
+  return{rep,out};
+}
+
+function chkCount(n,exp,decl,srcN){
+  let s=`<b>${n}</b> ／ 預期 ${exp}`;
+  if(exp>0){const d=n-exp;s+=d===0?' <span class="ok">✓ 吻合</span>':` <span class="warn">✗ 差 ${d>0?"+"+d:d}</span>`;}
+  if(decl!=null){const d=srcN-decl;s+=`<br>來源宣告「共 ${decl} 字」：實得 ${srcN}`+(d===0?' <span class="ok">✓</span>':` <span class="warn">✗ 差 ${d>0?"+"+d:d}</span>`);}
+  return s;
+}
+
+function run(){
+  let out=htmlText;const reps=[],parsedMaps={};
+  for(const n of NAMES){
+    const r=processDict(n,src[n],$("mode"+n).value,out);
+    out=r.out;reps.push(r.rep);if(r.rep.line)lines[n]=r.rep.line;
+    parsedMaps[n]=parsePack(r.rep.line||(extractMainDict(out,n)?.str||"")).map;
+  }
+
+  /* 跨庫智慧仲裁：T1000 (最頂級) > SIMP (次級) > T5000 (三級)，次級碼剝 X 後轉容錯排尾 */
+  const crossLog=[];
+  if($("chkCrossArbitration").checked){
+    const absorb=(hi,lo,hiN,loN)=>{
+      let cnt=0,tolCnt=0;
+      for(const[ch,loCs]of lo){
+        if(!hi.has(ch))continue;
+        const hiCs=hi.get(ch);
+        for(const raw of loCs){
+          const c=stripX(raw);
+          if(c&&!hiCs.includes(c)){hiCs.push(c);tolCnt++;}
+        }
+        lo.delete(ch);cnt++;
+      }
+      if(cnt)crossLog.push(`• 【${loN} ➔ ${hiN}】移轉除名 <b>${cnt}</b> 個重疊字（吸納 <b>${tolCnt}</b> 個次級容錯碼至 ${hiN} 尾端）`);
+    };
+    absorb(parsedMaps.T1000,parsedMaps.SIMP,"T1000","SIMP");
+    absorb(parsedMaps.T1000,parsedMaps.T5000,"T1000","T5000");
+    absorb(parsedMaps.SIMP,parsedMaps.T5000,"SIMP","T5000");
+    if(crossLog.length){
+      for(const n of NAMES){
+        const fm=parsedMaps[n],line=[...fm].map(([ch,cs])=>ch+cs.join("/")).join(" ");
+        out=replaceMainDictLine(out,n,line);lines[n]=line;
+        const rep=reps.find(x=>x.name===n);
+        if(rep){rep.line=line;if(!rep.modified)rep.mode="arb";rep.modified=true;rep.finalChars=fm.size;}
+      }
+    }
+  }
+
+  /* 內建詞庫 WORDS 涵蓋率驗證 */
+  const allChars=new Set([...parsedMaps.T1000.keys(),...parsedMaps.SIMP.keys(),...parsedMaps.T5000.keys(),..."日月金木水火土竹戈十大中一弓人心手口尸廿山女田難卜重"]);
+  const mWords=out.match(/WORDS\s*=\s*"([^"]+)"\.split/);
+  let wordsMsg='<span class="mut">未偵測到內建 WORDS 詞庫</span>';
+  if(mWords){
+    const ws=mWords[1].split(" ").filter(Boolean),badW=ws.filter(w=>[...w].some(c=>!allChars.has(c)));
+    wordsMsg=badW.length?`<span class="warn">⚠ 有 ${badW.length} 個內建成語含未收錄字：${badW.slice(0,10).join("、")}${badW.length>10?"…":""}</span>`:`<span class="ok">✓ 全部 ${ws.length} 個內建詞語皆可完整輸入</span>`;
+  }
+
+  let fixMsg='<span class="mut">無修改，未更動 unpack</span>';
+  if(/nextChar\s*\(/.test(out)){
+    fixMsg='<span class="ok">✓ 主檔已內建 codePointAt 代理對支援（無需改動 unpack）</span>';
+  }else if(reps.some(r=>r.modified||r.hasExt)){
+    const reU=/const unpack=s=>\{[\s\S]*?return o\}/;
+    if(reU.test(out)){
+      out=out.replace(reU,'const unpack=s=>{const o={};for(const p of s.split(" "))if(p){const cs=Array.from(p),k=cs[0],v=p.slice(k.length);o[k]=v.includes("/")?v.split("/"):v}return o}');
+      fixMsg='<span class="ok">✓ 已升級 unpack 支援擴展區漢字（已確保括號完整閉合）</span>';
+    }else fixMsg='<span class="warn">⚠ 未找到原 unpack 函式，請手動確認</span>';
+  }
+  built=out;
+  let h=crossLog.length?`<div style="color:#ff5;font-weight:bold;margin:4px 0 2px">【跨庫智慧仲裁結果】</div><div style="background:#002220;border:1px solid #5ff;padding:6px 10px;margin-bottom:8px;font-size:12px;color:#5ff;line-height:1.6">${crossLog.join("<br>")}</div>`:"";
+  for(const r of reps){
+    const badge=r.modified?`<span class="ok">✅ 已更新（${MODE_LABEL[r.mode]}）</span>`:r.err?'<span class="err">❌ 錯誤</span>':`<span class="mut">⏸ ${r.status}</span>`;
+    h+=`<div style="color:#ff5;font-weight:bold;margin:6px 0 2px">【${r.name}】${badge}</div><table class="retro-table">`;
+    const rows=[];
+    if(r.err)rows.push(["錯誤訊息",`<span class="err">${r.err}</span>`]);
+    else if(r.modified){
+      const finalN=r.finalChars??(r.mode==="endfix"?r.oldChars:r.mode==="clear"?r.added+r.overlap:r.oldChars+r.added);
+      rows.push(["處理模式",MODE_LABEL[r.mode]]);
+      if(r.srcType)rows.push(["來源格式",`${r.srcType}（解析 ${r.srcChars} 字）`]);
+      rows.push(["字數變化",`原有 ${r.oldChars} ｜ 重疊 ${r.overlap} ｜ 新增 <span class="ok">+${r.added}</span> ｜ ${r.mode==="clear"?`移除 <span class="warn">-${r.removed}</span>`:`保留舊獨有 ${r.kept}`} ➔ 最終 <b>${finalN}</b> 字`]);
+      if(r.mode==="oldTol")rows.push(["舊碼降為容錯",`${r.tolOld} 個（以新碼為主碼）`]);
+      if(r.mode==="newTol")rows.push(["新碼降為容錯",`${r.tolNew} 個（以舊碼為主碼）`]);
+      rows.push(["首碼 X 剝除與除重",`剝除 X 升格(${r.up.length})：${r.up.slice(0,12).join("、")+(r.up.length>12?"…":"")||"0"} ｜ 舊庫剝 X(${r.xFixed}) ｜ 同碼除重(${r.dup})`]);
+      if(r.diffs.length)rows.push(["變更樣本預覽",`<span style="font-size:12px;color:#cfd8dc">${r.diffs.slice(0,15).join(" ｜ ")}${r.diffs.length>15?" …":""}</span>`]);
+      rows.push(["字數檢查",chkCount(finalN,r.exp,r.declared,r.srcChars)]);
+    }else{
+      rows.push(["現有字庫掃描",`共 <b>${r.oldChars}</b> 字（無首碼 X 殘留）`]);
+      rows.push(["字數檢查",chkCount(r.oldChars,r.exp,null,0)]);
+    }
+    if(r.fixes.length)rows.push(["修復與清理紀錄",r.fixes.map(f=>"• "+f).join("<br>")]);
+    if(r.warn)rows.push(["⚠️ 警示",`<span class="warn">${r.warn}</span>`]);
+    h+=rows.map(([k,v])=>`<tr><th>${k}</th><td>${v}</td></tr>`).join("")+"</table>";
+    $("out"+r.name).textContent=r.modified?(r.line.length>4000?r.line.slice(0,4000)+` …（預覽截斷，下載為完整 ${r.line.length} 字元）`:r.line):"（未更新——原字庫保留不變）";
+    $("dl"+r.name).disabled=!r.modified;
+  }
+  h+=`<table class="retro-table"><tr><th>內建詞庫 WORDS 檢查</th><td>${wordsMsg}</td></tr><tr><th>全域 unpack 相容檢查</th><td>${fixMsg}</td></tr></table>`;
+  $("report").innerHTML=h;
+  $("repSummaryBadge").textContent=`完成（更新 ${reps.filter(r=>r.modified).length}/3 庫）`;
+  $("btnDl").disabled=false;
+}
+
+$("btnRun").addEventListener("click",()=>{try{run()}catch(e){$("report").innerHTML=`<span class="err">執行錯誤：${e.message}</span>`;console.error(e)}});
+window.addEventListener("keydown",e=>{if(e.key==="Enter"&&!$("btnRun").disabled&&document.activeElement?.tagName!=="INPUT")$("btnRun").click()});
+
+function dl(text,fname,type){
+  const u=URL.createObjectURL(new Blob(["\uFEFF"+text],{type:type+";charset=utf-8"})),a=document.createElement("a");
+  a.href=u;a.download=fname;document.body.appendChild(a);a.click();
+  setTimeout(()=>{a.remove();URL.revokeObjectURL(u)},200);
+}
+$("btnDl").addEventListener("click",()=>dl(built,"index.html","text/html"));
+NAMES.forEach(n=>$("dl"+n).addEventListener("click",()=>dl(lines[n],`${n}-new.txt`,"text/plain")));
+</script>
+</body>
+</html>
