@@ -1,4 +1,4 @@
-** 直接執行：**
+**直接執行：**
 進入此網址 https://ck-from-hk.github.io/-/simp
 
 
