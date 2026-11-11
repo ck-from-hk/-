@@ -233,7 +233,7 @@ html.js #jsNote{display:none}
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 公平計分</div>
 • 測驗中使用 <b>Z 萬用鍵</b>時，程式<b>不會</b>自動把目標字排到候選首位——須看清單以 <b>1-9</b> 手動選字（貼近真實輸入法行為，防止 Space 保送拿分）。不含 Z 的正常輸入仍自動首選，速度體驗不變。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 配套生成器</div>
-配套生成器能合併多來源 chinese.tt 倉頡碼表與 words.txt 詞庫，並自訂 limit.js 常用字範圍；一鍵輸出與本程式相容的 chinese_dict.js、words_dict.js，亦支援 .atc／.txt 目錄批量處理——詳見 generator.html。
+配套生成器能合併多來源 chinese.tt 倉頡碼表與 words.txt 詞庫，並自訂 limit.js 常用字範圍；一鍵輸出與本程式相容的 chinese_dict.js、words_dict.js，亦支援 .atc／.txt 目錄批量處理——詳見 /generator/index.html。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 關於排行榜資料的儲存</div>
 • 排行榜成績<b>只儲存在本機瀏覽器內（localStorage）</b>，不會上傳到任何伺服器，也不會同步到其他裝置或瀏覽器。<br>• 換裝置、換瀏覽器（或經不同方式開啟，如內建瀏覽器 vs Safari）所見的排行榜互不相通。<br>• 若清除瀏覽器的「網站資料／歷史記錄」，排行榜紀錄即會消失，請自行留意外。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 其他</div>
@@ -274,7 +274,7 @@ html.js #jsNote{display:none}
 <div class="tut-h y">十、香港用語字速查（一）</div>
 <div style="margin-top:4px;font-size:13px">嘅RAIU｜喺ROHF｜睇BUCNH｜嘢RWGN｜咗RKM｜冇KB｜搵QABT｜諗YROIP<br>嗰ROWR｜啲RHAI｜靚QBBUU｜畀WML｜嬲WVSW｜仔OND｜唔RMMR｜佢OSS</div>
 <div class="tut-h y">十一、香港用語字速查（二）＋記憶貼士</div>
-<div style="margin-top:4px;font-size:13px">煲ODF｜劏FWLN｜叻RKS｜囡WV｜囝WND｜俾OHWJ｜瞓BULLL｜唞RQYJ<br>晏AJV｜掟QJMO｜嘥RHOO｜啱RUMR｜噏RORY｜戇YJKP｜嚡RTJG｜喼RNSP　曱甴：曱WML＋甴LWM<br>💡 <b>練習建議</b>：先熟記廿四字母與常用輔助字形 → 打字練習（範圍選「常用字」由易入手）→ 遇難字按「?」查碼 → 逐步挑戰「全字庫」同實力測驗。</div>
+<div style="margin-top:4px;font-size:13px">煲ODF｜劏FWLN｜叻RKS｜囡WV｜囝WND｜俾OHWJ｜瞓BULLL｜唞RQYJ<br>晏AJV｜掟QJMO｜嘥RHOO｜啱RUMR｜噏RORY｜戇YJKP｜嚡RTJG｜喼RNSP　曱甴：曱WML＋甴LWM<br>💡 <b>練習建議</b>：先熟記廿四字母與常用輔助字形 → 打字練習（範圍選「常用字」由易入手）→ 遇難字按「?」查碼 → 逐步挑戰「全字庫」同實力測驗。如已熟練所有繁體字，可嘗試挑戰Github專案網頁簡體倉頡特別版。</div>
 </div>
 <div style="display:flex;justify-content:space-between"><button class="key-button" id="closeTutorialBackBtn">返回主選單 [Esc]</button><button class="key-button" id="closeTutorialBtn" style="color:#800000">開始練習 [Enter]</button></div>
 </div>
@@ -777,7 +777,7 @@ async function downloadRemoteLatest(){
     if (!branch) { sfxToast("❌ 無法連接專案網址——請手動前往 GitHub 專案主頁", true); return; }
     try { const r = await fetch(repo + branch + "/index.html", { cache: "no-store" }); if (r.ok) { await downloadBlob(await r.blob(), "index.html"); ok++; } } catch(e){}
     await new Promise(res => setTimeout(res, 600));
-    for (const name of ["generator.html", "generator2.html"]) {
+    for (const name of ["generator.html", "generator2.html", "generator/index.html"]) {
       try { const r = await fetch(repo + branch + "/" + name, { cache: "no-store" }); if (r.ok) { await downloadBlob(await r.blob(), "generator.html"); ok++; break; } } catch(e){}
     }
     if (ok >= 1) sfxToast(`✅ 已從專案下載 ${ok} 個檔案`, true);
