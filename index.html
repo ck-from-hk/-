@@ -793,7 +793,7 @@ async function initSys(){
     if(location.protocol!=="file:"){
       let raw=null,src="chinese.tt";
       try{const r=await fetch("chinese.tt");if(r.ok)raw=await r.text()}catch(e){}
-      if(!raw){src="線上碼表";try{const r2=await fetch(FALLBACK_URL);if(r2.ok)raw=await r2.text()}catch(e){}}
+      if(!raw){src="線上碼表";try{const r2=await fetch(chinese(1).tt);if(r2.ok)raw=await r2.text()}catch(e){}}
       if(raw){const text=raw.replace(/^\uFEFF/,"").trim();if(S.view==="EXAM"||S.view==="PRACTICE"){S.pendingDict=text;msg.textContent="⏳ 外部碼表已載入，離開測驗後自動套用"}else{const n=applyDict(text);if(n>0)msg.textContent=`✅ 已以外部碼表（${src}）校正 ${n} 字（共 ${Object.keys(DICT).length} 字）`}upSz();return tryLoadPool()}
     }
     const v=await IDB.get("chinese_tt");
