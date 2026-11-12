@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<title>快快快樂學倉頡 - 倉頡入門與拆字指南（全書完整版）</title>
+<style>
+*{box-sizing:border-box;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+html,body{overscroll-behavior:none;margin:0;background:#111;width:100vw;height:100vh;height:100dvh;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:"BiauKaiHK","DFKai-SB","標楷體","Microsoft JhengHei",serif;overflow:hidden}
+.dos-screen{width:960px;height:540px;background:#005a52;position:relative;border:3px solid #808080;box-shadow:0 0 25px rgba(0,0,0,.9);display:flex;flex-direction:column;justify-content:space-between;transform-origin:center;flex-shrink:0}
+.dos-header{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0}
+.slop-logo{display:flex;align-items:center;justify-content:center;width:95px;height:30px}
+.title-group{display:flex;align-items:center;flex:1;justify-content:center;gap:16px}
+.magenta-double-line{flex:1;height:8px;border-top:3px solid #f0f;border-bottom:3px solid #f0f}
+.dos-main-title{color:#ff0;font-size:30px;font-weight:bold;letter-spacing:6px;text-shadow:2px 2px #000;white-space:nowrap;padding:0 10px}
+.dos-stage{flex:1;position:relative;display:flex;justify-content:center;align-items:center;padding:8px 20px;overflow:hidden}
+.dos-footer{height:36px;background:#c0c0c0;border-top:2px solid #fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0;z-index:10}
+.key-button{background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;font-weight:bold;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:#000080;cursor:pointer;font-family:Consolas,"Microsoft JhengHei",monospace;padding:0 12px;text-decoration:none}
+.key-button:active{border-color:#404040 #fff #fff #404040;background:#a8a8a8}
+
+.sub-window{background:#003833;border:3px double #5ff;width:100%;height:100%;padding:10px 18px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:6px 6px 0 rgba(0,0,0,.5);z-index:10}
+.sub-win-title{color:#ff5;font-size:19px;font-weight:bold;border-bottom:2px solid #5ff;padding-bottom:4px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.category-badge{background:#004b45;border:1px solid #5ff;color:#ff5;font-size:12px;padding:1px 8px;margin-left:8px}
+
+/* 教學內容捲動區 */
+.tut-content{overflow-y:auto;flex:1;font-size:14px;color:#fff;line-height:1.68;margin:4px 0;padding-right:6px}
+.tut-h{font-weight:bold;font-size:14.5px;margin-top:8px}
+.tut-h.y{color:#ff5}.tut-h.g{color:#5f5}.tut-h.o{color:#fa5}.tut-h.c{color:#5ff}
+.tut-content i{font-style:normal;font-weight:bold}
+.tut-content .tr{color:#ff5}.tut-content .ky{color:#0ff}.tut-content .cd{color:#fa5}.tut-content .ch{color:#ff5}
+
+/* 主字根＋放大彩色輔助字形展示區 */
+.rad-hero-box{display:flex;align-items:stretch;background:rgba(0,0,0,.38);border:2px solid #ff0;padding:8px 14px;gap:14px;margin:2px 0 6px;border-radius:4px}
+.rad-main-card{display:flex;flex-direction:column;align-items:center;justify-content:center;background:#002220;border:2px solid #ff5;padding:4px 12px;min-width:88px;box-shadow:inset 2px 2px 5px rgba(0,0,0,.85);flex-shrink:0}
+.rad-big-char{font-size:54px;color:#ff5;line-height:1.05;font-weight:bold;text-shadow:2px 2px #000}
+.rad-key-tag{font-size:12px;color:#0ff;font-weight:bold;margin-top:3px;font-family:Consolas,monospace;background:#003b36;padding:1px 8px;border:1px solid #0ff}
+
+.rad-right-panel{display:flex;flex-direction:column;justify-content:space-between;flex:1;gap:5px}
+.aux-showcase-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.aux-chip{display:inline-flex;align-items:center;gap:8px;background:rgba(0,30,35,.9);border:1px solid #5ff;padding:3px 10px;border-radius:3px}
+.aux-glyph{font-size:26px;font-weight:bold;line-height:1;text-shadow:1px 1px #000}
+.aux-glyph.c1{color:#0ff}   /* 青色：第一輔助形 */
+.aux-glyph.c2{color:#5f5}   /* 亮綠：第二輔助形 */
+.aux-glyph.c3{color:#ff80ab}/* 粉紅：第三輔助形 */
+.aux-desc{font-size:12px;color:#eee;line-height:1.25}
+.aux-desc b{display:block;font-size:12.5px}
+
+/* 範例表格 */
+.retro-table{width:100%;border-collapse:collapse;color:#fff;font-size:13px;margin-top:4px}
+.retro-table th,.retro-table td{border:1px solid #5ff;padding:3.5px 8px;text-align:center}
+.retro-table th{background:#002220;color:#ff5}
+.retro-table td:nth-child(3){font-family:Consolas,monospace;color:#ff5;font-weight:bold;white-space:nowrap}
+.aux-pill-mini{display:inline-block;padding:1px 6px;border-radius:2px;font-weight:bold;font-size:12px;background:rgba(0,0,0,.4);white-space:nowrap}
+
+/* 進階偏旁與香港字補充卡（置於較低位置） */
+.adv-aux-box{background:rgba(0,40,65,.55);border:1px dashed #5ff;padding:6px 12px;margin-top:5px;border-radius:3px;font-size:12.5px;line-height:1.55}
+
+/* 單行詩句框：置中、字體略大（16.5px），左右各保留約 4 字闊（4em）留白 */
+.poem-line-box{font-size:16.5px;line-height:1.85;background:rgba(0,0,0,.28);padding:7px 4em;border-left:4px solid #ff5;border-right:4px solid #ff5;margin-top:4px;text-align:center;white-space:nowrap;overflow-x:auto}
+
+/* 索引頁專用緊湊免捲動樣式 */
+.idx-board{flex:1;display:flex;flex-direction:column;justify-content:space-evenly;gap:5px;padding:2px 0;overflow:hidden}
+.cat-group{background:rgba(0,0,0,.28);border:1px solid #00695c;padding:5px 10px;border-radius:3px}
+.cat-header{font-size:13px;font-weight:bold;margin-bottom:4px;display:flex;justify-content:space-between;line-height:1.1}
+.rad-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.rad-grid.cols-6{grid-template-columns:repeat(6,1fr)}
+.rad-grid.cols-4{grid-template-columns:repeat(4,1fr)}
+.rad-grid.cols-2{grid-template-columns:repeat(2,1fr);gap:8px}
+.rad-card{background:#002220;border:1.5px solid #5ff;padding:3px 2px;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background .12s;cursor:pointer}
+.rad-card:hover,.rad-card:focus{background:#004d40;border-color:#ff0;outline:none}
+.rad-card .rk{font-family:Consolas,monospace;font-size:12px;color:#0ff;font-weight:bold;line-height:1.05}
+.rad-card .rc{font-size:21px;color:#ff5;font-weight:bold;line-height:1.15}
+.rad-card .rs{font-size:10px;color:#bbb;line-height:1.05;white-space:nowrap}
+.rad-card.intro-card{flex-direction:row;gap:8px;padding:5px 10px;border-color:#ff5}
+.rad-card.intro-card .rc{font-size:15px;color:#ff5;line-height:1.1}
+
+/* 引言頁與總結頁卡片 */
+.cat-overview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:5px 0}
+.cat-box{background:rgba(0,0,0,.32);border:1px solid #5ff;padding:5px 10px;border-radius:3px;font-size:12px;line-height:1.45}
+.cat-box b{display:block;font-size:13px;margin-bottom:2px}
+.xz-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:5px}
+.xz-card{background:rgba(0,25,30,.75);border:1.5px solid #ff5;padding:7px 12px;border-radius:4px;display:flex;gap:12px;align-items:flex-start}
+.xz-glyph-box{display:flex;flex-direction:column;align-items:center;justify-content:center;background:#002220;border:1.5px solid #0ff;padding:4px 10px;min-width:60px;flex-shrink:0}
+.xz-glyph{font-size:34px;font-weight:bold;line-height:1.1}
+.xz-key{font-family:Consolas,monospace;font-size:12px;font-weight:bold;margin-top:2px;padding:0 5px;background:#003b36}
+
+@media(max-width:480px){.dos-screen{transform:scale(.4)}}
+@media(min-width:481px)and(max-width:768px){.dos-screen{transform:scale(.6)}}
+</style>
+</head>
+<body>
+<div class="dos-screen" id="dosScreen">
+  <div class="dos-header">
+    <div class="slop-logo" title="SLOP 經典標誌"><svg viewBox="0 0 120 40" width="95" height="30"><ellipse cx="60" cy="20" rx="55" ry="16" fill="none" stroke="#0ff" stroke-width="2"/><text x="50%" y="62%" text-anchor="middle" fill="#f0f" font-size="20" font-weight="900" font-style="italic" font-family="Arial">SLOP</text></svg></div>
+    <div class="title-group">
+      <div class="magenta-double-line"></div>
+      <div class="dos-main-title">快快快樂學倉頡</div>
+      <div class="magenta-double-line"></div>
+    </div>
+  </div>
+
+  <div class="dos-stage">
+    <div class="sub-window" id="mainWin"></div>
+  </div>
+
+  <!-- 底部控制列：左下僅保留 Esc [主選單]／Esc [索引]，右半頁整合上一頁與下一頁 -->
+  <div class="dos-footer">
+    <div style="display:flex;gap:10px;align-items:center">
+      <button type="button" class="key-button" id="btnEscIdx" style="color:#800000" title="返回總目錄索引或主程式">Esc [主選單]</button>
+    </div>
+    <div id="footerHint" style="font-size:12px;color:#333;flex:1;text-align:center">Esc 返回索引／主選單 ｜ ← → 切換上下頁</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button type="button" class="key-button" id="btnPrevPage">◀ 上一頁</button>
+      <button type="button" class="key-button" id="btnNextPage">下一頁 ▶</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const C1="#0ff", C2="#5f5", C3="#ff80ab";
+
+/* 全書 26 頁結構化教材資料（0=引言, 1..24=A日..Y卜, 25=總結） */
+const PAGES = [
+  {
+    type:"intro",
+    badge:"第 1 / 26 頁：全書引言與鍵位總覽",
+    rightTag:"標準倉頡與香港字校訂版"
+  },
+  {
+    key:"A", rad:"日", en:"Sun", cat:"第 2 / 26 頁：哲理類字根",
+    aux:[
+      {g:"曰", c:C1, title:"扁日框", desc:"四面封閉中有一橫（如：曲、更、書底）"},
+      {g:"門", c:C2, title:"門字框", desc:"首尾碼取日弓 AN（如：間、開、關）"},
+      {g:"⺜", c:C3, title:"日形變體", desc:"局部封閉帶一橫（如：冒、冕上）"}
+    ],
+    slogan:`凡四面封閉且中間僅有一橫的方框，以及「<b style="color:${C2}">門</b>」字外框首碼，統一歸入 <i class="ky">A</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">日</b>」獨立出現時，只取一碼 <i class="ky">A</i>（合體字如「<b>明</b>」拆為日月 <i class="cd">AB</i>）。`,
+      `<b><span style="color:${C1}">曰</span>（扁日）與 <span style="color:${C3}">⺜</span>（日形變體）：</b>寬扁的「<b style="color:${C1}">曰</b>」字（單字亦取 <i class="ky">A</i>）及「更、曲、書」中的封閉帶橫方框，皆視同日取 <i class="ky">A</i>。`,
+      `<b><span style="color:${C2}">門</span>（門字框關鍵規則）：</b>「<b style="color:${C2}">門</b>」字左扇上方為「日」（<i class="ky">A</i>）、右扇最末筆為豎鉤「亅」（<i class="ky">N</i>），作外框時字首固定取兩碼 <b>日弓（<i class="cd">AN</i>）</b>！`
+    ],
+    examples:[
+      ["基本形 日","#ff5","明","AB",`左字首「<b class="tr">日</b>」取日 (<i class="ky">A</i>)，右字身「月」取月 (<i class="ky">B</i>)，連為：日月 (<i class="cd">AB</i>)。`],
+      ["基本形 日","#ff5","時","AGDI",`左字首「<b class="tr">日</b>」取日 (<i class="ky">A</i>)，右字身「寺」上土 (<i class="ky">G</i>) 下寸 (<i class="cd">DI</i>)，組為：日土木戈 (<i class="cd">AGDI</i>)。`],
+      ["輔助形 曰",C1,"書","LGA",`上部聿字頭拆為中土 (<i class="cd">LG</i>)，下部扁日「<b style="color:${C1}">曰</b>」取日 (<i class="ky">A</i>)，結為：中土日 (<i class="cd">LGA</i>)。`],
+      ["輔助形 門",C2,"間","ANA",`外圍「<b style="color:${C2}">門</b>」框取首尾碼日弓 (<i class="cd">AN</i>)，內部「<b class="tr">日</b>」取日 (<i class="ky">A</i>)，組為：日弓日 (<i class="cd">ANA</i>)。`]
+    ],
+    adv:`• <b style="color:${C1}">香港字實戰 —「啲」（<i class="cd">RHAI</i>）與「晒」（<i class="cd">AMCW</i>）</b>：港人最常用的「<b>啲</b>」（些少），左「口」取 <i class="ky">R</i>，右「的」左邊「白」拆為頂撇竹 (<i class="ky">H</i>) 加「<b class="tr">日</b>」(<i class="ky">A</i>)、右邊「勺」取尾碼戈 (<i class="ky">I</i>)，全字拆為口竹日戈 (<i class="cd">RHAI</i>)；「<b>晒</b>」（曬太陽／完成語氣）左「<b class="tr">日</b>」(<i class="ky">A</i>) 右「西」(<i class="cd">MCW</i>)，拆為日一金田 (<i class="cd">AMCW</i>)。<br>• <b style="color:${C2}">三種方框辨析</b>：內有一橫為「<b class="tr">日</b>/<b style="color:${C1}">曰</b>」(<i class="ky">A</i>)；內部全空為「<b>口</b>」(<i class="ky">R</i>)；大框包部件為「<b>囗</b>」(<i class="ky">W</i>)。`,
+    rhyme:"押韻：光／方／旁，粵音 -ong 平聲",
+    poem:`<i class="tr">日</i>字當頭耀萬光，<b style="color:${C2}">門</b>框扁<b style="color:${C1}">曰</b> <i class="ky">A</i> 鍵方。　<i class="tr">日</i><i class="cd">土木戈</i>「<b class="tr">時</b>」四碼，<i class="tr">日</i><i class="cd">弓</i>包<i class="tr">日</i>「<b style="color:${C2}">間</b>」在旁。`
+  },
+  {
+    key:"B", rad:"月", en:"Moon", cat:"第 3 / 26 頁：哲理類字根",
+    aux:[
+      {g:"⺼", c:C1, title:"肉月旁", desc:"人體器官偏旁（如：肌、腦、腳、骨）"},
+      {g:"冂", c:C2, title:"同字框", desc:"三面框下方開口（如：同、周、冇底）"},
+      {g:"目貝豸", c:C3, title:"目/貝/豸首碼", desc:"外框或起筆歸 B（如：見、財、貓、貌）"}
+    ],
+    slogan:`<span style="color:${C1};font-weight:bold">肉月偏旁</span>與<span style="color:${C2};font-weight:bold">下方開口的三面框</span>，以及「<span style="color:${C3};font-weight:bold">目、貝、豸</span>」部件首碼，統一歸入 <i class="ky">B</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">月</b>」獨立出現時，只取一碼 <i class="ky">B</i>（雙月「<b>朋</b>」拆為月月 <i class="cd">BB</i>）。`,
+      `<b><span style="color:${C1}">⺼</span>（肉月旁）與 <span style="color:${C2}">冂</span>（下開口框）：</b>與身體有關的肉月旁（如「服」、「膽」），以及向下開口的三面框「<b style="color:${C2}">冂</b>」（如「同」、「冇」下部），均取 <i class="ky">B</i>。`,
+      `<b><span style="color:${C3}">目、貝、豸</span>之取碼通則：</b>「<b style="color:${C3}">目</b>」拆月山（<i class="cd">BU</i>）；「<b style="color:${C3}">貝</b>」拆月山金（<i class="cd">BUC</i>，字首取 <i class="cd">BC</i>）；左偏旁「<b style="color:${C3}">豸</b>」（如「貓」、「貌」）上爪頭取月 (<i class="ky">B</i>)、下彎鉤兩撇取竹 (<i class="ky">H</i>)，固定拆為 <b>月竹（<i class="cd">BH</i>）</b>！`
+    ],
+    examples:[
+      ["輔助形 ⺼",C1,"腦","BVVW",`左肉月旁「<b style="color:${C1}">⺼</b>」取月 (<i class="ky">B</i>)，右上三拐取女 (<i class="ky">V</i>)，右下頂撇連框取女田 (<i class="cd">VW</i>)，組為 <i class="cd">BVVW</i>。`],
+      ["輔助形 冂",C2,"同","BMR",`外框「<b style="color:${C2}">冂</b>」取月 (<i class="ky">B</i>)，內部一橫取一 (<i class="ky">M</i>)、小方框取口 (<i class="ky">R</i>)，組為：月一口 (<i class="cd">BMR</i>)。`],
+      ["輔助形 目/貝",C3,"見 / 財","BUHU / BCDH",`「<b style="color:${C3}">見</b>」上「<b style="color:${C3}">目</b>」拆月山 (<i class="cd">BU</i>)、下「儿」拆竹山 (<i class="cd">HU</i>) 為 <i class="cd">BUHU</i>；「<b style="color:${C3}">財</b>」左「<b style="color:${C3}">貝</b>」取首尾月金 (<i class="cd">BC</i>)、右「才」拆木竹 (<i class="cd">DH</i>) 為 <i class="cd">BCDH</i>。`],
+      ["輔助形 豸",C3,"貓 / 貌","BHTW / BHHAU",`「<b style="color:${C3}">貓</b>」左「<b style="color:${C3}">豸</b>」取月竹 (<i class="cd">BH</i>)、右「苗」取廿田 (<i class="cd">TW</i>) 為 <i class="cd">BHTW</i>；「<b style="color:${C3}">貌</b>」左「<b style="color:${C3}">豸</b>」(<i class="cd">BH</i>) 右「兒」(<i class="cd">HAU</i>) 為 <i class="cd">BHHAU</i>。`]
+    ],
+    adv:`• <b style="color:${C2}">香港字實戰 —「冇」（<i class="cd">KB</i>）與「睇」（<i class="cd">BUCNH</i>）</b>：「<b style="color:${C2}">冇</b>」（沒有）上字首為橫撇「ナ」（取大 <i class="ky">K</i>），下字身為下開口框「<b style="color:${C2}">冂</b>」（取月 <i class="ky">B</i>），合為兩碼大月 (<i class="cd">KB</i>)；「<b>睇</b>」（看）左邊「<b style="color:${C3}">目</b>」取月山 (<i class="cd">BU</i>)，右邊「弟」取頭尾金弓竹 (<i class="cd">CNH</i>)，合為 <i class="cd">BUCNH</i>。<br>• <b>「冖」（秃寶蓋）對應</b>：無點的平頂蓋「<b>冖</b>」（如「冠」<i class="cd">BMUI</i>、「冤」<i class="cd">BNUI</i> 上部）亦歸入月 (<i class="ky">B</i>)。`,
+    rhyme:"押韻：開／來／才，粵音 -oi 平聲",
+    poem:`<b style="color:${C1}">肉旁</b><b style="color:${C2}">同框</b><i class="tr">月</i>字開，<b style="color:${C3}">目貝</b>下空入 <i class="ky">B</i> 來。　<i class="cd">大</i><i class="tr">月</i>相連「<b style="color:${C2}">冇</b>」兩碼，<i class="tr">月</i><i class="cd">山竹山</i>「<b style="color:${C3}">見</b>」字才。`
+  },
+  {
+    key:"C", rad:"金", en:"Metal", cat:"第 4 / 26 頁：哲理類字根",
+    aux:[
+      {g:"釒", c:C1, title:"金字旁", desc:"左側金屬偏旁直取一碼 C（如：銅、錢）"},
+      {g:"八", c:C2, title:"八字底", desc:"左撇右捺底腳（如：只、共、兵、興底）"},
+      {g:"丷", c:C3, title:"倒八字頭", desc:"左點右撇頂部（如：弟、曾、尊、公）"}
+    ],
+    slogan:`<span style="color:${C1};font-weight:bold">金字偏旁</span>、<span style="color:${C2};font-weight:bold">正八字底</span>與<span style="color:${C3};font-weight:bold">倒八雙點</span>，統一歸入 <i class="ky">C</i> 鍵。`,
+    rules:[
+      `<b>基本形與偏旁：</b>鍵面字「<b class="tr">金</b>」獨立成字取一碼 <i class="ky">C</i>；合體字左側的「<b style="color:${C1}">釒</b>」（金字旁）作字首時，不需拆開，直接取一碼 <b>金（<i class="ky">C</i>）</b>！`,
+      `<b><span style="color:${C2}">八</span>（正八底）與 <span style="color:${C3}">丷</span>（倒八頭）：</b>凡兩筆分開不相交的左撇右捺「<b style="color:${C2}">八</b>」（如「<b style="color:${C2}">只、共、兵</b>、具」底部），或左點右撇「<b style="color:${C3}">丷</b>」（如「弟」、「曾」頂部），一律取 <i class="ky">C</i>。`
+    ],
+    examples:[
+      ["基本形 金","#ff5","鑑","CSIT",`左「<b style="color:${C1}">釒</b>」取金 (<i class="ky">C</i>)，右「監」上取尸戈 (<i class="cd">SI</i>)、下「皿」取廿 (<i class="ky">T</i>)，組為：金尸戈廿 (<i class="cd">CSIT</i>)。`],
+      ["輔助形 釒",C1,"銅 / 錢","CBMR / CII",`「<b style="color:${C1}">銅</b>」左「<b style="color:${C1}">釒</b>」(<i class="ky">C</i>) 右「同」(<i class="cd">BMR</i>) 為 <i class="cd">CBMR</i>；「<b style="color:${C1}">錢</b>」左「<b style="color:${C1}">釒</b>」(<i class="ky">C</i>) 右雙「戈」(<i class="cd">II</i>) 為 <i class="cd">CII</i>。`],
+      ["輔助形 八",C2,"共","TC",`上部「廿」取廿 (<i class="ky">T</i>)，下部八字底「<b style="color:${C2}">八</b>」取金 (<i class="ky">C</i>)，連為：廿金 (<i class="cd">TC</i>)。`],
+      ["輔助形 丷",C3,"曾","CWA",`頂部倒八點「<b style="color:${C3}">丷</b>」取金 (<i class="ky">C</i>)，中扁框取田 (<i class="ky">W</i>)，底「日」取日 (<i class="ky">A</i>)，組為：金田日 (<i class="cd">CWA</i>)。`]
+    ],
+    adv:`• <b style="color:${C1}">香港字實戰 —「錶」（<i class="cd">CQMV</i>）與「釦」（<i class="cd">CR</i>）</b>：香港慣用的手錶之「<b>錶</b>」，左「<b style="color:${C1}">釒</b>」取金 (<i class="ky">C</i>)，右「表」取手一女 (<i class="cd">QMV</i>)，拆為 <i class="cd">CQMV</i>。<br>• <b style="color:${C2}">「八」與「人」字形辨析</b>：兩筆<b>分離不相交</b>的「<b style="color:${C2}">八</b> / <b style="color:${C3}">丷</b>」取金 (<i class="ky">C</i>)；兩筆<b>頂端相連</b>的「<b>人 / 𠆢</b>」則取人 (<i class="ky">O</i>)。`,
+    rhyme:"押韻：連／邊／前，粵音 -in 平聲",
+    poem:`<b style="color:${C2}">八字</b><b style="color:${C3}">雙點</b><i class="tr">金</i>相連（<i class="ky">C</i>），<b style="color:${C2}">只共兵</b>分守底邊。　<i class="tr">金</i><i class="cd">月一口</i>「<b style="color:${C1}">銅</b>」四碼，<i class="tr">金</i><i class="cd">戈戈</i>疊「<b style="color:${C1}">錢</b>」當前。`
+  },
+  {
+    key:"D", rad:"木", en:"Wood", cat:"第 5 / 26 頁：哲理類字根",
+    aux:[
+      {g:"朩", c:C1, title:"木底變體", desc:"豎鉤配左右點撇（如：茶、條、雜、寨底）"},
+      {g:"寸", c:C2, title:"寸部字根", desc:"合體字拆為木戈 DI（如：村、樹、對）"},
+      {g:"皮", c:C3, title:"皮字首尾", desc:"首筆連撇豎視同木（拆 DHE，如：破、被）"}
+    ],
+    slogan:`<i class="tr">木</i>字偏旁、木底變體「<span style="color:${C1};font-weight:bold">朩</span>」與「<span style="color:${C2};font-weight:bold">寸</span>」部首碼，統一歸入 <i class="ky">D</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">木</b>」獨立出現時，只取一碼 <i class="ky">D</i>（雙木「<b>林</b>」取 <i class="cd">DD</i>，三木「<b>森</b>」取 <i class="cd">DDD</i>）。`,
+      `<b><span style="color:${C1}">朩</span>（木底變體）：</b>下部帶左右兩點的木形部件（如「茶」、「條」、「雜」、「寨」底部），一律視同木取 <i class="ky">D</i>。`,
+      `<b><span style="color:${C2}">寸</span>（寸字部件）：</b>「<b style="color:${C2}">寸</b>」在倉頡中視為「木」省去撇捺加一點「丶」，故單字或合體字尾皆拆為 <b>木戈（<i class="cd">DI</i>）</b>。`
+    ],
+    examples:[
+      ["基本形 木","#ff5","校","DYCK",`左字首「<b class="tr">木</b>」取木 (<i class="ky">D</i>)，右字身「交」拆為卜金大 (<i class="cd">YCK</i>)，組為：木卜金大 (<i class="cd">DYCK</i>)。`],
+      ["基本形 木","#ff5","樹","DGTI",`左「<b class="tr">木</b>」(<i class="ky">D</i>)，中「尌」取首碼土 (<i class="ky">G</i>) 與底豆廿 (<i class="ky">T</i>)，右「<b style="color:${C2}">寸</b>」取尾碼戈 (<i class="ky">I</i>)，為 <i class="cd">DGTI</i>。`],
+      ["輔助形 朩",C1,"茶","TOD",`上草字頭取廿 (<i class="ky">T</i>)，中人字頭取人 (<i class="ky">O</i>)，底「<b style="color:${C1}">朩</b>」取木 (<i class="ky">D</i>)，結為：廿人木 (<i class="cd">TOD</i>)。`],
+      ["輔助形 寸",C2,"村","DDI",`左字首「<b class="tr">木</b>」取木 (<i class="ky">D</i>)，右字身「<b style="color:${C2}">寸</b>」拆為木戈 (<i class="cd">DI</i>)，連為：木木戈 (<i class="cd">DDI</i>)。`]
+    ],
+    adv:`• <b style="color:${C1}">香港字實戰 —「檯」（<i class="cd">DGRG</i>）與「杧」（<i class="cd">DYV</i>）</b>：港式用字「<b>檯</b>」（書檯、食飯檯），左「<b class="tr">木</b>」(<i class="ky">D</i>) 右「臺」（土口土 <i class="cd">GRG</i>），拆為 <i class="cd">DGRG</i>；「<b>杧</b>」（杧果）左「<b class="tr">木</b>」(<i class="ky">D</i>) 右「亡」(<i class="cd">YV</i>)，拆為 <i class="cd">DYV</i>。<br>• <b style="color:${C2}">「寸」與「才」區分</b>：「<b style="color:${C2}">寸</b>」含點筆，拆為木戈 (<i class="cd">DI</i>)；「<b>才</b>」末筆為斜撇，拆為木竹 (<i class="cd">DH</i>)。`,
+    rhyme:"押韻：林／深／尋，粵音 -am 平聲",
+    poem:`雙<i class="tr">木</i>相依便作<b class="tr">林</b>（<i class="ky">D</i>），三<i class="tr">木</i>聚<b class="tr">森</b>意更深。　<i class="cd">廿人</i><i class="tr">木</i>結「<b style="color:${C1}">茶</b>」三碼，<i class="tr">木木</i><i class="cd">戈</i>連「<b style="color:${C2}">村</b>」易尋。`
+  },
+  {
+    key:"E", rad:"水", en:"Water", cat:"第 6 / 26 頁：哲理類字根",
+    aux:[
+      {g:"氵", c:C1, title:"三點水", desc:"左側水部偏旁（如：海、港、灣、深）"},
+      {g:"氺", c:C2, title:"水字底", desc:"底部水形變體（如：泰、求、暴底、黎底）"},
+      {g:"又叉", c:C3, title:"曲折交叉形", desc:"帶點或疊合之又形（如：叉、蚤、桑上）"}
+    ],
+    slogan:`江河湖海<span style="color:${C1};font-weight:bold">三點水</span>、<span style="color:${C2};font-weight:bold">水字底「氺」</span>及<span style="color:${C3};font-weight:bold">叉形曲筆</span>，統一歸入 <i class="ky">E</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">水</b>」獨立出現時，只取一碼 <i class="ky">E</i>（合體字如「<b>泉</b>」拆為竹日水 <i class="cd">HAE</i>）。`,
+      `<b><span style="color:${C1}">氵</span>（三點水）與 <span style="color:${C2}">氺</span>（水字底）：</b>左側最常見的「<b style="color:${C1}">氵</b>」（如「海」、「港」）與字底的「<b style="color:${C2}">氺</b>」（如「泰」、「求」），皆直接取一碼 <i class="ky">E</i>。`,
+      `<b><span style="color:${C3}">又</span>（雙疊與帶點特例）：</b>單獨一個「又」拆為弓大 (<i class="cd">NK</i>)；但當中間加一點成「<b style="color:${C3}">叉</b>」（拆為水戈 <i class="cd">EI</i>），或雙又並排成「<b>雙</b>」底、三又疊成「<b style="color:${C3}">桑</b>」（拆為水水木 <i class="cd">EED</i>）時，則歸入水 (<i class="ky">E</i>)！`
+    ],
+    examples:[
+      ["基本形 水","#ff5","泉","HAE",`上字首「白」拆為竹日 (<i class="cd">HA</i>)，下字身「<b class="tr">水</b>」取水 (<i class="ky">E</i>)，組為：竹日水 (<i class="cd">HAE</i>)。`],
+      ["輔助形 氵",C1,"港","ETCU",`左三點水「<b style="color:${C1}">氵</b>」取水 (<i class="ky">E</i>)，右「巷」上「共」拆廿金 (<i class="cd">TC</i>)、下「巳」取山 (<i class="ky">U</i>)，為 <i class="cd">ETCU</i>。`],
+      ["輔助形 氺",C2,"泰","QKE",`上部春字頭取手 (<i class="ky">Q</i>)、人字撇捺併入大 (<i class="ky">K</i>)，底部水字底「<b style="color:${C2}">氺</b>」取水 (<i class="ky">E</i>)，為：手大水 (<i class="cd">QKE</i>)。`],
+      ["輔助形 又",C3,"桑","EED",`上部三個「<b style="color:${C3}">又</b>」取首尾水水 (<i class="cd">EE</i>)，下部「木」取木 (<i class="ky">D</i>)，組為：水水木 (<i class="cd">EED</i>)。`]
+    ],
+    adv:`• <b style="color:${C1}">香港字實戰 —「氹」（<i class="cd">NE</i>）與「涌」（<i class="cd">ENIB</i>）</b>：香港地名與粵語常用字「<b>氹</b>」（水氹／哄騙），外框「乙」取弓 (<i class="ky">N</i>)、內「<b class="tr">水</b>」取水 (<i class="ky">E</i>)，兩碼 <i class="cd">NE</i> 即成；「<b>涌</b>」（葵涌、東涌）左「<b style="color:${C1}">氵</b>」(<i class="ky">E</i>) 右「甬」(<i class="cd">NIB</i>)，拆為 <i class="cd">ENIB</i>。<br>• <b>「氵」與「冫」區分</b>：三點水「<b style="color:${C1}">氵</b>」取水 (<i class="ky">E</i>)；兩點水「<b>冫</b>（如：冰、冷）」則取戈一 (<i class="cd">IM</i>)。`,
+    rhyme:"押韻：流／頭／求，粵音 -au 平聲",
+    poem:`<b style="color:${C1}">江河湖海</b><i class="tr">水</i>長流，<b style="color:${C1}">三點水旁</b> <i class="ky">E</i> 鍵頭。　<i class="tr">水</i><i class="cd">廿金山</i>「<b style="color:${C1}">港</b>」四碼，<i class="cd">手大</i><i class="tr">水</i>連「<b style="color:${C2}">泰</b>」易求。`
+  },
+  {
+    key:"F", rad:"火", en:"Fire", cat:"第 7 / 26 頁：哲理類字根",
+    aux:[
+      {g:"灬", c:C1, title:"四點底", desc:"底部四點火焰形（如：熱、照、點、烈底）"},
+      {g:"⺌", c:C2, title:"尚字頭", desc:"中豎配左右點撇朝上（如：當、常、光、榮上）"},
+      {g:"小", c:C3, title:"小字部件", desc:"中豎鉤配八字點（如：尖、少、雀上、糸底）"}
+    ],
+    slogan:`<i class="tr">火</i>字偏旁、<span style="color:${C1};font-weight:bold">四點底座</span>與<span style="color:${C2};font-weight:bold">尚字頭</span>／<span style="color:${C3};font-weight:bold">小字部件</span>，統一歸入 <i class="ky">F</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">火</b>」獨立出現時，只取一碼 <i class="ky">F</i>（雙火「<b>炎</b>」取 <i class="cd">FF</i>，三火「<b>焱</b>」取 <i class="cd">FFF</i>）。`,
+      `<b><span style="color:${C1}">灬</span>（四點底）：</b>位於字底的並排四點「<b style="color:${C1}">灬</b>」（如「點」、「照」、「煮」底部），一律取火 (<i class="ky">F</i>)。`,
+      `<b><span style="color:${C2}">⺌</span>（尚字頭）與 <span style="color:${C3}">小</span>：</b>位於字頂的「<b style="color:${C2}">⺌</b>」（如「當」、「光」、「肖」上部），以及合體字中的「<b style="color:${C3}">小</b>」（如「尖」上、「絲/細」中絞絲旁底部），皆取火 (<i class="ky">F</i>)！（註：「小」單字拆為弓金 <i class="cd">NC</i>）。`
+    ],
+    examples:[
+      ["基本形 火","#ff5","燈","FNOT",`左字首「<b class="tr">火</b>」取火 (<i class="ky">F</i>)，右字身「登」上取弓人 (<i class="cd">NO</i>)、下取廿 (<i class="ky">T</i>)，組為：火弓人廿 (<i class="cd">FNOT</i>)。`],
+      ["輔助形 灬",C1,"點 / 照","WFYR / ARF",`「<b style="color:${C1}">點</b>」左黑取首尾田火 (<i class="cd">WF</i>) 右占 (<i class="cd">YR</i>) 為 <i class="cd">WFYR</i>；「<b style="color:${C1}">照</b>」上日口 (<i class="cd">AR</i>) 下四點「<b style="color:${C1}">灬</b>」(<i class="ky">F</i>) 為 <i class="cd">ARF</i>。`],
+      ["輔助形 ⺌",C2,"當","FRW",`上字首「尚」取頂部「<b style="color:${C2}">⺌</b>」火 (<i class="ky">F</i>) 與下部口 (<i class="ky">R</i>)，下字身「田」取田 (<i class="ky">W</i>)，組為：火口田 (<i class="cd">FRW</i>)。`],
+      ["輔助形 小",C3,"尖","FK",`上部「<b style="color:${C3}">小</b>」作字首取火 (<i class="ky">F</i>)，下部「大」取大 (<i class="ky">K</i>)，連為：火大 (<i class="cd">FK</i>)。`]
+    ],
+    adv:`• <b style="color:#ff5">香港字實戰 —「煲」（<i class="cd">ODF</i>）與「燶」（<i class="cd">FTWV</i>）</b>：「<b>煲</b>」（煲湯、電飯煲）上「保」拆人木 (<i class="cd">OD</i>)、下「<b class="tr">火</b>」取火 (<i class="ky">F</i>)，組為 <i class="cd">ODF</i>；「<b>燶</b>」（燒焦／燶味）左「<b class="tr">火</b>」(<i class="ky">F</i>) 右「農」(<i class="cd">TWV</i>)，拆為 <i class="cd">FTWV</i>。<br>• <b style="color:${C3}">「糹」（絞絲旁）尾碼</b>：「<b>糹</b>」底部為「<b style="color:${C3}">小</b>」或三點變體，故全拆為女戈火 (<i class="cd">VIF</i>)，作字首取首尾女火 (<i class="cd">VF</i>)！`,
+    rhyme:"押韻：紅／中／通，粵音 -ung 平聲",
+    poem:`烈焰熊熊映日紅，<b style="color:${C1}">四點</b><b style="color:${C2}">小頭</b>歸<i class="tr">火</i>中（<i class="ky">F</i>）。　<i class="cd">日口</i><i class="tr">火</i>結「<b style="color:${C1}">照</b>」三碼，<i class="tr">火</i><i class="cd">口田</i>連「<b style="color:${C2}">當</b>」路通。`
+  },
+  {
+    key:"G", rad:"土", en:"Earth", cat:"第 8 / 26 頁：哲理類字根",
+    aux:[
+      {g:"士", c:C1, title:"士字部件", desc:"上橫長下橫短（如：吉、志、喜、聲上）"},
+      {g:"土", c:C2, title:"提土旁", desc:"左側土部偏旁（如：地、城、場、境）"}
+    ],
+    slogan:`大地根基<i class="tr">土</i>與<span style="color:${C1};font-weight:bold">士</span>，合體字中不論上長下短或上短下長，統一歸入 <i class="ky">G</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">土</b>」獨立出現時，只取一碼 <i class="ky">G</i>（注意：「<b>士</b>」單獨成字時拆為十一 <i class="cd">JM</i>）。`,
+      `<b><span style="color:${C1}">士</span>與<span style="color:${C2}">土</span>合體字通則：</b>只要在合體字中作為字根部件，無論是上短下長的「<b style="color:${C2}">土</b>」（如「地」、「城」），還是上長下短的「<b style="color:${C1}">士</b>」（如「<b style="color:${C1}">吉</b>」、「志」、「壺」上部），一律直接取一碼 <i class="ky">G</i>！`
+    ],
+    examples:[
+      ["基本形 土","#ff5","圭","GG",`上字首「<b class="tr">土</b>」取土 (<i class="ky">G</i>)，下字身「<b class="tr">土</b>」亦取土 (<i class="ky">G</i>)，雙土疊為：土土 (<i class="cd">GG</i>)。`],
+      ["輔助形 土旁",C2,"地","GPD",`左字首提土旁「<b style="color:${C2}">土</b>」取土 (<i class="ky">G</i>)，右字身「也」拆為心木 (<i class="cd">PD</i>)，連為：土心木 (<i class="cd">GPD</i>)。`],
+      ["輔助形 土旁",C2,"場","GAMH",`左字首「<b style="color:${C2}">土</b>」取土 (<i class="ky">G</i>)，右字身「昜」上取日 (<i class="ky">A</i>)、下「勿」連橫取首尾一竹 (<i class="cd">MH</i>)，合為 <i class="cd">GAMH</i>。`],
+      ["輔助形 士",C1,"吉 / 志","GR / GP",`上字首「<b style="color:${C1}">士</b>」取土 (<i class="ky">G</i>)，下接「口」(<i class="ky">R</i>) 為 <i class="cd">GR</i>（吉）；下接「心」(<i class="ky">P</i>) 為 <i class="cd">GP</i>（志）。`]
+    ],
+    adv:`• <b style="color:${C2}">香港字實戰 —「埞」（<i class="cd">GJMO</i>）與「圾」（<i class="cd">GNHE</i>）</b>：港語「<b>埞</b>」（走埞／地方），左「<b style="color:${C2}">土</b>」取土 (<i class="ky">G</i>)，右「定」拆為十一 (<i class="cd">JM</i>) 加底人 (<i class="ky">O</i>)，合為 <i class="cd">GJMO</i>；「<b>圾</b>」（垃圾）左「<b style="color:${C2}">土</b>」(<i class="ky">G</i>) 右「及」(<i class="cd">NHE</i>) 為 <i class="cd">GNHE</i>。<br>• <b>「土」與「王」區分</b>：「<b>土</b>」只有兩橫一豎取 <i class="ky">G</i>；斜玉旁「<b>王</b>」多一頂橫，拆為一土 (<i class="cd">MG</i>)。`,
+    rhyme:"押韻：家／華／誇，粵音 -aa 平聲",
+    poem:`大地根基<i class="tr">土</i><b style="color:${C1}">士</b>家（<i class="ky">G</i>），上<b style="color:${C1}">士</b>下口<b style="color:${C1}">吉</b>字華。　<i class="tr">土</i><i class="cd">心木</i>組「<b style="color:${C2}">地</b>」三碼，<i class="tr">土</i><i class="cd">日一竹</i>「<b style="color:${C2}">場</b>」共誇。`
+  },
+  {
+    key:"H", rad:"竹", en:"Bamboo", cat:"第 9 / 26 頁：筆畫類字根",
+    aux:[
+      {g:"⺮", c:C1, title:"竹字頭", desc:"頂部竹部偏旁（如：笑、算、筆、簡）"},
+      {g:"丿", c:C2, title:"獨立斜撇", desc:"向左下延伸單筆（如：白、千、禾、係右首）"},
+      {g:"彡", c:C3, title:"三撇飾筆", desc:"並排三條斜撇（如：彩、影、須、形右）"}
+    ],
+    slogan:`翠<span style="color:${C1};font-weight:bold">竹字頭</span>、<span style="color:${C2};font-weight:bold">獨立單撇</span>與<span style="color:${C3};font-weight:bold">三撇飾筆</span>，統一歸入 <i class="ky">H</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">竹</b>」獨立出現時，只取一碼 <i class="ky">H</i>。`,
+      `<b><span style="color:${C1}">⺮</span>（竹字頭）與 <span style="color:${C2}">丿</span>（獨立斜撇）：</b>字頂的「<b style="color:${C1}">⺮</b>」（如「笑」、「筆」），以及字首的獨立斜撇「<b style="color:${C2}">丿</b>」（如「白」拆竹日 <i class="cd">HA</i>、「千」拆竹十 <i class="cd">HJ</i>、「禾」拆竹木 <i class="cd">HD</i>），一律取 <i class="ky">H</i>。`,
+      `<b><span style="color:${C3}">彡</span>（三撇）：</b>位於右側或下方的三撇「<b style="color:${C3}">彡</b>」（如「彩」、「杉」右側），每撇皆屬 <i class="ky">H</i>。`
+    ],
+    examples:[
+      ["輔助形 ⺮",C1,"筆","HLQ",`上字首竹字頭「<b style="color:${C1}">⺮</b>」取竹 (<i class="ky">H</i>)，下字身「聿」拆為中手 (<i class="cd">LQ</i>)，組為：竹中手 (<i class="cd">HLQ</i>)。`],
+      ["輔助形 ⺮",C1,"算","HBUT",`上「<b style="color:${C1}">⺮</b>」取竹 (<i class="ky">H</i>)，中「目」拆月山 (<i class="cd">BU</i>)，下「廾」取廿 (<i class="ky">T</i>)，組為：竹月山廿 (<i class="cd">HBUT</i>)。`],
+      ["輔助形 丿",C2,"白 / 禾","HA / HD",`頂部獨立斜撇「<b style="color:${C2}">丿</b>」取竹 (<i class="ky">H</i>)，下接「日」(<i class="ky">A</i>) 為 <i class="cd">HA</i>（白）；下接「木」(<i class="ky">D</i>) 為 <i class="cd">HD</i>（禾）。`],
+      ["輔助形 彡",C3,"影","AFHHH",`左「景」取首尾日火 (<i class="cd">AF</i>)，右三撇「<b style="color:${C3}">彡</b>」取三碼竹竹竹 (<i class="cd">HHH</i>)，合為 <i class="cd">AFHHH</i>。`]
+    ],
+    adv:`• <b style="color:${C2}">香港字實戰 —「係」（<i class="cd">OHVF</i>）與「臼」（<i class="cd">HX</i>）</b>：粵語最常用的「<b>係</b>」（是），左單人旁取 <i class="ky">O</i>，右「系」首筆為斜撇「<b style="color:${C2}">丿</b>」取竹 (<i class="ky">H</i>)、中「幺」取女 (<i class="ky">V</i>)、底「小」取火 (<i class="ky">F</i>)，全字拆為 <i class="cd">OHVF</i>！另「<b>臼</b>」框（如：舅、興、與、兒）首筆為頂撇，固定拆為 <b>竹難（<i class="cd">HX</i>）</b>。<br>• <b>斜撇與直豎區分</b>：斜撇「<b style="color:${C2}">丿</b>」取竹 (<i class="ky">H</i>)；垂直豎「<b>丨</b>」取中 (<i class="ky">L</i>)。`,
+    rhyme:"押韻：風／中／功，粵音 -ung 平聲",
+    poem:`翠<i class="tr">竹</i><b style="color:${C2}">斜撇</b>迎清風，<b style="color:${C2}">單撇</b><b style="color:${C3}">三撇</b>歸此中（<i class="ky">H</i>）。　<i class="tr">竹</i><i class="cd">中手</i>結「<b style="color:${C1}">筆</b>」三碼，<i class="tr">竹</i><i class="cd">月山廿</i>「<b style="color:${C1}">算</b>」顯功。`
+  },
+  {
+    key:"I", rad:"戈", en:"Halberd", cat:"第 10 / 26 頁：筆畫類字根",
+    aux:[
+      {g:"丶", c:C1, title:"獨立單點", desc:"不連其他筆畫之點（如：太、玉、永、犬）"},
+      {g:"广", c:C2, title:"廣字頭", desc:"頂有單點斜崖框（如：店、度、府、廣框）"},
+      {g:"厶", c:C3, title:"私字底", desc:"三角形封閉折點（如：公、去、台、參）"}
+    ],
+    slogan:`<span style="color:${C1};font-weight:bold">單點筆畫</span>、<span style="color:${C2};font-weight:bold">廣字頭</span>與<span style="color:${C3};font-weight:bold">三角形私字底</span>，統一歸入 <i class="ky">I</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">戈</b>」獨立出現時，只取一碼 <i class="ky">I</i>（合體字如「<b>成</b>」拆為戈竹尸 <i class="cd">IHS</i>、「<b>我</b>」拆為竹手戈 <i class="cd">HQI</i>）。`,
+      `<b><span style="color:${C1}">丶</span>（獨立單點）：</b>凡獨立的單一點筆（如「良」頂點、「寸」中點、「玉」右下點），一律歸入 <i class="ky">I</i>。`,
+      `<b><span style="color:${C2}">广</span>（廣字頭）與 <span style="color:${C3}">厶</span>（私字底）：</b>頂部帶點的斜崖外框「<b style="color:${C2}">广</b>」（如「店」、「座」），以及三角折點「<b style="color:${C3}">厶</b>」（如「去」底、「台」上），皆直接取 <i class="ky">I</i>。`
+    ],
+    examples:[
+      ["基本形 戈","#ff5","成","IHS",`外框主體「<b class="tr">戈</b>」連長撇取戈竹 (<i class="cd">IH</i>)，左下方橫折鉤取尸 (<i class="ky">S</i>)，組為：戈竹尸 (<i class="cd">IHS</i>)。`],
+      ["輔助形 丶",C1,"玉","MGI",`主幹「王」拆為一土 (<i class="cd">MG</i>)，右下角獨立單點「<b style="color:${C1}">丶</b>」取戈 (<i class="ky">I</i>)，連為：一土戈 (<i class="cd">MGI</i>)。`],
+      ["輔助形 广",C2,"店","IYR",`外圍廣字頭「<b style="color:${C2}">广</b>」取戈 (<i class="ky">I</i>)，內部「占」拆為卜口 (<i class="cd">YR</i>)，組為：戈卜口 (<i class="cd">IYR</i>)。`],
+      ["輔助形 厶",C3,"台","IR",`上方私字頭「<b style="color:${C3}">厶</b>」取戈 (<i class="ky">I</i>)，下方「口」取口 (<i class="ky">R</i>)，連為：戈口 (<i class="cd">IR</i>)。`]
+    ],
+    adv:`• <b style="color:${C1}">香港字實戰 —「嘅」（<i class="cd">RAIU</i>）</b>：港語高頻字「<b>嘅</b>」（的），左「口」(<i class="ky">R</i>)，中「艮」拆為日戈 (<i class="cd">AI</i>)，右「旡」取尾碼山 (<i class="ky">U</i>)，全字四碼為 <i class="cd">RAIU</i>！<br>• <b style="color:${C2}">「广」與「厂」及「礻」與「衤」辨析</b>：有頂點的「<b style="color:${C2}">广</b>（廣頭）」取戈 (<i class="ky">I</i>)，無點的「<b>厂</b>（廠框）」取一 (<i class="ky">M</i>)；示字旁「<b>礻</b>（如：神 <i class="cd">IFLWL</i>、禮 <i class="cd">IFTWT</i>）」首筆為單點取戈火 (<i class="cd">IF</i>)，衣字旁「<b>衤</b>」則取中 (<i class="ky">L</i>)。`,
+    rhyme:"押韻：開／台／來，粵音 -oi 平聲",
+    poem:`<b style="color:${C1}">單點</b><b style="color:${C2}">廣頭</b><i class="tr">戈</i>字開（<i class="ky">I</i>），<b style="color:${C3}">私底三角</b>入此<b style="color:${C3}">台</b>。　<i class="cd">一土</i><i class="tr">戈</i>歸「<b style="color:${C1}">玉</b>」三碼，<i class="tr">戈</i><i class="cd">卜口</i>連「<b style="color:${C2}">店</b>」字來。`
+  },
+  {
+    key:"J", rad:"十", en:"Cross", cat:"第 11 / 26 頁：筆畫類字根",
+    aux:[
+      {g:"宀", c:C1, title:"寶蓋頭", desc:"頂有單點屋頂框（如：家、寶、字、定）"},
+      {g:"➕", c:C2, title:"十字交錯", desc:"一橫一豎正交結構（如：古、早、車、真上）"}
+    ],
+    slogan:`一豎穿過一長橫，以及帶點的<span style="color:${C1};font-weight:bold">寶蓋頭屋頂</span>，統一歸入 <i class="ky">J</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">十</b>」獨立出現時，只取一碼 <i class="ky">J</i>。`,
+      `<b><span style="color:${C1}">宀</span>（寶蓋頭）：</b>凡頂部有一點、兩側向下短折的屋頂框「<b style="color:${C1}">宀</b>」（如「字」、「安」、「家」、「實」上部），一律直接取一碼 <b>十（<i class="ky">J</i>）</b>。`,
+      `<b><span style="color:${C2}">十</span>（十字交錯）：</b>合體字中凡一橫一豎相交之部件（如「古」上、「早」下、「車」上下、「朝」左側），皆取 <i class="ky">J</i>。`
+    ],
+    examples:[
+      ["基本形 十","#ff5","古","JR",`上字首「<b class="tr">十</b>」取十 (<i class="ky">J</i>)，下字身「口」取口 (<i class="ky">R</i>)，連為：十口 (<i class="cd">JR</i>)。`],
+      ["輔助形 宀",C1,"字 / 定","JND / JMYO",`上寶蓋頭「<b style="color:${C1}">宀</b>」取十 (<i class="ky">J</i>)，下接「子」(<i class="cd">ND</i>) 為 <i class="cd">JND</i>（字）；下接「正」(<i class="cd">MYO</i>) 為 <i class="cd">JMYO</i>（定）。`],
+      ["輔助形 宀",C1,"寶","JMUC",`上寶蓋頭「<b style="color:${C1}">宀</b>」取十 (<i class="ky">J</i>)，中「王」與「缶」合為次字首取首尾一山 (<i class="cd">MU</i>)，下「貝」取尾碼金 (<i class="ky">C</i>)，合為 <i class="cd">JMUC</i>。`],
+      ["輔助形 十字",C2,"車","JWJ",`「<b style="color:${C2}">車</b>」上「<b style="color:${C2}">十</b>」取 (<i class="ky">J</i>)，中「日」連框視同田 (<i class="ky">W</i>)，下「<b style="color:${C2}">十</b>」取 (<i class="ky">J</i>)，組為：十田十 (<i class="cd">JWJ</i>)。`]
+    ],
+    adv:`• <b style="color:${C2}">香港字實戰 —「𨋢」（<i class="cd">JJYT</i>）與「闊」（<i class="cd">ANEHR</i>）</b>：香港升降機俗稱「<b>𨋢</b>」（Lift），左「<b style="color:${C2}">車</b>」取首尾碼十十 (<i class="cd">JJ</i>)，右「立」拆卜廿 (<i class="cd">YT</i>)，組為 <i class="cd">JJYT</i>；「<b>闊</b>」外門框取日弓 (<i class="cd">AN</i>)、內「活」拆水竹口 (<i class="cd">EHR</i>)，合為 <i class="cd">ANEHR</i>。<br>• <b style="color:${C1}">屋頂有無點區分</b>：有頂點的「<b style="color:${C1}">宀</b>（寶蓋頭）」取十 (<i class="ky">J</i>)；無頂點的「<b>冖</b>（秃寶蓋）」取月 (<i class="ky">B</i>)。`,
+    rhyme:"押韻：橫／間／難，粵音 -aan 平聲",
+    poem:`一豎穿過一長橫，<b style="color:${C1}">寶蓋屋頂</b><i class="tr">十</i>字間（<i class="ky">J</i>）。　<i class="tr">十</i><i class="cd">田</i><i class="tr">十</i>組「<b style="color:${C2}">車</b>」三碼，<i class="tr">十</i><i class="cd">一山金</i>「<b style="color:${C1}">寶</b>」唔難。`
+  },
+  {
+    key:"K", rad:"大", en:"Big", cat:"第 12 / 26 頁：筆畫類字根",
+    aux:[
+      {g:"乂", c:C1, title:"交叉撇捺", desc:"一撇一捺相交（如：文底、殺左上、希上）"},
+      {g:"ナ", c:C2, title:"左上橫撇", desc:"一橫一撇交於左上（如：左、右、有、冇）"},
+      {g:"疒", c:C3, title:"病字頭", desc:"醫療疾病外框（如：病、痛、療、瘦）"}
+    ],
+    slogan:`<span style="color:${C1};font-weight:bold">撇捺交叉</span>、<span style="color:${C2};font-weight:bold">左肩橫撇</span>與<span style="color:${C3};font-weight:bold">病字頭外框</span>，統一歸入 <i class="ky">K</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">大</b>」獨立出現時，只取一碼 <i class="ky">K</i>（合體字如「<b>太</b>」拆為大戈 <i class="cd">KI</i>、「<b>天</b>」拆為一大 <i class="cd">MK</i>）。`,
+      `<b><span style="color:${C1}">乂</span>（交叉撇捺）與 <span style="color:${C2}">ナ</span>（左上橫撇）：</b>兩筆交叉的「<b style="color:${C1}">乂</b>」（如「文」下、「殺」左上角）及左上橫撇「<b style="color:${C2}">ナ</b>」（如「有」、「右」、「布」上部），均取 <i class="ky">K</i>。`,
+      `<b><span style="color:${C3}">疒</span>（病字頭）：</b>所有疾病、痛症相關的半包圍外框「<b style="color:${C3}">疒</b>」（如「病」、「痛」），字首固定取一碼 <b>大（<i class="ky">K</i>）</b>。`
+    ],
+    examples:[
+      ["基本形 大","#ff5","奇","KMR",`上字首「<b class="tr">大</b>」取大 (<i class="ky">K</i>)，下字身「可」取首尾碼一口 (<i class="cd">MR</i>)，組為：大一口 (<i class="cd">KMR</i>)。`],
+      ["輔助形 乂",C1,"殺","KJCNE",`左上「<b style="color:${C1}">乂</b>」取大 (<i class="ky">K</i>)，左下「𣎳」取首尾十金 (<i class="cd">JC</i>)，右「殳」拆弓水 (<i class="cd">NE</i>)，合為 <i class="cd">KJCNE</i>。`],
+      ["輔助形 ナ",C2,"有 / 右","KB / KR",`左上橫撇「<b style="color:${C2}">ナ</b>」取大 (<i class="ky">K</i>)，下接「月」(<i class="ky">B</i>) 為 <i class="cd">KB</i>（有）；下接「口」(<i class="ky">R</i>) 為 <i class="cd">KR</i>（右）。`],
+      ["輔助形 疒",C3,"病","KMOB",`外框病字頭「<b style="color:${C3}">疒</b>」取大 (<i class="ky">K</i>)，內部「丙」拆為一月 (<i class="cd">MOB</i>)，組為：大一月 (<i class="cd">KMOB</i>)。`]
+    ],
+    adv:`• <b style="color:${C3}">香港字實戰 —「攰」（<i class="cd">JEKS</i>）與「痕」（<i class="cd">KAV</i>）</b>：粵語「<b>攰</b>」（疲倦），左「支」拆為十水 (<i class="cd">JE</i>)、右「力」拆為大尸 (<i class="cd">KS</i>)，合為十水大尸 (<i class="cd">JEKS</i>)；「<b>痕</b>」外病頭取大 (<i class="ky">K</i>)、內「艮」拆日女 (<i class="cd">AV</i>) 為 <i class="cd">KAV</i>。<br>• <b style="color:${C1}">反犬旁「犭」對應</b>：如「<b>狗</b>」(<i class="cd">KHPR</i>)、「<b>狂</b>」(<i class="cd">KHMG</i>)，左側反犬旁彎鉤與撇交叉，固定拆為 <b>大竹（<i class="cd">KH</i>）</b>。`,
+    rhyme:"押韻：開／來／才，粵音 -oi 平聲",
+    poem:`<b style="color:${C1}">撇捺交叉</b><b style="color:${C3}">病字</b>開，<b style="color:${C2}">橫撇在左</b><i class="tr">大</i>中來（<i class="ky">K</i>）。　<i class="tr">大</i><i class="cd">一弓田</i>「<b style="color:${C3}">病</b>」四碼，<i class="cd">卜</i><i class="tr">大</i>相連「<b style="color:${C1}">文</b>」字才。`
+  },
+  {
+    key:"L", rad:"中", en:"Middle", cat:"第 13 / 26 頁：筆畫類字根",
+    aux:[
+      {g:"丨", c:C1, title:"獨立直豎", desc:"垂直單豎筆（如：引右、師左中豎）"},
+      {g:"巾川", c:C2, title:"穿心與三豎", desc:"直豎貫穿或並列（如：布、州、順左）"},
+      {g:"衤聿", c:C3, title:"衣字旁/書主幹", desc:"首筆連豎或長豎穿橫（如：被、衫、書）"}
+    ],
+    slogan:`<span style="color:${C1};font-weight:bold">筆直單豎</span>、<span style="color:${C2};font-weight:bold">川巾主幹</span>與<span style="color:${C3};font-weight:bold">衣字旁首碼</span>，統一歸入 <i class="ky">L</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">中</b>」獨立出現時，只取一碼 <i class="ky">L</i>（雙中「<b>串</b>」拆為中中 <i class="cd">LL</i>）。`,
+      `<b><span style="color:${C1}">丨</span>（獨立直豎）與 <span style="color:${C2}">巾 / 川</span>：</b>凡垂直不帶鉤的單豎「<b style="color:${C1}">丨</b>」（如「引」拆弓中 <i class="cd">NL</i>），以及「<b style="color:${C2}">巾</b>」（拆中月 <i class="cd">LB</i>）、「<b style="color:${C2}">川</b>」（拆中中中 <i class="cd">LLL</i>），皆歸入 <i class="ky">L</i>。`,
+      `<b><span style="color:${C3}">衤</span>（衣字旁關鍵規則）：</b>左側衣字旁「<b style="color:${C3}">衤</b>」（如「被」、「衫」），首點與下豎視為相連直豎，作字首時取首尾碼 <b>中竹（<i class="cd">LH</i>）</b>（部分字例亦取首碼 <i class="ky">L</i>，如「補」<i class="cd">LIJB</i>）。`
+    ],
+    examples:[
+      ["基本形 中","#ff5","忠","LP",`上字首「<b class="tr">中</b>」取中 (<i class="ky">L</i>)，下字身「心」取心 (<i class="ky">P</i>)，連為：中心 (<i class="cd">LP</i>)。`],
+      ["輔助形 丨",C1,"引","NL",`左字首「弓」取弓 (<i class="ky">N</i>)，右字身獨立直豎「<b style="color:${C1}">丨</b>」取中 (<i class="ky">L</i>)，連為：弓中 (<i class="cd">NL</i>)。`],
+      ["輔助形 川",C2,"順","LLMBC",`左字首「<b style="color:${C2}">川</b>」取首尾兩碼中中 (<i class="cd">LL</i>)，右字身「頁」取首次尾三碼一月金 (<i class="cd">MBC</i>)，組為 <i class="cd">LLMBC</i>。`],
+      ["輔助形 衤",C3,"被","LHDHE",`左衣字旁「<b style="color:${C3}">衤</b>」取首尾碼中竹 (<i class="cd">LH</i>)，右「皮」拆為木竹水 (<i class="cd">DHE</i>)，組為 <i class="cd">LHDHE</i>。`]
+    ],
+    adv:`• <b style="color:${C3}">香港字實戰 —「衫」（<i class="cd">LHHHH</i>）與「補」（<i class="cd">LIJB</i>）</b>：「<b>衫</b>」（衣服）左衣旁「<b style="color:${C3}">衤</b>」取中竹 (<i class="cd">LH</i>)、右三撇「彡」取竹竹竹 (<i class="cd">HHH</i>)，合為 <i class="cd">LHHHH</i>；「<b>補</b>」左衣旁取中 (<i class="ky">L</i>) 右「甫」拆戈十月 (<i class="cd">IJB</i>)，標準主碼為 <i class="cd">LIJB</i>。<br>• <b>「衤」（衣旁）vs「礻」（示旁）</b>：衣旁「<b style="color:${C3}">衤</b>」多一撇，首碼取中 (<i class="ky">L</i>)；示旁「<b>礻</b>」無右撇，取戈火 (<i class="cd">IF</i>)。`,
+    rhyme:"押韻：通／中／功，粵音 -ung 平聲",
+    poem:`<b style="color:${C1}">直豎穿心</b>上下通，<b style="color:${C2}">川巾</b><b style="color:${C3}">衣旁</b>盡歸<i class="tr">中</i>（<i class="ky">L</i>）。　<i class="tr">中中</i><i class="cd">一月金</i>「<b style="color:${C2}">順</b>」字，<i class="tr">中</i><i class="cd">竹木竹水</i>「<b style="color:${C3}">被</b>」功。`
+  },
+  {
+    key:"M", rad:"一", en:"One", cat:"第 14 / 26 頁：筆畫類字根",
+    aux:[
+      {g:"厂", c:C1, title:"廠字框", desc:"頂部無點斜崖框（如：原、歷、厚、壓框）"},
+      {g:"工王", c:C2, title:"橫畫組合", desc:"上下橫中貫豎（如：江右、空底、珠左王）"},
+      {g:"㇀", c:C3, title:"提筆／平橫", desc:"水平橫畫與提筆（如：下、不、百首筆）"}
+    ],
+    slogan:`<span style="color:${C3};font-weight:bold">平橫筆畫</span>、<span style="color:${C1};font-weight:bold">無點廠字斜崖</span>與<span style="color:${C2};font-weight:bold">工字部件</span>，統一歸入 <i class="ky">M</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">一</b>」獨立出現時，只取一碼 <i class="ky">M</i>（「<b>二</b>」取 <i class="cd">MM</i>，「<b>三</b>」取 <i class="cd">MMM</i>）。`,
+      `<b><span style="color:${C1}">厂</span>（廠字框）：</b>頂部平滑無點的斜崖外框「<b style="color:${C1}">厂</b>」（如「原」、「厚」、「歷」外框），一律取一 (<i class="ky">M</i>)。`,
+      `<b><span style="color:${C2}">工</span>與<span style="color:${C2}">王</span>部件：</b>合體字中的「<b style="color:${C2}">工</b>」（如「江」<i class="cd">EM</i>、「攻」<i class="cd">MOK</i>）直接取一碼 <i class="ky">M</i>；斜玉旁「<b style="color:${C2}">王</b>」則拆為一土 (<i class="cd">MG</i>)。`
+    ],
+    examples:[
+      ["基本形 一","#ff5","不 / 百","MF / MA",`頂部平橫「<b class="tr">一</b>」取一 (<i class="ky">M</i>)，下接小變體 (<i class="ky">F</i>) 為 <i class="cd">MF</i>（不）；下接「白」取尾碼日 (<i class="ky">A</i>) 為 <i class="cd">MA</i>（百）。`],
+      ["輔助形 厂",C1,"原","MHAF",`外框廠字頭「<b style="color:${C1}">厂</b>」取一 (<i class="ky">M</i>)，內部次字首「白」拆竹日 (<i class="cd">HA</i>)、次字身「小」取火 (<i class="ky">F</i>)，組為 <i class="cd">MHAF</i>。`],
+      ["輔助形 工",C2,"江 / 項","EM / MMBC",`「<b style="color:${C2}">江</b>」左水 (<i class="ky">E</i>) 右「<b style="color:${C2}">工</b>」(<i class="ky">M</i>) 為 <i class="cd">EM</i>；「<b style="color:${C2}">項</b>」左「<b style="color:${C2}">工</b>」(<i class="ky">M</i>) 右「頁」(<i class="cd">MBC</i>) 為 <i class="cd">MMBC</i>。`],
+      ["輔助形 王",C2,"珠","MGHJD",`左斜玉旁「<b style="color:${C2}">王</b>」拆為一土 (<i class="cd">MG</i>)，右「朱」拆為竹十木 (<i class="cd">HJD</i>)，組為 <i class="cd">MGHJD</i>。`]
+    ],
+    adv:`• <b style="color:${C3}">香港字實戰 —「唔」（<i class="cd">RMMR</i>）與「𠝹」（<i class="cd">MLLLN</i>）</b>：粵語否定詞「<b>唔</b>」（不），左「口」(<i class="ky">R</i>)，右「吾」上「五」拆為一一 (<i class="cd">MM</i>)、下「口」(<i class="ky">R</i>)，全字拆為口一一口 (<i class="cd">RMMR</i>)！<br>• <b>「頁」字旁首碼</b>：「<b>頁</b>」（如：頭 <i class="cd">MTMBC</i>、頂 <i class="cd">MNMBC</i>、順 <i class="cd">LLMBC</i>）頂部為一橫，固定拆為 <b>一月金（<i class="cd">MBC</i>）</b>。`,
+    rhyme:"押韻：開／台／來，粵音 -oi 平聲",
+    poem:`<b style="color:${C3}">平橫</b><b style="color:${C1}">廠框</b><i class="tr">一</i>字開，無點崖邊按此台（<i class="ky">M</i>）。　<i class="tr">一</i><i class="cd">竹日火</i>「<b style="color:${C1}">原</b>」四碼，<i class="cd">口</i><i class="tr">一一</i><i class="cd">口</i>「<b style="color:${C3}">唔</b>」字來。`
+  },
+  {
+    key:"N", rad:"弓", en:"Bow", cat:"第 15 / 26 頁：筆畫類字根",
+    aux:[
+      {g:"亅乙", c:C1, title:"豎鉤與乙鉤", desc:"帶尖鉤或曲折單筆（如：了、予、字底、飛）"},
+      {g:"乛フ", c:C2, title:"橫鉤與橫撇", desc:"折角起筆（如：久、欠首、又首、名上）"},
+      {g:"阝", c:C3, title:"雙耳旁", desc:"左阜右邑，固定拆為弓中 NL（如：院、陳、都）"}
+    ],
+    slogan:`<span style="color:${C1};font-weight:bold">豎鉤</span><span style="color:${C2};font-weight:bold">橫撇</span>折彎彎，<span style="color:${C3};font-weight:bold">雙耳刀旁</span>與立刀尾碼皆入 <i class="ky">N</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">弓</b>」獨立出現時，只取一碼 <i class="ky">N</i>（合體字如「<b>張</b>」拆為弓尸一女 <i class="cd">NSMV</i>）。`,
+      `<b><span style="color:${C1}">亅</span>（豎鉤）與 <span style="color:${C2}">乛 / フ</span>（橫鉤橫撇）：</b>凡帶鉤或折彎的單筆（如「丁」拆一弓 <i class="cd">MN</i>、「了」拆弓弓 <i class="cd">NN</i>、「立刀旁 刂」拆中弓 <i class="cd">LN</i>），一律歸入 <i class="ky">N</i>。`,
+      `<b><span style="color:${C3}">阝</span>（雙耳旁）：</b>無論在左（阜部，如「陳」、「院」）或在右（邑部，如「都」、「鄭」），「<b style="color:${C3}">阝</b>」一律拆為 <b>弓中（<i class="cd">NL</i>）</b>！`
+    ],
+    examples:[
+      ["基本形 弓","#ff5","張","NSMV",`左字首「<b class="tr">弓</b>」取弓 (<i class="ky">N</i>)，右字身「長」拆為尸一女 (<i class="cd">SMV</i>)，組為：弓尸一女 (<i class="cd">NSMV</i>)。`],
+      ["輔助形 亅",C1,"了 / 利","NN / HDLN",`「<b style="color:${C1}">了</b>」上橫撇下豎鉤「<b style="color:${C1}">亅</b>」拆弓弓 (<i class="cd">NN</i>)；「<b>利</b>」左禾 (<i class="cd">HD</i>) 右立刀「<b>刂</b>」拆中弓 (<i class="cd">LN</i>) 為 <i class="cd">HDLN</i>。`],
+      ["輔助形 フ",C2,"名 / 外","NIR / NIY",`左上「夕」首筆橫撇「<b style="color:${C2}">フ</b>」加點拆為弓戈 (<i class="cd">NI</i>)，接「口」(<i class="ky">R</i>) 為 <i class="cd">NIR</i>（名）；接「卜」(<i class="ky">Y</i>) 為 <i class="cd">NIY</i>（外）。`],
+      ["輔助形 阝",C3,"院 / 都","NLJMU / JANL",`「<b style="color:${C3}">院</b>」左「<b style="color:${C3}">阝</b>」(<i class="cd">NL</i>) 右「完」(<i class="cd">JMU</i>) 為 <i class="cd">NLJMU</i>；「<b style="color:${C3}">都</b>」左「者」(<i class="cd">JA</i>) 右「<b style="color:${C3}">阝</b>」(<i class="cd">NL</i>) 為 <i class="cd">JANL</i>。`]
+    ],
+    adv:`• <b style="color:${C1}">香港字實戰 —「乜」（<i class="cd">PN</i>）與「噏」（<i class="cd">RORSM</i>）</b>：港語「<b>乜</b>」（什麼／乜嘢），外折取心 (<i class="ky">P</i>)、內豎彎折取弓 (<i class="ky">N</i>)，兩碼 <i class="cd">PN</i> 即成；「<b>噏</b>」（噏風／講嘢）左「口」(<i class="ky">R</i>)、右「翕」上合 (<i class="cd">OR</i>) 下羽 (<i class="cd">SM</i>)，拆為 <i class="cd">RORSM</i>。<br>• <b style="color:${C2}">建之旁「廴」首碼</b>：如「<b>建</b>」(<i class="cd">NKLQ</i>)、「<b>延</b>」(<i class="cd">NKHYM</i>)，首碼亦取弓 (<i class="ky">N</i>)。`,
+    rhyme:"押韻：彎／間／難，粵音 -aan 平聲",
+    poem:`<b style="color:${C1}">豎鉤</b><b style="color:${C2}">橫撇</b>折彎彎，<b style="color:${C3}">雙耳刀旁</b><i class="tr">弓</i>字間（<i class="ky">N</i>）。　<i class="tr">弓</i><i class="cd">尸一女</i>「<b class="tr">張</b>」四碼，<i class="tr">弓</i><i class="cd">中十山</i>「<b style="color:${C3}">院</b>」唔難。`
+  },
+  {
+    key:"O", rad:"人", en:"Man", cat:"第 16 / 26 頁：人體類字根",
+    aux:[
+      {g:"亻", c:C1, title:"單人旁", desc:"左側立人偏旁（如：你、他、們、係、佢）"},
+      {g:"𠆢", c:C2, title:"人字頭", desc:"頂部撇捺相交傘蓋（如：合、今、全、會上）"},
+      {g:"𠂉", c:C3, title:"臥人頭", desc:"一撇連一橫字頂（如：氣、每、年、知左）"}
+    ],
+    slogan:`<span style="color:${C1};font-weight:bold">單人側立</span>、<span style="color:${C2};font-weight:bold">人字傘蓋</span>與<span style="color:${C3};font-weight:bold">撇橫臥人</span>，統一歸入 <i class="ky">O</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">人</b>」獨立出現時，只取一碼 <i class="ky">O</i>（雙人「<b>從</b>」內部、三人「<b>眾</b>」底部皆取 <i class="ky">O</i>）。`,
+      `<b><span style="color:${C1}">亻</span>（單人旁）與 <span style="color:${C2}">𠆢</span>（人字頭）：</b>左側「<b style="color:${C1}">亻</b>」（如「你」、「作」）與頂部撇捺頂端相連的「<b style="color:${C2}">𠆢</b>」（如「合」、「今」、「食」上），均直接取 <i class="ky">O</i>。`,
+      `<b><span style="color:${C3}">𠂉</span>（撇橫臥人）與「攵」（反文旁）：</b>凡一撇加一橫的頂部結構（如「氣」、「午」、「矢」上），以及右側「<b>攵</b>」（反文旁，拆為人大 <i class="cd">OK</i>），首碼皆取 <i class="ky">O</i>。`
+    ],
+    examples:[
+      ["基本形 人","#ff5","囚","WO",`外框「囗」取田 (<i class="ky">W</i>)，內部「<b class="tr">人</b>」取人 (<i class="ky">O</i>)，連為：田人 (<i class="cd">WO</i>)。`],
+      ["輔助形 亻",C1,"們 / 佢","OAN / OSS",`左單人旁「<b style="color:${C1}">亻</b>」取人 (<i class="ky">O</i>)，右接「門」(<i class="cd">AN</i>) 為 <i class="cd">OAN</i>（們）；右接「巨」(<i class="cd">SS</i>) 為 <i class="cd">OSS</i>（佢）。`],
+      ["輔助形 𠆢",C2,"合 / 會","OMR / OMWMA",`上人字頭「<b style="color:${C2}">𠆢</b>」取人 (<i class="ky">O</i>)，下接一口 (<i class="cd">MR</i>) 為 <i class="cd">OMR</i>（合）；「<b style="color:${C2}">會</b>」由上而下拆為人一田一日 (<i class="cd">OMWMA</i>)。`],
+      ["輔助形 𠂉",C3,"氣 / 知","OMNFD / OKR",`「<b style="color:${C3}">氣</b>」上「气」拆人一弓 (<i class="cd">OMN</i>)、內「米」取火木 (<i class="cd">FD</i>) 為 <i class="cd">OMNFD</i>；「<b>知</b>」左「矢」拆人大 (<i class="cd">OK</i>)、右口 (<i class="ky">R</i>) 為 <i class="cd">OKR</i>。`]
+    ],
+    adv:`• <b style="color:${C1}">香港字實戰 —「佢」（<i class="cd">OSS</i>）與「𠺘」（<i class="cd">ROAV</i>）</b>：粵語第三人稱「<b style="color:${C1}">佢</b>」（他），左單人旁「<b style="color:${C1}">亻</b>」取人 (<i class="ky">O</i>)，右「巨」外框與內框取尸尸 (<i class="cd">SS</i>)，拆為人尸尸 (<i class="cd">OSS</i>)！<br>• <b>「食」字旁（飠）首碼</b>：「<b>飠</b>」（如：飯 <i class="cd">OIHE</i>、飲 <i class="cd">OINO</i>）首筆為人字頭，字首固定取首尾碼 <b>人戈（<i class="cd">OI</i>）</b>。`,
+    rhyme:"押韻：行／間／難，粵音 -aan 平聲",
+    poem:`<b style="color:${C1}">單<i class="tr">人</i>側立</b>企成行，<b style="color:${C2}"><i class="tr">人</i>頭</b><b style="color:${C3}">臥<i class="tr">人</i></b>在此間（<i class="ky">O</i>）。　<i class="tr">人</i><i class="cd">一田日</i>「<b style="color:${C2}">會</b>」五碼，<i class="tr">人</i><i class="cd">尸尸</i>連「<b style="color:${C1}">佢</b>」唔難。`
+  },
+  {
+    key:"P", rad:"心", en:"Heart", cat:"第 17 / 26 頁：人體類字根",
+    aux:[
+      {g:"忄㣺", c:C1, title:"豎心旁/心底", desc:"心理偏旁（如：快、情、性、慕底、恭底）"},
+      {g:"勹", c:C2, title:"包字頭", desc:"右上包圍橫折鉤框（如：包、句、夠、勺）"},
+      {g:"匕", c:C3, title:"匕形彎鉤", desc:"撇接豎彎鉤（如：比、化右、老底、旨上）"}
+    ],
+    slogan:`<span style="color:${C1};font-weight:bold">豎心旁</span>、<span style="color:${C2};font-weight:bold">包字框</span>與<span style="color:${C3};font-weight:bold">匕字彎鉤</span>，統一歸入 <i class="ky">P</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">心</b>」獨立出現時，只取一碼 <i class="ky">P</i>（作字底如「<b>想</b>」拆為木目心 <i class="cd">DBUP</i>、「<b>思</b>」拆為田心 <i class="cd">WP</i>）。`,
+      `<b><span style="color:${C1}">忄</span>（豎心旁）與 <span style="color:${C1}">㣺</span>（心字底）：</b>左側「<b style="color:${C1}">忄</b>」（如「情」、「快」）與底部「<b style="color:${C1}">㣺</b>」（如「恭」、「慕」底），一律取 <i class="ky">P</i>。`,
+      `<b><span style="color:${C2}">勹</span>（包字頭）與 <span style="color:${C3}">匕</span>（湯匙形）：</b>右上包圍框「<b style="color:${C2}">勹</b>」（如「包」、「句」）及「<b style="color:${C3}">匕</b>」（如「化」右、「北」右、「能」右兩匕），皆取 <i class="ky">P</i>。`
+    ],
+    examples:[
+      ["基本形 心","#ff5","思 / 忘","WP / YVP",`「<b class="tr">思</b>」上田 (<i class="ky">W</i>) 下「<b class="tr">心</b>」(<i class="ky">P</i>) 為 <i class="cd">WP</i>；「<b>忘</b>」上亡 (<i class="cd">YV</i>) 下「<b class="tr">心</b>」(<i class="ky">P</i>) 為 <i class="cd">YVP</i>。`],
+      ["輔助形 忄",C1,"情 / 快","PQMB / PDK",`左豎心旁「<b style="color:${C1}">忄</b>」取心 (<i class="ky">P</i>)，右接「青」(<i class="cd">QMB</i>) 為 <i class="cd">PQMB</i>（情）；接「夬」(<i class="cd">DK</i>) 為 <i class="cd">PDK</i>（快）。`],
+      ["輔助形 勹",C2,"包 / 句","PRU / PR",`外框「<b style="color:${C2}">勹</b>」取心 (<i class="ky">P</i>)，內「巳」拆口山 (<i class="cd">RU</i>) 為 <i class="cd">PRU</i>（包）；內「口」(<i class="ky">R</i>) 為 <i class="cd">PR</i>（句）。`],
+      ["輔助形 匕",C3,"化 / 能","OP / IBPP",`「<b style="color:${C3}">化</b>」左人 (<i class="ky">O</i>) 右「<b style="color:${C3}">匕</b>」(<i class="ky">P</i>) 為 <i class="cd">OP</i>；「<b>能</b>」左戈月 (<i class="cd">IB</i>) 右雙「<b style="color:${C3}">匕</b>」(<i class="cd">PP</i>) 為 <i class="cd">IBPP</i>。`]
+    ],
+    adv:`• <b style="color:${C1}">香港字實戰 —「怕」（<i class="cd">PHA</i>）與「憎」（<i class="cd">PCWA</i>）</b>：「<b>怕</b>」左「<b style="color:${C1}">忄</b>」(<i class="ky">P</i>) 右「白」(<i class="cd">HA</i>) 為 <i class="cd">PHA</i>；「<b>憎</b>」（好憎／討厭）左「<b style="color:${C1}">忄</b>」(<i class="ky">P</i>) 右「曾」(<i class="cd">CWA</i>)，拆為 <i class="cd">PCWA</i>。<br>• <b>「㣺」與「氺」區分</b>：「<b style="color:${C1}">㣺</b>（心字底，如：恭 <i class="cd">TCP</i>）」比「<b>氺</b>（水字底，取水 <i class="ky">E</i>）」右側多一點，切勿混淆。`,
+    rhyme:"押韻：情／明／清，粵音 -ing 平聲",
+    poem:`<b style="color:${C1}">豎<i class="tr">心</i></b><b style="color:${C2}">包框</b>訴衷情，<b style="color:${C3}">匕字彎鉤</b> <i class="ky">P</i> 鍵明。　<i class="tr">心</i><i class="cd">手一月</i>「<b style="color:${C1}">情</b>」四碼，<i class="cd">田</i><i class="tr">心</i>相連「<b class="tr">思</b>」字清。`
+  },
+  {
+    key:"Q", rad:"手", en:"Hand", cat:"第 18 / 26 頁：人體類字根",
+    aux:[
+      {g:"扌", c:C1, title:"提手旁", desc:"左側手部偏旁（如：打、找、捉、攞）"},
+      {g:"龶", c:C2, title:"春字頭", desc:"三橫貫穿（如：春、青、夫、丰、表上）"},
+      {g:"牜年", c:C3, title:"牛部/橫撇貫豎", desc:"橫豎交錯帶撇（如：牛、物左、生、年底）"}
+    ],
+    slogan:`<span style="color:${C1};font-weight:bold">提手旁</span>與三橫貫穿之<span style="color:${C2};font-weight:bold">春字頭（夫、青、丰、表）</span>，統一歸入 <i class="ky">Q</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">手</b>」獨立出現時，只取一碼 <i class="ky">Q</i>（合體字如「<b>看</b>」拆為竹手月山 <i class="cd">HQBU</i>、「<b>拿</b>」拆為人一口手 <i class="cd">OMRQ</i>）。`,
+      `<b><span style="color:${C1}">扌</span>（提手旁）：</b>最常見於左側偏旁（如「打」、「投」、「推」），直接取一碼 <b>手（<i class="ky">Q</i>）</b>。`,
+      `<b><span style="color:${C2}">龶</span>（三橫貫穿結構）：</b>凡三橫被一撇或一豎貫穿的字頭（如「<b style="color:${C2}">春</b>」<i class="cd">QKA</i>、「<b style="color:${C2}">青</b>」<i class="cd">QMB</i>、「<b style="color:${C2}">表</b>」<i class="cd">QMV</i>、「<b>豐</b>」上部），或兩橫一撇的「<b style="color:${C2}">夫</b>」（<i class="cd">QO</i>），一律取 <i class="ky">Q</i>。`
+    ],
+    examples:[
+      ["基本形 手","#ff5","看","HQBU",`頂撇取竹 (<i class="ky">H</i>)，中部「<b class="tr">手</b>」取手 (<i class="ky">Q</i>)，下部「目」拆為月山 (<i class="cd">BU</i>)，組為：竹手月山 (<i class="cd">HQBU</i>)。`],
+      ["輔助形 扌",C1,"打 / 找","QMN / QI",`左提手旁「<b style="color:${C1}">扌</b>」取手 (<i class="ky">Q</i>)，右接「丁」(<i class="cd">MN</i>) 為 <i class="cd">QMN</i>（打）；接「戈」(<i class="ky">I</i>) 為 <i class="cd">QI</i>（找）。`],
+      ["輔助形 龶",C2,"春 / 青","QKA / QMB",`上部「<b style="color:${C2}">龶</b>」取手 (<i class="ky">Q</i>)，下接大日 (<i class="cd">KA</i>) 為 <i class="cd">QKA</i>（春）；下接一月 (<i class="cd">MB</i>) 為 <i class="cd">QMB</i>（青）。`],
+      ["輔助形 龶",C2,"夫 / 表","QO / QMV",`「<b style="color:${C2}">夫</b>」上取手 (<i class="ky">Q</i>) 下取人 (<i class="ky">O</i>) 為 <i class="cd">QO</i>；「<b style="color:${C2}">表</b>」上取手 (<i class="ky">Q</i>) 下取一女 (<i class="cd">MV</i>) 為 <i class="cd">QMV</i>。`]
+    ],
+    adv:`• <b style="color:${C2}">香港字實戰 —「靚」（<i class="cd">QBUU</i>）、「攞」（<i class="cd">QWLG</i>）與「搵」（<i class="cd">QWOT</i>）</b>：<br>　▸ 「<b style="color:${C2}">靚</b>」（漂亮）：左字首「<b style="color:${C2}">青</b>」取首尾碼手月 (<i class="cd">QB</i>)，右字身「見」取上目尾碼與下儿尾碼山山 (<i class="cd">UU</i>)，四碼為 <b><i class="cd">QBUU</i></b>（亦兼容五碼 <i class="cd">QBBUU</i>）。<br>　▸ 「<b style="color:${C1}">攞</b>」（拿取）：左「<b style="color:${C1}">扌</b>」(<i class="ky">Q</i>) 右「羅」(<i class="cd">WLG</i>) 為 <b><i class="cd">QWLG</i></b>；「<b style="color:${C1}">搵</b>」（尋找）：左「<b style="color:${C1}">扌</b>」(<i class="ky">Q</i>) 右「溫」右半 (<i class="cd">WOT</i>) 為 <b><i class="cd">QWOT</i></b>。`,
+    rhyme:"押韻：開／台／來，粵音 -oi 平聲",
+    poem:`<b style="color:${C1}">提<i class="tr">手</i></b><b style="color:${C2}">春頭</b><i class="tr">手</i>字開，<b style="color:${C2}">夫青丰表</b>入 <i class="ky">Q</i> 台。　<i class="cd">竹</i><i class="tr">手</i><i class="cd">月山</i>「<b class="tr">看</b>」四碼，<i class="tr">手</i><i class="cd">月山山</i>「<b style="color:${C2}">靚</b>」字來。`
+  },
+  {
+    key:"R", rad:"口", en:"Mouth", cat:"第 19 / 26 頁：人體類字根",
+    aux:[
+      {g:"口", c:C1, title:"口字偏旁", desc:"左側語氣與嘴部偏旁（如：啲、嘅、喺、咁）"},
+      {g:"品呂", c:C2, title:"多口疊合", desc:"空心小方框組合（如：呂、品、器、單中）"},
+      {g:"⻊", c:C3, title:"足字旁首碼", desc:"上口下止，字首取口一 RM（如：路、跑、跳）"}
+    ],
+    slogan:`凡<span style="color:${C1};font-weight:bold">四面封閉且內部空無一物的小方框</span>，以及香港粵語口部字首碼，統一歸入 <i class="ky">R</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">口</b>」獨立出現時，只取一碼 <i class="ky">R</i>（雙口「<b>呂</b>」拆為口竹口 <i class="cd">RHR</i>，三口「<b style="color:${C2}">品</b>」拆為口口口 <i class="cd">RRR</i>）。`,
+      `<b><span style="color:${C1}">口</span>（香港粵語字第一大部首）：</b>粵語中有極大量語氣詞與專用字以「<b style="color:${C1}">口</b>」旁構成（<b>啲、嘅、喺、咁、咗、喇、喎、咩、嘢</b>），首碼 100% 皆按 <b>口（<i class="ky">R</i>）</b>！`,
+      `<b><span style="color:${C3}">⻊</span>（足字旁）：</b>左偏旁「<b style="color:${C3}">⻊</b>」上方為小方框「口」(<i class="ky">R</i>)、最末筆為提筆「一」(<i class="ky">M</i>)，故作字首時固定取兩碼 <b>口一（<i class="cd">RM</i>）</b>。`
+    ],
+    examples:[
+      ["輔助形 口旁",C1,"咁 / 喺","RTM / ROHF",`「<b style="color:${C1}">咁</b>」（這樣）左「<b style="color:${C1}">口</b>」(<i class="ky">R</i>) 右「甘」(<i class="cd">TM</i>) 為 <i class="cd">RTM</i>；「<b style="color:${C1}">喺</b>」（在）左「<b style="color:${C1}">口</b>」(<i class="ky">R</i>) 右「係」取 <i class="cd">OHF</i>（或 <i class="cd">OHVF</i>）。`],
+      ["輔助形 多口",C2,"品 / 器","RRR / RRIKR",`「<b style="color:${C2}">品</b>」三口疊為 <i class="cd">RRR</i>；「<b>器</b>」上雙口 (<i class="cd">RR</i>)、中犬 (<i class="cd">IK</i>)、底口 (<i class="ky">R</i>) 為 <i class="cd">RRIKR</i>。`],
+      ["輔助形 足旁",C3,"路","RMHER",`左足字旁「<b style="color:${C3}">⻊</b>」取首尾碼口一 (<i class="cd">RM</i>)，右「各」拆為竹水口 (<i class="cd">HER</i>)，組為 <i class="cd">RMHER</i>。`],
+      ["輔助形 口旁",C1,"叫 / 吃","RVL / RON",`左「<b style="color:${C1}">口</b>」取 (<i class="ky">R</i>)，右「丩」拆女中 (<i class="cd">VL</i>) 為 <i class="cd">RVL</i>（叫）；右「乞」拆人弓 (<i class="cd">ON</i>) 為 <i class="cd">RON</i>（吃）。`]
+    ],
+    adv:`• <b style="color:${C1}">香港粵語口部字速查寶典</b>：<br>　▸ <b>「咗」</b>(<i class="cd">RKM</i>)：口＋左 ｜ <b>「啲」</b>(<i class="cd">RHAI</i>)：口＋的 ｜ <b>「嘅」</b>(<i class="cd">RAIU</i>)：口＋既<br>　▸ <b>「嘢」</b>(<i class="cd">RWGN</i>)：口＋野 ｜ <b>「咩」</b>(<i class="cd">RTQ</i>)：口＋羊 ｜ <b>「喎」</b>(<i class="cd">RBBR</i>)：口＋咼`,
+    rhyme:"押韻：開／台／來，粵音 -oi 平聲",
+    poem:`<b style="color:${C1}">四方空心</b><i class="tr">口</i>字開，<b style="color:${C2}">三<i class="tr">口</i>聚品</b>上高台（<i class="ky">R</i>）。　<i class="tr">口</i><i class="cd">廿一</i>組「<b style="color:${C1}">咁</b>」三碼，<i class="tr">口</i><i class="cd">人竹女火</i>「<b style="color:${C1}">喺</b>」來。`
+  },
+  {
+    key:"S", rad:"尸", en:"Corpse", cat:"第 20 / 26 頁：字形類字根",
+    aux:[
+      {g:"匚匸", c:C1, title:"右開口三面框", desc:"向右開口方框（如：區、醫、匹、巨、臣）"},
+      {g:"彐コ", c:C2, title:"左開口折框", desc:"橫折向左開口（如：雪底、尋上、君上）"},
+      {g:"卩馬", c:C3, title:"單耳與馬/長首", desc:"直角橫折與三橫一豎（如：印右、駐左、長）"}
+    ],
+    slogan:`<span style="color:#ff5;font-weight:bold">屋宇尸框</span>、<span style="color:${C1};font-weight:bold">右開口框（區、巨、臣）</span>與<span style="color:${C2};font-weight:bold">左開口橫折</span>，統一歸入 <i class="ky">S</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">尸</b>」獨立出現時，只取一碼 <i class="ky">S</i>（作外框如「<b>局</b>」拆為尸尸口 <i class="cd">SSR</i>、「<b>居</b>」拆為尸十口 <i class="cd">SJR</i>）。`,
+      `<b><span style="color:${C1}">匚</span>（右開口框）：</b>向右開口的三面框（如「<b style="color:${C1}">區、匹、醫、匠、巨、臣</b>」），外框首碼一律取 <b>尸（<i class="ky">S</i>）</b>。`,
+      `<b><span style="color:${C2}">彐 / コ</span>（左開口橫折）與 <span style="color:${C3}">長 / 馬</span>首碼：</b>「<b style="color:${C3}">長</b>」（拆為尸一女 <i class="cd">SMV</i>）與「<b style="color:${C3}">馬</b>」（拆為尸手尸火 <i class="cd">SQSF</i>）左上方結構，首碼皆取 <b>尸（<i class="ky">S</i>）</b>！`
+    ],
+    examples:[
+      ["基本形 尸","#ff5","局 / 居","SSR / SJR",`外圍「<b class="tr">尸</b>」取尸 (<i class="ky">S</i>)，內接折框與口 (<i class="cd">SR</i>) 為 <i class="cd">SSR</i>（局）；內接「古」(<i class="cd">JR</i>) 為 <i class="cd">SJR</i>（居）。`],
+      ["輔助形 匚",C1,"區","SRRR",`外框右開口「<b style="color:${C1}">匚</b>」取尸 (<i class="ky">S</i>)，內部三個「口」取口口口 (<i class="cd">RRR</i>)，組為：尸口口口 (<i class="cd">SRRR</i>)。`],
+      ["輔助形 彐",C2,"雪","MBSM",`上字首「雨」取首尾碼一月 (<i class="cd">MB</i>)，下字身橫折「<b style="color:${C2}">彐</b>」拆為尸一 (<i class="cd">SM</i>)，組為：一月尸一 (<i class="cd">MBSM</i>)。`],
+      ["輔助形 馬",C3,"馬 / 駐","SQSF / SFYG",`「<b style="color:${C3}">馬</b>」拆尸手尸火 (<i class="cd">SQSF</i>)；「<b style="color:${C3}">駐</b>」左「<b style="color:${C3}">馬</b>」取首尾碼尸火 (<i class="cd">SF</i>)、右「主」(<i class="cd">YG</i>) 為 <i class="cd">SFYG</i>。`]
+    ],
+    adv:`• <b style="color:${C3}">香港字實戰 —「呃」（<i class="cd">RMSU</i>）與「駛」（<i class="cd">SFLK</i>）</b>：「<b>呃</b>」（欺騙）左「口」(<i class="ky">R</i>)，右「厄」上廠框 (<i class="ky">M</i>) 下單耳「<b style="color:${C3}">卩</b>」(<i class="cd">SU</i>)，拆為 <i class="cd">RMSU</i>；「<b>駛</b>」（駕駛）左「<b style="color:${C3}">馬</b>」取首尾尸火 (<i class="cd">SF</i>)、右「史」拆中大 (<i class="cd">LK</i>) 為 <i class="cd">SFLK</i>。<br>• <b>四種三面框方向</b>：右開「<b style="color:${C1}">匚</b>」與左開「<b style="color:${C2}">コ</b>」取尸 (<i class="ky">S</i>)；下開「<b>冂</b>」取月 (<i class="ky">B</i>)；上開「<b>凵</b>」取山 (<i class="ky">U</i>)。`,
+    rhyme:"押韻：開／台／來，粵音 -oi 平聲",
+    poem:`<b style="color:#ff5">屋宇</b><b style="color:${C1}">方框</b><i class="tr">尸</i>字開，<b style="color:${C1}">巨臣匹匠</b>入斯台（<i class="ky">S</i>）。　<i class="tr">尸</i><i class="cd">口口口</i>「<b style="color:${C1}">區</b>」四碼，<i class="tr">尸</i><i class="cd">十口</i>連「<b class="tr">居</b>」字來。`
+  },
+  {
+    key:"T", rad:"廿", en:"Twenty", cat:"第 21 / 26 頁：字形類字根",
+    aux:[
+      {g:"艹", c:C1, title:"草字頭", desc:"植物花卉頂部偏旁（如：花、草、茶、英）"},
+      {g:"䒑", c:C2, title:"羊頭／前頭", desc:"倒八雙點連一橫（如：羊、前、首、美上）"},
+      {g:"皿廾", c:C3, title:"皿底與雙豎托", desc:"底部並排多豎連橫（如：益、盒、算底、弄底）"}
+    ],
+    slogan:`<span style="color:${C1};font-weight:bold">綠草字頭</span>、<span style="color:${C2};font-weight:bold">羊頭雙點連橫</span>與<span style="color:${C3};font-weight:bold">皿字底托</span>，統一歸入 <i class="ky">T</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">廿</b>」獨立出現時，只取一碼 <i class="ky">T</i>（「<b>甘</b>」拆為廿一 <i class="cd">TM</i>，「<b>共</b>」拆為廿金 <i class="cd">TC</i>）。`,
+      `<b><span style="color:${C1}">艹</span>（草字頭）與 <span style="color:${C2}">䒑</span>（羊字頭）：</b>字頂的「<b style="color:${C1}">艹</b>」（如「花」、「英」）及倒八點緊連一橫的「<b style="color:${C2}">䒑</b>」（如「羊」、「前」、「首」頂部），一律取 <i class="ky">T</i>。`,
+      `<b><span style="color:${C3}">皿</span>（皿字底）：</b>位於字底的器皿框「<b style="color:${C3}">皿</b>」（如「盆」、「盒」、「盛」、「監」底部），整體直接取一碼 <b>廿（<i class="ky">T</i>）</b>！`
+    ],
+    examples:[
+      ["輔助形 艹",C1,"花 / 英","TOP / TLBK",`上草字頭「<b style="color:${C1}">艹</b>」取廿 (<i class="ky">T</i>)，下接「化」(<i class="cd">OP</i>) 為 <i class="cd">TOP</i>（花）；下接「央」(<i class="cd">LBK</i>) 為 <i class="cd">TLBK</i>（英）。`],
+      ["輔助形 䒑",C2,"前 / 美","TBLN / TGK",`上「<b style="color:${C2}">䒑</b>」取廿 (<i class="ky">T</i>)，「<b style="color:${C2}">前</b>」左下月 (<i class="ky">B</i>) 右下立刀拆中弓 (<i class="cd">LN</i>) 為 <i class="cd">TBLN</i>；「<b>美</b>」中土 (<i class="ky">G</i>) 下大 (<i class="ky">K</i>) 為 <i class="cd">TGK</i>。`],
+      ["輔助形 皿",C3,"盒 / 益","OMRT / TCT",`「<b style="color:${C3}">盒</b>」上「合」(<i class="cd">OMR</i>) 下「<b style="color:${C3}">皿</b>」(<i class="ky">T</i>) 為 <i class="cd">OMRT</i>；「<b style="color:${C3}">益</b>」上拆廿金 (<i class="cd">TC</i>) 下「<b style="color:${C3}">皿</b>」(<i class="ky">T</i>) 為 <i class="cd">TCT</i>。`],
+      ["輔助形 廾",C3,"弄","MGT",`上「王」拆為一土 (<i class="cd">MG</i>)，下雙豎橫托「<b style="color:${C3}">廾</b>」取廿 (<i class="ky">T</i>)，組為：一土廿 (<i class="cd">MGT</i>)。`]
+    ],
+    adv:`• <b style="color:${C1}">香港字實戰 —「茄」（<i class="cd">TKSR</i>）與「著」（<i class="cd">TJKA</i>）</b>：「<b>茄</b>」（番茄／雪茄）上「<b style="color:${C1}">艹</b>」(<i class="ky">T</i>) 下「加」(<i class="cd">KSR</i>) 為 <i class="cd">TKSR</i>；「<b>著</b>」（唔著數／著衫）上「<b style="color:${C1}">艹</b>」(<i class="ky">T</i>) 下「者」(<i class="cd">JKA</i>) 為 <i class="cd">TJKA</i>。<br>• <b>「立」字尾碼</b>：如「<b>粒</b>」(<i class="cd">FDYT</i>)、「<b>拉</b>」(<i class="cd">QYT</i>)，點橫下兩點連底橫，拆為卜廿 (<i class="cd">YT</i>)。`,
+    rhyme:"押韻：開／栽／來，粵音 -oi 平聲",
+    poem:`<b style="color:${C1}">綠草芳菲</b><i class="tr">廿</i>字開，<b style="color:${C2}">羊頭</b><b style="color:${C3}">皿底</b>此中栽（<i class="ky">T</i>）。　<i class="tr">廿</i><i class="cd">人心</i>組「<b style="color:${C1}">花</b>」三碼，<i class="tr">廿</i><i class="cd">月刀</i>排「<b style="color:${C2}">前</b>」字來。`
+  },
+  {
+    key:"U", rad:"山", en:"Mountain", cat:"第 22 / 26 頁：字形類字根",
+    aux:[
+      {g:"凵", c:C1, title:"上開口三面框", desc:"向上開口凹框（如：凶、出、畫底、擊底）"},
+      {g:"乚", c:C2, title:"儿字底豎彎鉤", desc:"右下角圓轉豎彎鉤（如：兒、見、元、先）"},
+      {g:"屮巳", c:C3, title:"出字與巳彎鉤", desc:"帶豎彎鉤部件（如：逆、包內、港右下）"}
+    ],
+    slogan:`<span style="color:#ff5;font-weight:bold">崇嶺三峰</span>、<span style="color:${C1};font-weight:bold">上開口凹框</span>與<span style="color:${C2};font-weight:bold">「儿」底右下豎彎鉤</span>，統一歸入 <i class="ky">U</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">山</b>」獨立出現時，只取一碼 <i class="ky">U</i>（雙山「<b>出</b>」拆為山山 <i class="cd">UU</i>）。`,
+      `<b><span style="color:${C1}">凵</span>（上開口三面框）：</b>向上開口的三面框「<b style="color:${C1}">凵</b>」（如「凶」拆山大 <i class="cd">UK</i>、「函」底），一律取山 (<i class="ky">U</i>)。`,
+      `<b><span style="color:${C2}">乚</span>（豎彎鉤）：</b>位於漢字右下角的圓轉豎彎鉤「<b style="color:${C2}">乚</b>」（如「<b>兒、元、先、見、光、兄</b>」的最末筆），尾碼 100% 取 <b>山（<i class="ky">U</i>）</b>！`
+    ],
+    examples:[
+      ["基本形 山","#ff5","峰 / 島","UHEJ / HAFU",`「<b class="tr">峰</b>」左「<b class="tr">山</b>」(<i class="ky">U</i>) 右「夆」(<i class="cd">HEJ</i>) 為 <i class="cd">UHEJ</i>；「<b>島</b>」上鳥省點取竹日火 (<i class="cd">HAF</i>)、下「<b class="tr">山</b>」(<i class="ky">U</i>) 為 <i class="cd">HAFU</i>。`],
+      ["輔助形 凵",C1,"凶","UK",`外框上開口「<b style="color:${C1}">凵</b>」取山 (<i class="ky">U</i>)，內部交叉「乂」取大 (<i class="ky">K</i>)，連為：山大 (<i class="cd">UK</i>)。`],
+      ["輔助形 乚",C2,"元 / 先","MMU / HGU",`「<b style="color:${C2}">元</b>」上二 (<i class="cd">MM</i>) 下儿尾「<b style="color:${C2}">乚</b>」(<i class="ky">U</i>) 為 <i class="cd">MMU</i>；「<b style="color:${C2}">先</b>」上竹土 (<i class="cd">HG</i>) 下儿尾「<b style="color:${C2}">乚</b>」(<i class="ky">U</i>) 為 <i class="cd">HGU</i>。`],
+      ["輔助形 屮",C3,"出","UU",`上半「<b style="color:${C3}">屮</b>」取山 (<i class="ky">U</i>)，下半亦取山 (<i class="ky">U</i>)，雙山疊為：山山 (<i class="cd">UU</i>)。`]
+    ],
+    adv:`• <b style="color:${C2}">香港字實戰 —「甩」（<i class="cd">BU</i>）與「靚」（<i class="cd">QBUU</i>）</b>：粵語「<b>甩</b>」（脫落／甩色），外框「月」取 <i class="ky">B</i>，右下豎彎鉤「<b style="color:${C2}">乚</b>」出頭取山 (<i class="ky">U</i>)，兩碼 <i class="cd">BU</i> 即成！<br>• <b>「乚」與「乙」區分</b>：圓轉向上的豎彎鉤「<b style="color:${C2}">乚</b>」取山 (<i class="ky">U</i>)；帶尖角折彎的「<b>乙 / 九</b>」斜鉤則取弓 (<i class="ky">N</i>)。`,
+    rhyme:"押韻：開／來／台，粵音 -oi 平聲",
+    poem:`<b style="color:#ff5">崇嶺三峰</b><b style="color:${C1}">向上開</b>，<b style="color:${C2}">兒底彎鉤</b>入 <i class="ky">U</i> 來。　<i class="cd">竹土</i><i class="tr">山</i>結「<b style="color:${C2}">先</b>」三碼，雙<i class="tr">山</i>相疊「<b style="color:${C3}">出</b>」登台。`
+  },
+  {
+    key:"V", rad:"女", en:"Woman", cat:"第 23 / 26 頁：字形類字根",
+    aux:[
+      {g:"ㄑ幺", c:C1, title:"撇折與三拐", desc:"折角撇折結構（如：幼左、鄉左、巡內）"},
+      {g:"糹", c:C2, title:"絞絲旁", desc:"全拆 VIF，作字首取女火 VF（如：紅、細、結）"},
+      {g:"㇂", c:C3, title:"衣底豎提捺", desc:"豎提加撇捺（如：衣底、良底、長底、辰底）"}
+    ],
+    slogan:`<i class="tr">女</i>字偏旁、<span style="color:${C1};font-weight:bold">撇折彎曲</span>、<span style="color:${C3};font-weight:bold">衣底豎提捺</span>與<span style="color:${C2};font-weight:bold">絞絲旁（<i class="cd">VF</i>）</span>，統一歸入 <i class="ky">V</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">女</b>」獨立出現時，只取一碼 <i class="ky">V</i>（合體字如「<b>好</b>」拆為女子 <i class="cd">VND</i>、「<b>如</b>」拆為女口 <i class="cd">VR</i>）。`,
+      `<b><span style="color:${C2}">糹</span>（絞絲旁關鍵規則）：</b>「<b style="color:${C2}">糹</b>」上半部為「幺」（女戈 <i class="cd">VI</i>），下半部為「小」（火 <i class="ky">F</i>）。在左側作字首時，依「字首最多取首尾兩碼」原則，<b>固定取首尾碼「女火」（<i class="cd">VF</i>）</b>！（單字「糸」或作字身時取全碼 <i class="cd">VIF</i>）。`,
+      `<b><span style="color:${C3}">㇂</span>（衣字底）：</b>「<b>衣、良、長、表、辰、展</b>」底部的豎提配撇捺，最末碼一律取 <b>女（<i class="ky">V</i>）</b>。`
+    ],
+    examples:[
+      ["基本形 女","#ff5","好 / 安","VND / JV",`「<b class="tr">好</b>」左「<b class="tr">女</b>」(<i class="ky">V</i>) 右「子」(<i class="cd">ND</i>) 為 <i class="cd">VND</i>；「<b>安</b>」上寶蓋 (<i class="ky">J</i>) 下「<b class="tr">女</b>」(<i class="ky">V</i>) 為 <i class="cd">JV</i>。`],
+      ["輔助形 ㄑ",C1,"幼","VIKS",`左「<b style="color:${C1}">幺</b>」由撇折加點拆為女戈 (<i class="cd">VI</i>)，右「力」拆為大尸 (<i class="cd">KS</i>)，組為：女戈大尸 (<i class="cd">VIKS</i>)。`],
+      ["輔助形 糹",C2,"紅 / 細","VFM / VFW",`左「<b style="color:${C2}">糹</b>」作字首取首尾碼女火 (<i class="cd">VF</i>)，右接「工」(<i class="ky">M</i>) 為 <i class="cd">VFM</i>（紅）；接「田」(<i class="ky">W</i>) 為 <i class="cd">VFW</i>（細）。`],
+      ["輔助形 ㇂",C3,"良 / 衣","IAV / YHV",`「<b style="color:${C3}">良</b>」頂點 (<i class="ky">I</i>)、中日 (<i class="ky">A</i>)、底「<b style="color:${C3}">㇂</b>」(<i class="ky">V</i>) 為 <i class="cd">IAV</i>；「<b style="color:${C3}">衣</b>」上卜 (<i class="ky">Y</i>)、左撇 (<i class="ky">H</i>)、底「<b style="color:${C3}">㇂</b>」(<i class="ky">V</i>) 為 <i class="cd">YHV</i>。`]
+    ],
+    adv:`• <b style="color:${C2}">香港字實戰 —「細」（<i class="cd">VFW</i>）與「紮」（<i class="cd">VFDU</i>）</b>：粵語「<b style="color:${C2}">細</b>」（小／細佬）左「<b style="color:${C2}">糹</b>」取女火 (<i class="cd">VF</i>)、右「田」取 (<i class="ky">W</i>)，三碼 <i class="cd">VFW</i> 即成；「<b>紮</b>」左上「<b style="color:${C2}">糹</b>」(<i class="cd">VF</i>)、右上「木」(<i class="ky">D</i>)、右下豎彎鉤取山 (<i class="ky">U</i>)，拆為 <i class="cd">VFDU</i>（亦兼容 <i class="cd">DUVIF</i>）。`,
+    rhyme:"押韻：連／邊／前，粵音 -in 平聲",
+    poem:`<b style="color:${C1}">撇折彎曲</b><i class="tr">女</i>相連（<i class="ky">V</i>），<b style="color:${C2}">糹旁</b>首尾<i class="tr">女</i><i class="cd">火</i>邊。　<i class="tr">女</i><i class="cd">火一</i>結「<b style="color:${C2}">紅</b>」三碼，<i class="tr">女</i><i class="cd">火田</i>配「<b style="color:${C2}">細</b>」當前。`
+  },
+  {
+    key:"W", rad:"田", en:"Field", cat:"第 24 / 26 頁：字形類字根",
+    aux:[
+      {g:"囗", c:C1, title:"國字大外框", desc:"四面封閉內包部件（如：國、圖、回、因）"},
+      {g:"罒", c:C2, title:"四字頭／網頭", desc:"扁方框內包筆畫（如：買上、罪上、羅上）"},
+      {g:"毋母", c:C3, title:"母字交叉框", desc:"方框內帶橫點（如：母、每底、貫上、毒底）"}
+    ],
+    slogan:`<span style="color:${C1};font-weight:bold">四面圍框內包部件（國字框）</span>，以及<span style="color:${C1};font-weight:bold">由、甲、申、電</span>等田字家族，統一歸入 <i class="ky">W</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">田</b>」獨立出現時，只取一碼 <i class="ky">W</i>（合體字如「<b>男</b>」拆為田大尸 <i class="cd">WKS</i>、「<b>界</b>」拆為田人中中 <i class="cd">WOLL</i>）。`,
+      `<b><span style="color:${C1}">囗</span>（國字大外框優先規則）：</b>凡四面封閉且內部包有字根的大方框（如「<b style="color:${C1}">國、圖、團、困、回</b>」），依照「由外至內」原則，<b>先取外框田（<i class="ky">W</i>），再拆內部部件</b>！`,
+      `<b><span style="color:${C2}">罒</span>（網字頭）：</b>「<b>四</b>」（拆為田金 <i class="cd">WC</i>）、「<b style="color:${C2}">買</b>」（上 <i class="ky">W</i> 下貝 <i class="cd">BUC</i> 為 <i class="cd">WBUC</i>）、「<b>罪</b>」（上 <i class="ky">W</i> 下非 <i class="cd">LMY</i> 為 <i class="cd">WLMY</i>），頂部扁框皆取 <i class="ky">W</i>。`
+    ],
+    examples:[
+      ["基本形 田","#ff5","男 / 留","WKS / HHW",`「<b class="tr">男</b>」上「<b class="tr">田</b>」(<i class="ky">W</i>) 下力 (<i class="cd">KS</i>) 為 <i class="cd">WKS</i>；「<b>留</b>」上卯刀取竹竹 (<i class="cd">HH</i>) 下「<b class="tr">田</b>」(<i class="ky">W</i>) 為 <i class="cd">HHW</i>。`],
+      ["輔助形 囗",C1,"國 / 回","WIRM / WR",`「<b style="color:${C1}">國</b>」外框「<b style="color:${C1}">囗</b>」取田 (<i class="ky">W</i>)，內「或」取首尾戈口一 (<i class="cd">IRM</i>) 為 <i class="cd">WIRM</i>；「<b>回</b>」外田 (<i class="ky">W</i>) 內口 (<i class="ky">R</i>) 為 <i class="cd">WR</i>。`],
+      ["輔助形 罒",C2,"買","WBUC",`上部網字頭「<b style="color:${C2}">罒</b>」取田 (<i class="ky">W</i>)（亦兼容 <i class="cd">WLBUC</i>），下部「貝」拆為月山金 (<i class="cd">BUC</i>)，組為：田月山金 (<i class="cd">WBUC</i>)。`],
+      ["輔助形 母",C3,"母 / 每","WYI / OWYI",`「<b style="color:${C3}">母</b>」外框取田 (<i class="ky">W</i>)、內部點橫拆卜戈 (<i class="cd">YI</i>) 為 <i class="cd">WYI</i>；「<b>每</b>」上臥人 (<i class="ky">O</i>) 下母 (<i class="cd">WYI</i>) 為 <i class="cd">OWYI</i>。`]
+    ],
+    adv:`• <b style="color:#ff5">香港字實戰 —「嘢」（<i class="cd">RWGN</i>）與「嬲」（<i class="cd">WSVWS</i>）</b>：港語「<b>嘢</b>」（東西），左「口」(<i class="ky">R</i>)，右「野」左邊「里」上為「<b class="tr">田</b>」(<i class="ky">W</i>) 下為土 (<i class="ky">G</i>)、右邊「予」取尾碼弓 (<i class="ky">N</i>)，全字拆為 <i class="cd">RWGN</i>；「<b>嬲</b>」（生氣／嬲爆爆）左右「男」(<i class="cd">WS</i>) 夾中「女」(<i class="ky">V</i>)，五碼為 <b><i class="cd">WSVWS</i></b>！`,
+    rhyme:"押韻：中／通／功，粵音 -ung 平聲",
+    poem:`<b style="color:${C1}">四面圍框</b>入<i class="tr">田</i>中（<i class="ky">W</i>），<b style="color:${C1}">由甲申電</b>一脈通。　<i class="tr">田</i><i class="cd">戈口一</i>「<b style="color:${C1}">國</b>」四碼，<i class="tr">田</i><i class="cd">月山金</i>「<b style="color:${C2}">買</b>」顯功。`
+  },
+  {
+    key:"Y", rad:"卜", en:"Oracle", cat:"第 25 / 26 頁：字形類字根",
+    aux:[
+      {g:"亠", c:C1, title:"點橫頭", desc:"一點加一平橫字頂（如：文、京、高、立首）"},
+      {g:"辶", c:C2, title:"走之旁", desc:"左下包圍，永遠優先作首碼取 Y（如：遠、道）"},
+      {g:"言", c:C3, title:"言字旁首碼", desc:"作字首取首尾卜口 YR（如：話、說、請、諗）"}
+    ],
+    slogan:`<span style="color:${C1};font-weight:bold">點橫高頂</span>、<span style="color:${C3};font-weight:bold">言字旁首碼</span>，以及永遠作第一碼的<span style="color:${C2};font-weight:bold">走之旁「辶」</span>，統一歸入 <i class="ky">Y</i> 鍵。`,
+    rules:[
+      `<b>基本形獨立成字：</b>鍵面字「<b class="tr">卜</b>」獨立出現時，只取一碼 <i class="ky">Y</i>（合體字如「<b>占</b>」拆為卜口 <i class="cd">YR</i>、「<b>上</b>」拆為卜一 <i class="cd">YM</i>）。`,
+      `<b><span style="color:${C1}">亠</span>（點橫頭）與 <span style="color:${C3}">言</span>字旁：</b>「<b style="color:${C3}">言</b>」字頂部為「<b style="color:${C1}">亠</b>」(<i class="ky">Y</i>)、中兩橫 (<i class="cd">MM</i>)、底「口」(<i class="ky">R</i>)，單字拆為 <i class="cd">YMMR</i>。在左側作字首時，依「字首取首尾兩碼」原則，<b>固定取首尾碼「卜口」（<i class="cd">YR</i>）</b>！`,
+      `<b><span style="color:${C2}">辶</span>（走之旁第一優先鐵律）：</b>凡帶有走之旁「<b style="color:${C2}">辶</b>」的字（如「這」、「遠」、「道」），<b>永遠先取外圍「辶」為第一碼 <i class="ky">Y</i></b>，再拆右上方被包圍部件！`
+    ],
+    examples:[
+      ["基本形 卜","#ff5","占 / 卡","YR / YMY",`「<b class="tr">占</b>」上「<b class="tr">卜</b>」(<i class="ky">Y</i>) 下口 (<i class="ky">R</i>) 為 <i class="cd">YR</i>；「<b>卡</b>」上卜一 (<i class="cd">YM</i>) 下「<b class="tr">卜</b>」(<i class="ky">Y</i>) 為 <i class="cd">YMY</i>。`],
+      ["輔助形 亠",C1,"京 / 高","YRF / YRBR",`上點橫頭「<b style="color:${C1}">亠</b>」取卜 (<i class="ky">Y</i>)，「<b>京</b>」中口 (<i class="ky">R</i>) 下小 (<i class="ky">F</i>) 為 <i class="cd">YRF</i>；「<b>高</b>」拆為卜口月口 (<i class="cd">YRBR</i>)。`],
+      ["輔助形 言",C3,"話 / 請","YRHJR / YRQMB",`左「<b style="color:${C3}">言</b>」取首尾碼卜口 (<i class="cd">YR</i>)，右接「舌」(<i class="cd">HJR</i>) 為 <i class="cd">YRHJR</i>（話）；接「青」(<i class="cd">QMB</i>) 為 <i class="cd">YRQMB</i>（請）。`],
+      ["輔助形 辶",C2,"遠 / 道","YGRV / YTHBU",`外圍「<b style="color:${C2}">辶</b>」先取第一碼卜 (<i class="ky">Y</i>)，「<b style="color:${C2}">遠</b>」內「袁」拆土口女 (<i class="cd">GRV</i>) 為 <i class="cd">YGRV</i>；「<b>道</b>」內「首」拆廿竹月山 (<i class="cd">THBU</i>) 為 <i class="cd">YTHBU</i>。`]
+    ],
+    adv:`• <b style="color:${C3}">香港字實戰 —「諗」（<i class="cd">YROIP</i>）與「講」（<i class="cd">YRTTB</i>）</b>：粵語「<b>諗</b>」（思考／諗法），左「<b style="color:${C3}">言</b>」取首尾碼卜口 (<i class="cd">YR</i>)，右「念」上「今」取人戈 (<i class="cd">OI</i>)、下「心」取 (<i class="ky">P</i>)，合為 <i class="cd">YROIP</i>；「<b>講</b>」（說話）左「<b style="color:${C3}">言</b>」(<i class="cd">YR</i>) 右「冓」(<i class="cd">TTB</i>)，合為 <i class="cd">YRTTB</i>。`,
+    rhyme:"押韻：開／來／台，粵音 -oi 平聲",
+    poem:`<b style="color:${C1}">點橫高頂</b><i class="tr">卜</i>字開，<b style="color:${C2}">走之</b><b style="color:${C3}">言旁</b>第一來（<i class="ky">Y</i>）。　<i class="tr">卜</i><i class="cd">口竹十口</i>「<b style="color:${C3}">話</b>」字，<i class="tr">卜</i><i class="cd">土口女</i>「<b style="color:${C2}">遠</b>」登台。`
+  },
+  {
+    type:"summary",
+    badge:"第 26 / 26 頁：全書總結與拆碼心法",
+    rightTag:"取碼原則與香港字速查表"
+  }
+];
+
+/* 渲染索引總目錄頁（curPage = -1） */
+function renderIndexHTML(){
+  return `
+    <div class="sub-win-title">
+      <div><span>📖 倉頡入門與拆字指南 — 總目錄索引</span><span class="category-badge">全書 26 頁導航</span></div>
+      <span style="font-size:12px;color:#5ff">點擊字根卡片或按鍵盤字母 <i style="color:#0ff;font-style:normal">A-Y</i> 直接進入</span>
+    </div>
+    <div class="idx-board">
+      <div class="rad-grid cols-2">
+        <div class="rad-card intro-card" onclick="goPage(0)">
+          <span class="rk">[P.01]</span>
+          <span class="rc">📘 引言：倉頡與香港字拆碼全書總覽</span>
+        </div>
+        <div class="rad-card intro-card" onclick="goPage(25)">
+          <span class="rk">[P.26]</span>
+          <span class="rc">🎓 總結：高頻部首首尾碼與香港字口袋卡</span>
+        </div>
+      </div>
+
+      <div class="cat-group">
+        <div class="cat-header" style="color:#ff5"><span>▶ 哲理類字根（A ～ G 鍵）</span><span style="font-size:11px;color:#aaa">日月金木水火土</span></div>
+        <div class="rad-grid">
+          <div class="rad-card" onclick="goPage(1)"><span class="rk">A</span><span class="rc">日</span><span class="rs">曰 門 ⺜</span></div>
+          <div class="rad-card" onclick="goPage(2)"><span class="rk">B</span><span class="rc">月</span><span class="rs">⺼ 冂 目貝豸</span></div>
+          <div class="rad-card" onclick="goPage(3)"><span class="rk">C</span><span class="rc">金</span><span class="rs">釒 八 丷</span></div>
+          <div class="rad-card" onclick="goPage(4)"><span class="rk">D</span><span class="rc">木</span><span class="rs">朩 寸 皮</span></div>
+          <div class="rad-card" onclick="goPage(5)"><span class="rk">E</span><span class="rc">水</span><span class="rs">氵 氺 又叉</span></div>
+          <div class="rad-card" onclick="goPage(6)"><span class="rk">F</span><span class="rc">火</span><span class="rs">灬 ⺌ 小</span></div>
+          <div class="rad-card" onclick="goPage(7)"><span class="rk">G</span><span class="rc">土</span><span class="rs">士 土旁</span></div>
+        </div>
+      </div>
+
+      <div class="cat-group">
+        <div class="cat-header" style="color:#5f5"><span>▶ 筆畫類字根（H ～ N 鍵）</span><span style="font-size:11px;color:#aaa">竹戈十大中一弓</span></div>
+        <div class="rad-grid">
+          <div class="rad-card" onclick="goPage(8)"><span class="rk">H</span><span class="rc">竹</span><span class="rs">⺮ 丿 彡</span></div>
+          <div class="rad-card" onclick="goPage(9)"><span class="rk">I</span><span class="rc">戈</span><span class="rs">丶 广 厶</span></div>
+          <div class="rad-card" onclick="goPage(10)"><span class="rk">J</span><span class="rc">十</span><span class="rs">宀 十字</span></div>
+          <div class="rad-card" onclick="goPage(11)"><span class="rk">K</span><span class="rc">大</span><span class="rs">乂 ナ 疒</span></div>
+          <div class="rad-card" onclick="goPage(12)"><span class="rk">L</span><span class="rc">中</span><span class="rs">丨 川巾 衤</span></div>
+          <div class="rad-card" onclick="goPage(13)"><span class="rk">M</span><span class="rc">一</span><span class="rs">厂 工王 ㇀</span></div>
+          <div class="rad-card" onclick="goPage(14)"><span class="rk">N</span><span class="rc">弓</span><span class="rs">亅 乛 阝</span></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:4fr 6fr;gap:8px">
+        <div class="cat-group">
+          <div class="cat-header" style="color:#0ff"><span>▶ 人體類（O ～ R）</span><span style="font-size:11px;color:#aaa">人心手口</span></div>
+          <div class="rad-grid cols-4">
+            <div class="rad-card" onclick="goPage(15)"><span class="rk">O</span><span class="rc">人</span><span class="rs">亻 𠆢 𠂉</span></div>
+            <div class="rad-card" onclick="goPage(16)"><span class="rk">P</span><span class="rc">心</span><span class="rs">忄 勹 匕</span></div>
+            <div class="rad-card" onclick="goPage(17)"><span class="rk">Q</span><span class="rc">手</span><span class="rs">扌 龶 牜</span></div>
+            <div class="rad-card" onclick="goPage(18)"><span class="rk">R</span><span class="rc">口</span><span class="rs">口 品 ⻊</span></div>
+          </div>
+        </div>
+        <div class="cat-group">
+          <div class="cat-header" style="color:#fa5"><span>▶ 字形類（S ～ Y）</span><span style="font-size:11px;color:#aaa">尸廿山女田卜</span></div>
+          <div class="rad-grid cols-6">
+            <div class="rad-card" onclick="goPage(19)"><span class="rk">S</span><span class="rc">尸</span><span class="rs">匚 彐 卩馬</span></div>
+            <div class="rad-card" onclick="goPage(20)"><span class="rk">T</span><span class="rc">廿</span><span class="rs">艹 䒑 皿廾</span></div>
+            <div class="rad-card" onclick="goPage(21)"><span class="rk">U</span><span class="rc">山</span><span class="rs">凵 乚 屮</span></div>
+            <div class="rad-card" onclick="goPage(22)"><span class="rk">V</span><span class="rc">女</span><span class="rs">ㄑ 糹 ㇂</span></div>
+            <div class="rad-card" onclick="goPage(23)"><span class="rk">W</span><span class="rc">田</span><span class="rs">囗 罒 母</span></div>
+            <div class="rad-card" onclick="goPage(24)"><span class="rk">Y</span><span class="rc">卜</span><span class="rs">亠 辶 言</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed #5ff;padding-top:4px;font-size:12px;color:#aaa;flex-shrink:0">
+      <span>特殊功能鍵：<b style="color:#ff80ab">X 難</b>（難字部件替代 <i style="color:#fa5;font-style:normal"> </i>）｜<b style="color:#5f5">Z 重</b>（標點/測驗萬用 <i style="color:#fa5;font-style:normal"> </i>）</span>
+      <span style="color:#5ff">按鍵盤 <i style="color:#0ff;font-style:normal">Enter</i> 或 <i style="color:#0ff;font-style:normal">→</i> 即可由引言開始依序閱讀</span>
+    </div>
+  `;
+}
+
+/* 渲染引言頁（curPage = 0） */
+function renderIntroHTML(){
+  return `
+    <div class="sub-win-title">
+      <div><span>📖 倉頡入門與拆字指南</span><span class="category-badge">第 1 / 26 頁：全書引言與鍵位總覽</span></div>
+      <span style="font-size:14px;color:#aaa">標準倉頡與香港字校訂版</span>
+    </div>
+    <div class="tut-content">
+      <div class="tut-h y" style="margin-top:2px">▶ 倉頡與香港字拆碼宗旨</div>
+      <div style="font-size:13px;margin-top:2px">
+        本教材專為《快快快樂學倉頡》量身編訂，全面採用標準漢字字形與香港電腦漢字參考字形拆碼規範。每個英文字母除鍵面上的<b>基本字形</b>外，亦涵蓋由其演變而來的<b>輔助字形</b>；凡廿四個鍵面基本字根獨立成字時，一律只取該鍵一碼（日=<i class="ky">A</i>｜月=<i class="ky">B</i>｜金=<i class="ky">C</i>…）。此外，針對日常極高頻的<b>香港粵語字</b>（如：<i class="ch">啲、嘅、冇、係、喺、咁、睇、靚、攞</i>等），各章節均設有專屬拆碼指引！
+      </div>
+
+      <div class="tut-h g">▶ 廿四基本字根四大分類總覽（<i class="ky">A</i> ～ <i class="ky">Y</i> 鍵）</div>
+      <div class="cat-overview-grid">
+        <div class="cat-box" style="border-color:#ff5"><b style="color:#ff5">① 哲理類（A-G）</b>日月金木水火土<br><span style="color:#aaa">宇宙自然七大元素</span></div>
+        <div class="cat-box" style="border-color:#5f5"><b style="color:#5f5">② 筆畫類（H-N）</b>竹戈十大中一弓<br><span style="color:#aaa">漢字七種基礎筆畫</span></div>
+        <div class="cat-box" style="border-color:#0ff"><b style="color:#0ff">③ 人體類（O-R）</b>人心手口<br><span style="color:#aaa">人身重要器官姿態</span></div>
+        <div class="cat-box" style="border-color:#fa5"><b style="color:#fa5">④ 字形類（S-Y）</b>尸廿山女田卜<br><span style="color:#aaa">常見外框結構特徵</span></div>
+      </div>
+
+      <div class="tut-h c">▶ 特殊功能鍵用法：<span style="color:#ff80ab">X（難）</span>與 <span style="color:#5f5">Z（重）</span></div>
+      <div class="xz-grid">
+        <div class="xz-card" style="border-color:#ff80ab">
+          <div class="xz-glyph-box" style="border-color:#ff80ab">
+            <span class="xz-glyph" style="color:#ff80ab">難</span>
+            <span class="xz-key" style="color:#ff80ab">X 鍵</span>
+          </div>
+          <div style="font-size:12.5px;line-height:1.55">
+            <b style="color:#ff80ab">【X 難】難字與重碼區分鍵：</b><br>
+            • <b>難字部件替代：</b>內部筆畫交錯繁複的特殊結構以 <i class="ky">X</i> 取代，如「<i class="ch">臼</i>」拆竹難 (<i class="cd">HX</i>，如兒 <i class="cd">HXHU</i>、與 <i class="cd">HXYC</i>)、「<i class="ch">身</i>」(<i class="cd">HXH</i>)、「<i class="ch">肅</i>」(<i class="cd">LX</i>)、「<i class="ch">齊</i>」(<i class="cd">YX</i>)。<br>
+            • <b>獨立成字：</b>「<i class="ch">難</i>」字本身拆為廿人人土 (<i class="cd">TOOG</i>)。
+          </div>
+        </div>
+        <div class="xz-card" style="border-color:#5f5">
+          <div class="xz-glyph-box" style="border-color:#5f5">
+            <span class="xz-glyph" style="color:#5f5">重</span>
+            <span class="xz-key" style="color:#5f5">Z 鍵</span>
+          </div>
+          <div style="font-size:12.5px;line-height:1.55">
+            <b style="color:#5f5">【Z 重】萬用通配與標點鍵：</b><br>
+            • <b>測驗萬用通配符（<i class="ky">*</i>）：</b>忘記某位字根時可用 <i class="ky">Z</i> 代替未知字母（如輸入 <i class="cd">A</i><i class="ky">Z</i><i class="cd">DI</i> 可檢索「<i class="ch">時</i>」），再以數字鍵選字。<br>
+            • <b>獨立成字：</b>「<i class="ch">重</i>」字本身拆為竹十田土 (<i class="cd">HJWG</i>)。
+          </div>
+        </div>
+      </div>
+
+      <div class="tut-h o">▶ 全書結構與導航操作</div>
+      <div style="font-size:13px;margin-top:2px">
+        • 全書共 <b>26 頁</b>：引言（第 1 頁）＋ 廿四字根專頁（<i class="ky">A</i> 日 ～ <i class="ky">Y</i> 卜，第 2-25 頁）＋ 總結心法（第 26 頁）。<br>
+        • 每頁皆附<b>放大主字根與同色輔助字形卡</b>、<b>實戰例字與香港字拆碼</b>及<b>單行粵語七言口訣詩</b>；隨時按底部左下角<b>［Esc 索引］</b>或鍵盤 <i class="ky">Esc</i> / <i class="ky">I</i> 即可返回總目錄跳轉。
+      </div>
+    </div>
+  `;
+}
+
+/* 渲染總結頁（curPage = 25） */
+function renderSummaryHTML(){
+  return `
+    <div class="sub-win-title">
+      <div><span>📖 倉頡入門與拆字指南</span><span class="category-badge">第 26 / 26 頁：全書總結與拆碼心法</span></div>
+      <span style="font-size:14px;color:#aaa">取碼原則與香港字速查表</span>
+    </div>
+    <div class="tut-content">
+      <div class="tut-h y" style="margin-top:2px">▶ 倉頡取碼次序與分體鐵律</div>
+      <div style="font-size:13px;margin-top:2px">
+        • <b>視覺幾何分割（非筆順）：</b>嚴格依「<b>由上至下、由左至右、由外至內</b>」取碼（唯獨走之旁「<b style="color:${C2}">辶</b>」永遠優先作第一碼 <i class="ky">Y</i>）。<br>
+        • <b>連體字（最多取 4 碼）：</b>取「<b>首、次、三、尾</b>」四碼（不足四碼則全取，如「<i class="ch">身</i>」取 <i class="cd">HXH</i>、「<i class="ch">車</i>」取 <i class="cd">JWJ</i>）。<br>
+        • <b>合體字（最多取 5 碼）：</b>分為「<b>字首</b>」（最上、最左或最外獨立部首，最多取<b>首尾 2 碼</b>，如「言」取 <i class="cd">YR</i>、「門」取 <i class="cd">AN</i>、「糹」取 <i class="cd">VF</i>、「貝」取 <i class="cd">BC</i>）與「<b>字身</b>」（其餘部分，最多取 <b>3 碼</b>）。
+      </div>
+
+      <div class="tut-h g">▶ 高頻部首「字首首尾碼」速查總表</div>
+      <table class="retro-table">
+        <thead>
+          <tr><th>常用部首</th><th>字首取碼</th><th>單字全碼</th><th>拆解結構記憶法</th><th>代表例字（標準碼）</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b style="color:${C1};font-size:15px">言（訁）</b></td>
+            <td><b style="color:#ff5;font-family:Consolas">YR</b>（卜口）</td>
+            <td>YMMR</td>
+            <td style="text-align:left">頂點橫「亠」(<i class="ky">Y</i>) ＋ 底「口」(<i class="ky">R</i>)</td>
+            <td style="text-align:left">話 (<i class="cd">YRHJR</i>)、說 (<i class="cd">YRCRU</i>)、諗 (<i class="cd">YROIP</i>)</td>
+          </tr>
+          <tr>
+            <td><b style="color:${C2};font-size:15px">糹（糸）</b></td>
+            <td><b style="color:#ff5;font-family:Consolas">VF</b>（女火）</td>
+            <td>VIF</td>
+            <td style="text-align:left">上「幺」首筆撇折 (<i class="ky">V</i>) ＋ 底「小」(<i class="ky">F</i>)</td>
+            <td style="text-align:left">紅 (<i class="cd">VFM</i>)、結 (<i class="cd">VFGR</i>)、細 (<i class="cd">VFW</i>)</td>
+          </tr>
+          <tr>
+            <td><b style="color:${C3};font-size:15px">門 / 釒</b></td>
+            <td><b style="color:#ff5;font-family:Consolas">AN / C</b></td>
+            <td>AN / C</td>
+            <td style="text-align:left">門=左上日 (<i class="ky">A</i>)＋右下鉤 (<i class="ky">N</i>)｜釒=直取一碼金 (<i class="ky">C</i>)</td>
+            <td style="text-align:left">間 (<i class="cd">ANA</i>)、開 (<i class="cd">ANMT</i>)、銅 (<i class="cd">CBMR</i>)、錢 (<i class="cd">CII</i>)</td>
+          </tr>
+          <tr>
+            <td><b style="color:#ff5;font-size:15px">貝 / 豸</b></td>
+            <td><b style="color:#ff5;font-family:Consolas">BC / BH</b></td>
+            <td>BUC / BSHH</td>
+            <td style="text-align:left">貝=上目框 (<i class="ky">B</i>)＋底八 (<i class="ky">C</i>)｜豸=上爪 (<i class="ky">B</i>)＋下撇 (<i class="ky">H</i>)</td>
+            <td style="text-align:left">財 (<i class="cd">BCDH</i>)、賺 (<i class="cd">BCTXC</i>)、貓 (<i class="cd">BHTW</i>)、貌 (<i class="cd">BHHAU</i>)</td>
+          </tr>
+          <tr>
+            <td><b style="color:${C1};font-size:15px">車 / 馬 / 飠</b></td>
+            <td><b style="color:#ff5;font-family:Consolas">JJ / SF / OI</b></td>
+            <td>JWJ / SQSF</td>
+            <td style="text-align:left">車=上下十 (<i class="cd">JJ</i>)｜馬=尸火 (<i class="cd">SF</i>)｜飠=人戈 (<i class="cd">OI</i>)</td>
+            <td style="text-align:left">較 (<i class="cd">JJYCK</i>)、駐 (<i class="cd">SFYG</i>)、飯 (<i class="cd">OIHE</i>)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="tut-h o" style="margin-top:7px">🇭🇰 香港粵語最常用 12 字拆碼口袋卡</div>
+      <div class="adv-aux-box">
+        • <b style="color:#ff5">啲</b> <i class="cd">RHAI</i>（口＋白＋勺）｜ <b style="color:#ff5">嘅</b> <i class="cd">RAIU</i>（口＋艮＋旡）｜ <b style="color:#ff5">喺</b> <i class="cd">ROHF</i> / <i class="cd">ROHVF</i>（口＋亻＋系）｜ <b style="color:#ff5">咁</b> <i class="cd">RTM</i>（口＋甘）<br>
+        • <b style="color:#0ff">咗</b> <i class="cd">RKM</i>（口＋左）　　｜ <b style="color:#0ff">唔</b> <i class="cd">RMMR</i>（口＋五＋口）｜ <b style="color:#0ff">冇</b> <i class="cd">KB</i>（ナ＋冂）　　　｜ <b style="color:#0ff">係</b> <i class="cd">OHVF</i>（亻＋系）<br>
+        • <b style="color:#5f5">佢</b> <i class="cd">OSS</i>（亻＋巨）　　｜ <b style="color:#5f5">睇</b> <i class="cd">BUCNH</i>（目＋弟）　 ｜ <b style="color:#5f5">靚</b> <i class="cd">QBUU</i>（青＋見）　　｜ <b style="color:#5f5">攞</b> <i class="cd">QWLG</i>（扌＋羅）
+      </div>
+    </div>
+  `;
+}
+
+/* 渲染單一字根教學頁（curPage = 1..24） */
+function renderRadicalHTML(p){
+  const auxHtml = p.aux.map(a=>`
+    <div class="aux-chip" style="border-color:${a.c}">
+      <span class="aux-glyph" style="color:${a.c}">${a.g}</span>
+      <div class="aux-desc"><b style="color:${a.c}">${a.title}</b>${a.desc}</div>
+    </div>
+  `).join("");
+
+  const rulesHtml = p.rules.map(r=>`• ${r}`).join("<br>");
+
+  const exRows = p.examples.map(e=>`
+    <tr>
+      <td><span class="aux-pill-mini" style="color:${e[1]};border:1px solid ${e[1]}">${e[0]}</span></td>
+      <td><span style="font-size:18px;color:${e[1]};font-weight:bold">${e[2]}</span></td>
+      <td>${e[3]}</td>
+      <td style="text-align:left">${e[4]}</td>
+    </tr>
+  `).join("");
+
+  return `
+    <div class="sub-win-title">
+      <div><span>📖 倉頡入門與拆字指南</span><span class="category-badge">${p.cat}</span></div>
+      <span style="font-size:14px;color:#aaa">[<i style="color:#0ff;font-style:normal">${p.key}</i> 鍵] ${p.rad} (${p.en})</span>
+    </div>
+
+    <div class="tut-content">
+      <div class="rad-hero-box">
+        <div class="rad-main-card">
+          <div class="rad-big-char">${p.rad}</div>
+          <div class="rad-key-tag">${p.key} 鍵</div>
+        </div>
+        <div class="rad-right-panel">
+          <div style="font-size:13.5px;color:#ff5;font-weight:bold">輔助字形（全部同歸 <span style="color:#0ff">${p.key} 鍵</span>）：</div>
+          <div class="aux-showcase-row">${auxHtml}</div>
+          <div style="font-size:12px;color:#5ff">💡 核心口訣：${p.slogan}</div>
+        </div>
+      </div>
+
+      <div class="tut-h y">▶ 字根取碼細節與延伸規範</div>
+      <div style="font-size:13px;margin-top:2px">${rulesHtml}</div>
+
+      <div class="tut-h g" style="margin-top:6px">▶ 全字形實戰拆字範例（涵蓋基本形與全部輔助形）</div>
+      <table class="retro-table">
+        <thead>
+          <tr><th>對應字形</th><th>漢字</th><th>標準倉頡碼</th><th>結構拆解與詳細說明</th></tr>
+        </thead>
+        <tbody>${exRows}</tbody>
+      </table>
+
+      <div class="tut-h c" style="margin-top:7px">▶ 進階偏旁對應與香港字拆碼</div>
+      <div class="adv-aux-box">${p.adv}</div>
+
+      <div class="poem-line-box">${p.poem}</div>
+    </div>
+  `;
+}
+
+/* 狀態與導航控制（curPage = -1 為總目錄索引；0..25 為第 1..26 頁） */
+let curPage = -1;
+
+/* 返回主程式 index.html（同時相容 iframe postMessage、opener 與同視窗相對路徑跳轉） */
+function exitToMainApp(){
+  if(window.parent && window.parent !== window){
+    window.parent.postMessage({type:"closeTutorial", action:"closeTutorial"}, "*");
+    window.parent.postMessage("closeTutorial", "*");
+    return;
+  }
+  if(window.opener && window.opener !== window && !window.opener.closed){
+    window.close();
+    return;
+  }
+  window.location.href = "index.html";
+}
+
+function goPage(idx){
+  curPage = idx;
+  const win = document.getElementById("mainWin");
+  const btnEsc = document.getElementById("btnEscIdx");
+  const btnPrev = document.getElementById("btnPrevPage");
+  const btnNext = document.getElementById("btnNextPage");
+  const hint = document.getElementById("footerHint");
+
+  if(curPage === -1){
+    win.innerHTML = renderIndexHTML();
+    btnEsc.textContent = "Esc [主選單]";
+    btnPrev.textContent = "◀ 總結";
+    btnNext.textContent = "開始學習 ▶";
+    hint.textContent = "點擊字根卡片或按 A-Y 進入 ｜ Esc 返回主選單 (index.html)";
+    if(history.replaceState) history.replaceState(null, "", location.pathname);
+  } else {
+    const p = PAGES[curPage];
+    if(p.type === "intro") win.innerHTML = renderIntroHTML();
+    else if(p.type === "summary") win.innerHTML = renderSummaryHTML();
+    else win.innerHTML = renderRadicalHTML(p);
+
+    btnEsc.textContent = "Esc [索引]";
+    btnPrev.textContent = curPage === 0 ? "◀ 返回索引" : "◀ 上一頁";
+    btnNext.textContent = curPage === PAGES.length - 1 ? "返回索引 ▶" : "下一頁 ▶";
+    hint.textContent = `第 ${curPage + 1} / 26 頁 ｜ Esc 返回索引 ｜ ← → 切換上下頁`;
+    const hashTag = p.key ? p.key : (p.type === "intro" ? "INTRO" : "SUMMARY");
+    if(history.replaceState) history.replaceState(null, "", "#" + hashTag);
+  }
+}
+
+function prevPage(){
+  if(curPage === -1) goPage(PAGES.length - 1);
+  else if(curPage === 0) goPage(-1);
+  else goPage(curPage - 1);
+}
+
+function nextPage(){
+  if(curPage === -1) goPage(0);
+  else if(curPage >= PAGES.length - 1) goPage(-1);
+  else goPage(curPage + 1);
+}
+
+document.getElementById("btnEscIdx").addEventListener("click", () => {
+  if(curPage === -1) exitToMainApp();
+  else goPage(-1);
+});
+document.getElementById("btnPrevPage").addEventListener("click", prevPage);
+document.getElementById("btnNextPage").addEventListener("click", nextPage);
+
+/* 鍵盤控制：內頁按 Esc 返回索引目錄，在索引目錄再按 Esc 即返回主程式 index.html */
+window.addEventListener("keydown", e => {
+  if(e.ctrlKey || e.metaKey || e.altKey) return;
+  if(e.key === "Escape"){
+    e.preventDefault();
+    if(curPage === -1) exitToMainApp();
+    else goPage(-1);
+  } else if(e.key === "ArrowRight" || e.key === "Enter" || e.key === "PageDown"){
+    e.preventDefault();
+    nextPage();
+  } else if(e.key === "ArrowLeft" || e.key === "PageUp"){
+    e.preventDefault();
+    prevPage();
+  } else if(curPage === -1 && /^[a-wy]$/i.test(e.key)){
+    const k = e.key.toUpperCase();
+    const idx = PAGES.findIndex(p => p.key === k);
+    if(idx !== -1){ e.preventDefault(); goPage(idx); }
+  }
+});
+
+/* 畫面自適應縮放 */
+function scaleScreen(){
+  const el = document.getElementById("dosScreen");
+  if(!el) return;
+  const W = window.innerWidth, H = window.innerHeight;
+  const sc = Math.min((W - 12) / 960, (H - 12) / 540);
+  el.style.transform = `scale(${Math.max(0.25, sc).toFixed(4)})`;
+}
+window.addEventListener("resize", scaleScreen);
+scaleScreen();
+
+/* 支援網址 Hash（如 #A、#Q、#INTRO、#SUMMARY）初始化與動態切換 */
+function applyHashRoute(){
+  const h = location.hash.replace("#","").toUpperCase();
+  if(!h){ goPage(-1); return; }
+  if(h === "INTRO" || h === "01" || h === "1"){ goPage(0); return; }
+  if(h === "SUMMARY" || h === "26"){ goPage(25); return; }
+  const idx = PAGES.findIndex(p => p.key === h);
+  goPage(idx !== -1 ? idx : -1);
+}
+window.addEventListener("hashchange", applyHashRoute);
+applyHashRoute();
+</script>
+</body>
+</html>
