@@ -786,8 +786,11 @@ async function downloadRemoteLatest(){
     if (!branch) { sfxToast("❌ 無法連接專案網址——請手動前往 GitHub 專案主頁", true); return; }
     try { const r = await fetch(repo + branch + "/index.html", { cache: "no-store" }); if (r.ok) { await downloadBlob(await r.blob(), "index.html"); ok++; } } catch(e){}
     await new Promise(res => setTimeout(res, 600));
-    for (const name of ["generator.html", "generator2.html", "generator/index.html", "tutorial.html"]) {
-      try { const r = await fetch(repo + branch + "/" + name, { cache: "no-store" }); if (r.ok) { await downloadBlob(await r.blob(), "generator.html", "tutorial.html"); ok++; break; } } catch(e){}
+    for (const name of ["generator.html", "generator2.html", "generator/index.html"]) {
+      try { const r = await fetch(repo + branch + "/" + name, { cache: "no-store" }); if (r.ok) { await downloadBlob(await r.blob(), "generator.html"); ok++; break; } } catch(e){}
+    }
+    for (const name of ["tutorial.html"]) {
+      try { const r = await fetch(repo + branch + "/" + name, { cache: "no-store" }); if (r.ok) { await downloadBlob(await r.blob(), "tutorial.html"); ok++; break; } } catch(e){}
     }
     if (ok >= 1) sfxToast(`✅ 已從專案下載 ${ok} 個檔案`, true);
     else sfxToast("❌ 下載失敗——請手動前往 GitHub 專案主頁", true);
