@@ -238,7 +238,7 @@ html.js #jsNote{display:none}
 • 排行榜成績<b>只儲存在本機瀏覽器內（localStorage）</b>，不會上傳到任何伺服器，也不會同步到其他裝置或瀏覽器。<br>• 換裝置、換瀏覽器（或經不同方式開啟，如內建瀏覽器 vs Safari）所見的排行榜互不相通。<br>• 若清除瀏覽器的「網站資料／歷史記錄」，排行榜紀錄即會消失，請自行留意外。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 其他</div>
 • 畫面底部之 Enter／Esc／↑↓ 按鈕等同實體鍵盤；偵測到實體鍵盤輸入後，虛擬鍵盤自動隱藏，<b>再點觸螢幕即自動喚回</b>——實體／虛擬鍵盤可隨時交替使用，毋須重新整理。<br>• 主選單第 7 項「音效」之方格亮燈（青點）即代表音效開啟。
-<div style="margin-top:14px;text-align:right"><span style="color:#888;font-family:Consolas,monospace;margin-right:16px">v0.825</span><a href="https://github.com/ck-from-hk/-" target="_blank" rel="noopener" style="color:#5ff;font-weight:bold;text-decoration:none">🔗 專案主頁</a></div>
+<div style="margin-top:14px;text-align:right"><span style="color:#888;font-family:Consolas,monospace;margin-right:16px">v0.88</span><a href="https://github.com/ck-from-hk/-" target="_blank" rel="noopener" style="color:#5ff;font-weight:bold;text-decoration:none">🔗 專案主頁</a></div>
 </div>
 <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px">
 <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -532,6 +532,16 @@ function setView(v,opt={}){
 }
 function menuAction(i){
   if(i!==7)sound.key();
+  if(i===2){
+    const f="tutorial.html"; // 主程式改寫
+    const s=document.createElement("script"),oldErr=window.onerror;
+    const fin=ok=>{window.onerror=oldErr;s.remove();ok?location.href=f:setView("TUTORIAL")};
+    window.onerror=()=>true; // 暫時靜音 HTML 的 "<" 語法報錯
+    s.onload=()=>fin(true);  // 檔案存在才會觸發 onload -> 跳轉外部教學！
+    s.onerror=()=>fin(false);// 檔案不存在必觸發 onerror -> 開內置教學！
+    s.src=f;
+    return document.head.appendChild(s);
+  }
   const m=["","ABOUT","TUTORIAL","PRACTICE","EXAM_SETUP","QUERY","LEADERBOARD"];
   if(i>=1&&i<=6)setView(m[i]);
   else if(i===7){
