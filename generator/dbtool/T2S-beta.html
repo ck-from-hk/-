@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>繁簡異體字比對與格式化工具 v0.825b — 快快快樂學簡倉配套工具</title>
+<title>繁簡異體字比對與格式化工具 — 快快快樂學簡倉配套工具</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#111;color:#fff;font-family:"BiauKaiHK","DFKai-SB","標楷體","Microsoft JhengHei",Consolas,monospace;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:18px 10px}
@@ -54,7 +54,7 @@ input[type=file]{font-size:12px;max-width:240px}
       <div class="dos-main-title">繁簡異體字比對與格式化工具</div>
       <div class="magenta-double-line"></div>
     </div>
-    <span style="color:#5ff;font-size:12px;font-family:Consolas,monospace">v0.825b</span>
+    <span style="color:#5ff;font-size:12px;font-family:Consolas,monospace">0.88</span>
   </div>
 
   <div class="dos-stage">
@@ -65,38 +65,38 @@ input[type=file]{font-size:12px;max-width:240px}
         <span style="font-size:12px;color:#444">主來源：lqfeng (通用規範漢字表) ＋ 副來源：jaywcjlove</span>
       </div>
 
+      <div class="file-cell" style="background:#b0b0b0;padding:6px 10px;border:1px inset #808080;margin-bottom:8px;justify-content:space-between">
+        <div class="file-cell">
+          <b style="color:#000080">📚 權威基準庫狀態：</b>
+          <span id="dbStatus" style="font-size:12px;color:#004080;font-weight:bold">正在初始化內建基準庫…</span>
+        </div>
+        <div class="file-cell">
+          <button type="button" class="key-button sm" id="btnFetchRemote" title="從 GitHub / jsDelivr 同步完整 8105 字表">🔄 連線同步雙權威表</button>
+          <label style="font-size:12px;color:#000080;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+            <span>或手動匯入對照表：</span>
+            <input type="file" id="fCustomRef" accept=".txt,.json,text/plain" style="max-width:170px">
+          </label>
+        </div>
+      </div>
+
       <table class="setup-table">
         <tr>
-          <th>🌐 線上權威對照源</th>
+          <th>① 目標檔案（必選）<br><span style="font-size:11px;font-weight:normal">（教學HTML / .md / .txt）</span></th>
           <td>
             <div class="file-cell">
-              <button type="button" class="key-button primary" id="btnFetchRemote">🔄 連線載入雙權威庫（lqfeng + jaywcjlove）</button>
-              <span id="dbStatus" style="font-size:12px;color:#004080;font-weight:bold">初始化中…</span>
-            </div>
-            <div style="font-size:11px;color:#333;margin-top:4px">
-              • <b>主來源 (lqfeng/ChineseCharacters)</b>：《通用規範漢字表(2013)》8105 字（自動依 0001-3500 / 3501-6500 / 6501-8105 切分一二三級）＋《附表1：規範字與繁體字()、異體字[]對照表》<br>
-              • <b>第二來源 (jaywcjlove/table-of-general-standard-chinese-characters)</b>：<code>traditional.convert.json</code> 與 <code>fanti.txt</code> 補充交叉驗證（成功載入後自動快取至 IndexedDB，離線亦可手動匯入對照表 txt/json）：
-              <input type="file" id="fCustomRef" accept=".txt,.json,text/plain,application/json" style="margin-top:2px">
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <th>① 目標檔案（必選）<br><span style="font-size:11px;font-weight:normal">（待比對之 .html/.txt/.atc）</span></th>
-          <td>
-            <div class="file-cell">
-              <input type="file" id="fTarget" accept=".html,.txt,.atc,.js,text/plain" multiple>
+              <input type="file" id="fTarget" accept=".html,.md,.txt,.atc,.js,text/plain" multiple>
               <button type="button" class="key-button sm" id="clrTarget" title="清除目標檔">✕</button>
               <span id="targetStatus" style="font-size:12px;color:#004080;font-weight:bold">尚未選擇檔案（可多選）</span>
             </div>
           </td>
         </tr>
         <tr>
-          <th>② 基準 index.html（選填）<br><span style="font-size:11px;font-weight:normal">（讀取現有 T2S_MAP 與 GEN）</span></th>
+          <th>② 基準 HTML（選填）<br><span style="font-size:11px;font-weight:normal">（讀取現有 T2S_MAP 與 GEN）</span></th>
           <td>
             <div class="file-cell">
               <input type="file" id="fBaseHtml" accept=".html,.txt,text/plain">
               <button type="button" class="key-button sm" id="clrBaseHtml" title="清除基準主檔">✕</button>
-              <span id="baseStatus" style="font-size:12px;color:#444">若目標檔本身即為 index.html，系統會自動提取其 T2S_MAP 與 GEN，無須重複上傳</span>
+              <span id="baseStatus" style="font-size:12px;color:#444">無字庫教學檔（如 cangjie_tutorial_full.html）可直接作為目標檔，系統會自動識別並提取其 T2S_MAP</span>
             </div>
           </td>
         </tr>
@@ -104,8 +104,12 @@ input[type=file]{font-size:12px;max-width:240px}
           <th>⚙️ 比對與輸出選項</th>
           <td style="line-height:1.8">
             <label style="cursor:pointer;display:block;color:#000080;font-weight:bold">
+              <input type="checkbox" id="chkProtectTutorial" checked>
+              教學文件模式（無字庫檔專用：自動剝除 CSS/腳本標籤與字根示範字 <code>.ch/.tr/.rs</code>，只掃描介面與解說文字）
+            </label>
+            <label style="cursor:pointer;display:block;color:#222">
               <input type="checkbox" id="chkSkipDict" checked>
-              預設跳過字庫行（自動跳過 <code>T1000=unpack(...)</code>、<code>SIMP=unpack(...)</code>、<code>T5000=unpack(...)</code> 及 <code>GEN=new Set(...)</code> 碼表定義行）
+              預設跳過字庫行（若載入含 <code>T1000/SIMP/T5000</code> 之主程式則自動跳過碼表行；無字庫教學檔自動略過此項）
             </label>
             <label style="cursor:pointer;display:block;color:#222">
               <input type="checkbox" id="chkIncludeVariants" checked>
@@ -153,7 +157,7 @@ input[type=file]{font-size:12px;max-width:240px}
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button type="button" class="key-button" id="btnCopyT2S" disabled>📋 複製 T2S_MAP 代碼</button>
           <button type="button" class="key-button" id="btnDlT2S" disabled>⬇ 下載 T2S_MAP.js</button>
-          <button type="button" class="key-button primary" id="btnDlPatchedHtml" disabled>⬇ 下載已更新 T2S_MAP 的完整 index.html</button>
+          <button type="button" class="key-button primary" id="btnDlPatchedHtml" disabled>⬇ 下載已更新 T2S_MAP 的 HTML</button>
         </div>
       </div>
 
@@ -374,6 +378,7 @@ const IDB={
 
 function updateDbStatusUI(extra=""){
   const el=$("dbStatus");
+  if(!el)return;
   const tCnt=KB.t2s.size,vCnt=KB.v2s.size,nCnt=KB.normMap.size;
   el.textContent=`✅ 知識庫就緒：規範字 ${nCnt||"內建"} ｜ 繁→簡 ${tCnt} 對 ｜ 異→簡 ${vCnt} 對`+(extra?`（${extra}）`:"");
 }
@@ -390,7 +395,8 @@ async function fetchWithFallback(urlList){
 
 async function syncRemoteSources(manual=false){
   const btn=$("btnFetchRemote"),st=$("dbStatus");
-  btn.disabled=true;st.textContent="⏳ 正在連線讀取 lqfeng 與 jaywcjlove 權威字表…";
+  if(btn)btn.disabled=true;
+  if(st)st.textContent="⏳ 正在連線讀取 lqfeng 與 jaywcjlove 權威字表…";
   let srcLog=[];
   try{
     const[lqAll,lqSub,jayJson,jayTxt]=await Promise.all([
@@ -405,7 +411,7 @@ async function syncRemoteSources(manual=false){
     if(jayTxt){ingestJayData(jayTxt);await IDB.set("jayTxt",jayTxt).catch(()=>{});}
     if(srcLog.length)updateDbStatusUI("已同步："+srcLog.join("＋"));
     else updateDbStatusUI(manual?"⚠️ 無法連線外部 GitHub，使用內建離線基準庫":"離線基準庫");
-  }finally{btn.disabled=false;}
+  }finally{if(btn)btn.disabled=false;}
 }
 
 /* 啟動時先載入 IndexedDB 快取，若無快取則自動背景同步 */
@@ -427,7 +433,7 @@ async function syncRemoteSources(manual=false){
   if(location.protocol!=="file:")syncRemoteSources(false);
 })();
 
-$("btnFetchRemote").addEventListener("click",()=>syncRemoteSources(true));
+$("btnFetchRemote")?.addEventListener("click",()=>syncRemoteSources(true));
 
 /* 智慧讀檔（自動偵測 UTF-8 / Big5 / GBK） */
 async function readSmart(file){
@@ -439,7 +445,7 @@ async function readSmart(file){
   return clean(new TextDecoder("utf-8").decode(buf));
 }
 
-$("fCustomRef").addEventListener("change",async e=>{
+$("fCustomRef")?.addEventListener("change",async e=>{
   const f=e.target.files[0];if(!f)return;
   const txt=await readSmart(f);
   const c1=ingestLqfengText(txt),c2=ingestJayData(txt);
@@ -475,6 +481,7 @@ $("chkSkipDict").addEventListener("change",e=>{
 /* 從 HTML 中提取現有的 T2S_MAP 與 GEN 與字庫 */
 function extractExistingFromHtml(html){
   const t2sOrder=[],t2sObj={},genSet=new Set(),dictSet=new Set();
+  if(!html)return{t2sOrder,t2sObj,genSet,dictSet};
   const mT2S=html.match(/const\s+T2S_MAP\s*=\s*\{([\s\S]*?)\};/);
   if(mT2S){
     for(const m of mT2S[1].matchAll(/"([^"]+)"\s*:\s*"([^"]+)"/g)){
@@ -484,27 +491,50 @@ function extractExistingFromHtml(html){
     }
   }
   const mGEN=html.match(/GEN\s*=\s*new\s+Set\(\s*"([^"]*)"\s*\)/);
-  if(mGEN)for(const c of[...mGEN[1]])if(isHan(c))genSet.add(c);
-  for(const name of["T1000","SIMP","T5000"]){
-    const m=html.match(new RegExp(name+'\\s*=\\s*unpack\\("([^"\\r\\n]*)"'));
-    if(m)for(const p of m[1].split(" ")){if(p){const c=[...p][0];if(isHan(c))dictSet.add(c);}}
+  if(mGEN){
+    for(const c of[...mGEN[1]])if(isHan(c))genSet.add(c);
+  }
+  for(const m of html.matchAll(/(?:T1000|SIMP|T5000)\s*=\s*unpack\(\s*"([^"\\r\\n]*)"\s*\)/g)){
+    for(const tk of m[1].split(" ")){
+      if(!tk)continue;
+      const ch=[...tk][0];
+      if(isHan(ch))dictSet.add(ch);
+    }
   }
   return{t2sOrder,t2sObj,genSet,dictSet};
 }
 
-/* 將檔案內容過濾（若勾選跳過字庫行，則剝除 T1000/SIMP/T5000/GEN 及 T2S_MAP/S2T_MAP 自身定義行） */
-function filterContentLines(text,skipDict){
+/* 將檔案內容過濾（支援無字庫教學 HTML/MD 模式，以及主程式跳過字庫行模式） */
+function filterContentLines(text,skipDict,protectTut){
   const lines=text.split("\n"),kept=[];
-  let inT2S=false,skippedDictLines=0;
+  let inT2S=false,skippedDictLines=0,hasDict=false;
   for(const l of lines){
-    if(/const\s+T2S_MAP\s*=\s*\{/.test(l)){inT2S=true;continue;}
+    if(/const\s+T2S_MAP\s*=\s*\{/.test(l)){
+      if(/\};/.test(l))continue;
+      inT2S=true;continue;
+    }
     if(inT2S){if(/\};/.test(l))inT2S=false;continue;}
-    if(skipDict&&/(?:T1000|T5000|SIMP)\s*=\s*unpack\(|GEN\s*=\s*new\s+Set\(/.test(l)){
-      skippedDictLines++;continue;
+    if(/(?:T1000|T5000|SIMP)\s*=\s*unpack\(|GEN\s*=\s*new\s+Set\(/.test(l)){
+      hasDict=true;
+      if(skipDict){skippedDictLines++;continue;}
     }
     kept.push(l);
   }
-  return{filteredText:kept.join("\n"),skippedDictLines};
+  let res=kept.join("\n");
+  let tutCleaned=false;
+  /* 若為教學文件保護模式：剝除 <style> 區塊、教學示範字標記（.ch / .tr / .rs / .aux-glyph）與 PAGES 結構中的單字根/例字欄位，只保留實際需要繁轉簡的解說與介面文字 */
+  if(protectTut){
+    tutCleaned=true;
+    res=res.replace(/<style[\s\S]*?<\/style>/gi," ");
+    /* 保護教學 HTML 內標記為字根/例字原形的標籤內容（對齊 cangjie_tutorial_full.html 的 simpSkip 規則） */
+    res=res.replace(/<([a-z0-9]+)[^>]+class="[^"]*\b(?:dos-main-title|rad-main-card|rad-big-char|aux-glyph|ch|tr|rs|xz-glyph)\b[^"]*"[^>]*>[\s\S]*?<\/\1>/gi," ");
+    /* 保護教學 PAGES 資料結構中的字根定義與例字欄位：rad:"...", g:"...", examples:[["...", color, "例字", ...]] */
+    res=res.replace(/\b(?:rad|g)\s*:\s*"[^"]*"/g," ");
+    res=res.replace(/(\[\s*"[^"]+"\s*,\s*[^,]+\s*,\s*)"[^"]*"/g,"$1\"\"");
+    /* 剝除 HTML 標籤屬性本身，僅保留可見文字與 JS 解說字串 */
+    res=res.replace(/<[^>]+>/g," ");
+  }
+  return{filteredText:res,skippedDictLines,hasDict,tutCleaned};
 }
 
 /* 格式化輸出 const T2S_MAP = {...};（輸出前再次強制過濾 k === v） */
@@ -533,28 +563,34 @@ function formatT2SCode(finalMap,style,origFrontKeys){
   for(let i=0;i<frontEntries.length;i+=7){
     rows.push("  "+frontEntries.slice(i,i+7).map(([k,v])=>`"${k}":"${v}"`).join(","));
   }
-  const frontStr=rows.length?rows.join(",\n")+(tailEntries.length?",\n":""):"";
-  const tailStr=tailEntries.map(([k,v])=>`  "${k}":"${v}",`).join("\n");
-  return`const T2S_MAP={\n${frontStr}${tailStr}\n};`;
+  for(const[k,v]of tailEntries){
+    rows.push(`  "${k}":"${v}"`);
+  }
+  return`const T2S_MAP={\n${rows.join(",\n")}\n};`;
 }
 
-let lastT2SCode="",lastGENCode="",lastPatchedHtml="",lastSimpText="";
+let lastT2SCode="",lastGENCode="",lastPatchedHtml="",lastSimpText="",lastHostFileName="index.html";
 
 function runComparison(){
   const skipDict=$("chkSkipDict").checked;
+  const protectTut=$("chkProtectTutorial").checked;
   const incVar=$("chkIncludeVariants").checked;
   const fmtStyle=$("selFormatStyle").value;
 
   /* 尋找基準 HTML（優先用 fBaseHtml，否則找 targetFiles 中的第一個含 T2S_MAP 的 HTML） */
-  let hostHtml=baseHtmlText||targetFiles.find(f=>/const\s+T2S_MAP/.test(f.text))?.text||"";
+  const hostObj=baseHtmlText?{name:"index.html",text:baseHtmlText}:targetFiles.find(f=>/const\s+T2S_MAP/.test(f.text));
+  const hostHtml=hostObj?.text||"";
+  lastHostFileName=hostObj?.name||"index.html";
   const ext=extractExistingFromHtml(hostHtml);
 
   /* 統計掃描到的所有漢字與頻次 */
   const charFreq=new Map();
-  let totalSkippedLines=0,combinedRawText="";
+  let totalSkippedLines=0,anyHasDict=false,anyTutCleaned=false,combinedRawText="";
   for(const f of targetFiles){
-    const{filteredText,skippedDictLines}=filterContentLines(f.text,skipDict);
+    const{filteredText,skippedDictLines,hasDict,tutCleaned}=filterContentLines(f.text,skipDict,protectTut);
     totalSkippedLines+=skippedDictLines;
+    if(hasDict)anyHasDict=true;
+    if(tutCleaned)anyTutCleaned=true;
     combinedRawText+=`/* === ${f.name} === */\n`+filteredText+"\n\n";
     for(const c of[...filteredText]){
       if(isHan(c))charFreq.set(c,(charFreq.get(c)||0)+1);
@@ -647,11 +683,14 @@ function runComparison(){
 
   /* 渲染報告 */
   let h="";
-  if(!skipDict){
+  if(!skipDict&&anyHasDict){
     h+=`<div style="background:#7f0000;border:1px solid #ff0;color:#ff5;padding:6px 10px;margin-bottom:8px;font-weight:bold">⚠️ 本次執行未跳過字庫行（強制全檔掃描模式）——字庫內的繁體與異體字已一併納入統計。</div>`;
   }
+  const modeDesc=!anyHasDict
+    ?`<span style="color:#5ff">📘 教學／純文檔模式（無字庫結構${anyTutCleaned?"，已自動保護字根/例字原形標籤":""}）</span>`
+    :(skipDict?`<span class="ok">✓ 主程式模式（已安全跳過字庫定義行 ${totalSkippedLines} 行）</span>`:`<span class="warn">⚠ 主程式未跳過字庫行</span>`);
   h+=`<table class="retro-table">
-    <tr><th>掃描檔案與行過濾</th><td>共掃描 <b>${targetFiles.length}</b> 個檔案，提取不重複漢字 <b>${charFreq.size}</b> 字（${skipDict?`<span class="ok">✓ 已安全跳過字庫定義行 ${totalSkippedLines} 行</span>`:`<span class="warn">⚠ 未跳過字庫行</span>`}）</td></tr>
+    <tr><th>掃描檔案與偵測模式</th><td>共掃描 <b>${targetFiles.length}</b> 個檔案，提取待檢漢字 <b>${charFreq.size}</b> 字（${modeDesc}）</td></tr>
     <tr><th>《通用規範漢字表》分級</th><td>一級字(0001-3500)：<b class="ok">${levelCounts[1]}</b> 字 ｜ 二級字(3501-6500)：<b style="color:#5ff">${levelCounts[2]}</b> 字 ｜ 三級字(6501-8105)：<b class="warn">${levelCounts[3]}</b> 字 ｜ 表外/未同步基準：<b>${levelCounts.other}</b> 字</td></tr>
     <tr><th>現有 T2S_MAP 有效覆蓋</th><td><span class="ok">${coveredTrad.length}</span> 個繁體字已存在於原 T2S_MAP 中</td></tr>
     <tr><th>🔍 新發現未覆蓋繁體字</th><td>${uncoveredTrad.length?`<span class="warn">新增 +${uncoveredTrad.length} 個繁→簡映射（已自動補入輸出）</span>`:`<span class="ok">✓ 0 漏網（所有繁體字均已覆蓋）</span>`}</td></tr>
@@ -684,22 +723,22 @@ function runComparison(){
   $("outSimpPreview").textContent=lastSimpText.length>5000?lastSimpText.slice(0,5000)+`\n…（預覽截斷，下載為完整 ${lastSimpText.length} 字元）`:lastSimpText;
 
   $("btnCopyT2S").disabled=false;
-  $("btnDlT2S").disabled=false;
-  $("btnCopyGEN").disabled=false;
-  $("btnDlSimpTxt").disabled=false;
-}
-
-$("btnRun").addEventListener("click",()=>{
-  try{runComparison();}catch(e){$("report").innerHTML=`<span class="err">執行錯誤：${esc(e.message)}</span>`;console.error(e);}
-});
-window.addEventListener("keydown",e=>{if(e.key==="Enter"&&!$("btnRun").disabled&&document.activeElement?.tagName!=="INPUT")$("btnRun").click();});
-
-/* 複製與下載輔助 */
+/* 複製與下載輔助（相容 iframe 與本機環境，不使用 alert） */
 function copyTxt(txt,btn){
-  navigator.clipboard?.writeText(txt).then(()=>{
+  const done=()=>{
     const orig=btn.textContent;btn.textContent="✅ 已複製！";
     setTimeout(()=>btn.textContent=orig,1500);
-  }).catch(()=>alert("複製失敗，請手動全選複製"));
+  };
+  const fallback=()=>{
+    const ta=document.createElement("textarea");
+    ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand("copy");done();}catch(e){}
+    ta.remove();
+  };
+  if(navigator.clipboard?.writeText){
+    navigator.clipboard.writeText(txt).then(done).catch(fallback);
+  }else fallback();
 }
 function dl(text,fname,type){
   const u=URL.createObjectURL(new Blob(["\uFEFF"+text],{type:type+";charset=utf-8"})),a=document.createElement("a");
@@ -711,7 +750,7 @@ $("btnCopyT2S").addEventListener("click",e=>copyTxt(lastT2SCode,e.currentTarget)
 $("btnCopyGEN").addEventListener("click",e=>copyTxt(lastGENCode,e.currentTarget));
 $("btnDlT2S").addEventListener("click",()=>dl(lastT2SCode+"\n","T2S_MAP.js","text/javascript"));
 $("btnDlSimpTxt").addEventListener("click",()=>dl(lastSimpText,"converted_simplified.txt","text/plain"));
-$("btnDlPatchedHtml").addEventListener("click",()=>{if(lastPatchedHtml)dl(lastPatchedHtml,"index.html","text/html");});
+$("btnDlPatchedHtml").addEventListener("click",()=>{if(lastPatchedHtml)dl(lastPatchedHtml,lastHostFileName,"text/html");});
 </script>
 </body>
 </html>
