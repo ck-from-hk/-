@@ -16,7 +16,7 @@ https://ck-from-hk.github.io/-/
 字庫和詞庫等可用generator/index.html生成
 生成器直接使用： https://ck-from-hk.github.io/-/generator
 
-簡體倉頡教學及練習特別版(0.825限定)：　https://ck-from-hk.github.io/-/simp
+簡體倉頡教學及練習特別版(0.825-0.88限定)：　https://ck-from-hk.github.io/-/simp
 
 [繁體中文](#繁體中文) ｜ [English](#english)
 
@@ -54,6 +54,7 @@ https://ck-from-hk.github.io/-/
 | `words.txt` / `*.atc` | ⬜ 選配 | 自訂命題題庫純文字檔（一行一詞或整段文章皆可），經「📂 選擇題庫資料夾」一鍵整夾匯入 |
 | `limit.js` | ⬜ 建議 | 依此檔設定常用字範圍 |
 | `generator/index.html` | ⬜ 選配 | 三合一生成器，生成以上　.js / .tt / .txt檔 |
+| `tutorial.html` | ⬜ 選配 | **豪華版**教學檔，可獨立運作（簡倉版為tutorial_simp.html） |
 
 
 > 排行榜頁「匯出 .js」可直接把當前生效的字庫（內建＋已載入擴充碼）包裝成 `chinese_dict.js` 下載，連同 HTML 一併分發即可毋須再設定。
@@ -201,9 +202,9 @@ Released under the [MIT License](LICENSE). The Cangjie method itself carries no 
 
 ---
 
-**以上都係AI gen出嚟**
+**以上都係AI gen出嚟**... 之後手動執吓
 
-項目擁有人並唔識programming
+項目擁有人並唔識programming languages
 
 只係間中去吓HKEPC偷師所以又未至於係電腦白痴
 
