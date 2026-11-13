@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>《快快快樂學簡倉 / 倉頡》口訣詩預覽、編輯與 HTML 替換程式 v1.0</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#111;color:#fff;font-family:"BiauKaiHK","DFKai-SB","標楷體","Microsoft JhengHei",serif;min-height:100vh;display:flex;justify-content:center;padding:14px 8px}
+.dos-frame{width:100%;max-width:1040px;background:#005a52;border:3px solid #808080;box-shadow:0 0 25px rgba(0,0,0,.9);display:flex;flex-direction:column}
+.dos-header{height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:2px solid #003833}
+.slop-logo{display:flex;align-items:center;justify-content:center;width:95px;height:32px;flex-shrink:0}
+.title-group{display:flex;align-items:center;flex:1;justify-content:center;gap:14px}
+.magenta-double-line{flex:1;height:8px;border-top:3px solid #f0f;border-bottom:3px solid #f0f}
+.dos-main-title{color:#ff0;font-size:23px;font-weight:bold;letter-spacing:3px;text-shadow:2px 2px #000;white-space:nowrap}
+.dos-stage{padding:12px 16px;display:flex;flex-direction:column;gap:12px;flex:1}
+
+/* 工具箱對話框 */
+.dialog-box{background:#c0c0c0;color:#000;border:3px solid;border-color:#fff #404040 #404040 #fff;padding:10px 14px;box-shadow:4px 4px 0 rgba(0,0,0,.45)}
+.dialog-title{font-size:16px;font-weight:bold;color:#000080;border-bottom:2px solid #808080;padding-bottom:4px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+.patch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:8px}
+.patch-card{background:#d4d0c8;border:2px groove #fff;padding:8px 10px;display:flex;flex-direction:column;gap:6px}
+.patch-card-title{font-size:13.5px;font-weight:bold;color:#800000;display:flex;justify-content:space-between;align-items:center}
+.patch-status{font-size:12px;color:#004080;font-weight:bold;min-height:18px}
+
+.sub-window{background:#003833;border:3px double #5ff;padding:12px 16px;box-shadow:5px 5px 0 rgba(0,0,0,.5);display:flex;flex-direction:column;gap:10px}
+.sub-win-title{color:#ff5;font-size:18px;font-weight:bold;border-bottom:2px solid #5ff;padding-bottom:5px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;background:rgba(0,0,0,.32);padding:8px 12px;border:1px solid #00695c;border-radius:4px}
+.tab-group{display:flex;gap:6px;flex-wrap:wrap}
+.key-button{background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;color:#000080;font-weight:bold;font-size:12.5px;padding:4px 11px;cursor:pointer;font-family:Consolas,"Microsoft JhengHei",monospace;display:inline-flex;align-items:center;justify-content:center;gap:4px}
+.key-button:active:not(:disabled){border-color:#404040 #fff #fff #404040;background:#a8a8a8}
+.key-button:disabled{opacity:.45;cursor:not-allowed;color:#555}
+.key-button.active{background:#002220;color:#ff0;border-color:#5ff}
+.key-button.primary{color:#800000}
+.key-button.sm{padding:2px 8px;font-size:11.5px}
+
+.search-input{background:#001a17;border:1.5px solid #5ff;color:#fff;padding:4px 10px;font-size:13px;font-family:inherit;border-radius:2px;width:210px}
+.search-input::placeholder{color:#7ab}
+.legend-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;background:rgba(0,25,30,.75);padding:6px 12px;border:1px dashed #5ff;border-radius:3px}
+.legend-item{display:inline-flex;align-items:center;gap:4px}
+.dot{width:10px;height:10px;display:inline-block;border:1px solid #000}
+
+/* 前言與總結展示卡 */
+.bookend-box{background:rgba(0,20,25,.65);border:1.5px solid #ff5;border-radius:4px;padding:8px 14px;text-align:center}
+.bookend-title{color:#0ff;font-size:13px;font-weight:bold;margin-bottom:4px;letter-spacing:1.5px;display:flex;justify-content:center;align-items:center;gap:10px}
+.bookend-lines{font-size:16px;line-height:1.85;color:#fff;letter-spacing:1.5px}
+
+/* 詩句卡片列表 */
+.poem-list{display:flex;flex-direction:column;gap:10px}
+.poem-card{background:rgba(0,0,0,.32);border:1px solid #00796b;border-radius:4px;padding:8px 12px;transition:border-color .15s}
+.poem-card:hover{border-color:#ff0}
+.poem-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;flex-wrap:wrap;gap:6px}
+.key-badge{display:inline-flex;align-items:center;gap:6px;background:#002220;border:1.5px solid #ff5;padding:2px 10px;border-radius:3px;font-weight:bold}
+.key-badge .k{font-family:Consolas,monospace;color:#0ff;font-size:15px}
+.key-badge .r{color:#ff5;font-size:16px}
+.key-badge .ver{font-size:11px;padding:1px 5px;background:#004d40;color:#5f5;border:1px solid #5f5;border-radius:2px}
+.rhyme-tag{font-size:12px;color:#fa5;background:rgba(0,0,0,.4);padding:2px 8px;border:1px solid #554;border-radius:2px}
+
+/* 還原教程內的單行詩句框樣式 */
+.poem-line-box{font-size:17px;line-height:1.85;background:rgba(0,0,0,.38);padding:7px 1.5em;border-left:4px solid #ff5;border-right:4px solid #ff5;text-align:center;overflow-x:auto;white-space:nowrap}
+.poem-line-box i{font-style:normal;font-weight:bold}
+.poem-line-box .tr{color:#ff5}
+.poem-line-box .ky{color:#0ff}
+.poem-line-box .cd{color:#fa5}
+
+/* 手動編輯器展開面板 */
+.edit-drawer{display:none;background:#001f1c;border:1px solid #ff5;padding:8px 10px;margin-top:6px;border-radius:3px}
+.edit-drawer.open{display:block}
+.edit-row{display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
+.edit-label{font-size:12px;color:#5ff;font-weight:bold;min-width:75px}
+.edit-input{flex:1;background:#00100e;border:1px solid #5ff;color:#fff;padding:4px 8px;font-size:13px;font-family:Consolas,"Microsoft JhengHei",monospace}
+.edit-textarea{width:100%;height:56px;background:#00100e;border:1px solid #5ff;color:#ff5;padding:6px 8px;font-size:13px;font-family:Consolas,"Microsoft JhengHei",monospace;resize:vertical}
+.tag-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;align-items:center}
+.tag-btn{background:#003833;border:1px solid #5ff;color:#fff;font-size:11.5px;padding:1px 7px;cursor:pointer;border-radius:2px}
+.tag-btn:hover{border-color:#ff0;background:#004d40}
+
+/* 匯出與批次替換代碼彈窗區 */
+.export-drawer{display:none;background:#001916;border:2px solid #ff0;padding:10px 14px;border-radius:4px;margin-bottom:8px}
+.export-drawer.open{display:block}
+.code-pre{background:#000d0b;border:1px solid #5ff;color:#cfd8dc;padding:8px;max-height:220px;overflow:auto;font-size:12px;white-space:pre-wrap;word-break:break-all;font-family:Consolas,monospace;margin:6px 0}
+
+.dos-footer{min-height:34px;background:#c0c0c0;border-top:2px solid #fff;display:flex;align-items:center;justify-content:space-between;padding:4px 16px;color:#222;font-size:12px;font-weight:bold;flex-wrap:wrap;gap:6px}
+@media(max-width:680px){
+  .dos-main-title{font-size:16px;letter-spacing:1px}
+  .poem-line-box{font-size:14.5px;padding:6px 8px;white-space:normal}
+}
+</style>
+</head>
+<body>
+<div class="dos-frame">
+  <div class="dos-header">
+    <div class="slop-logo" title="SLOP 經典標誌">
+      <svg viewBox="0 0 120 40" width="95" height="32"><ellipse cx="60" cy="20" rx="55" ry="16" fill="none" stroke="#0ff" stroke-width="2"/><text x="50%" y="62%" text-anchor="middle" fill="#f0f" font-size="20" font-weight="900" font-style="italic" font-family="Arial">SLOP</text></svg>
+    </div>
+    <div class="title-group">
+      <div class="magenta-double-line"></div>
+      <div class="dos-main-title">口訣詩預覽・即時編輯・HTML 替換工具</div>
+      <div class="magenta-double-line"></div>
+    </div>
+    <span style="color:#5ff;font-size:12px;font-family:Consolas,monospace">v1.0</span>
+  </div>
+
+  <div class="dos-stage">
+    <!-- 頂部：載入並一鍵替換 HTML 教學檔與主檔工作台 -->
+    <div class="dialog-box">
+      <div class="dialog-title">
+        <span>🛠️ 檔案替換工作台：將下方最新（或您手動修改後）的口訣詩一鍵寫入 HTML 檔案</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button type="button" class="key-button sm" onclick="toggleExportDrawer()">📄 匯出純文字 / 教學JS代碼</button>
+          <button type="button" class="key-button sm primary" onclick="openBatchQuickModal()">⚡ 批次句子查找替換</button>
+          <button type="button" class="key-button sm" onclick="resetAllPoems()" title="還原所有手動修改回初始定稿">↺ 還原初始定稿</button>
+        </div>
+      </div>
+
+      <div class="patch-grid">
+        <!-- 卡片 1：簡體教學全書 -->
+        <div class="patch-card">
+          <div class="patch-card-title">
+            <span>① 簡體教學檔 (cangjie_tutorial_full.html)</span>
+            <span style="font-size:11px;color:#004080">替換 24 首簡體詩</span>
+          </div>
+          <input type="file" id="fSimpTut" accept=".html,text/html" style="font-size:11.5px">
+          <div class="patch-status" id="stSimpTut">尚未載入檔案（載入後自動替換 PAGES 內 24 首 poem/rhyme）</div>
+          <button type="button" class="key-button primary" id="btnDlSimpTut" disabled onclick="patchAndDownload('simpTut')">⬇ 替換簡體教學詩句並下載</button>
+        </div>
+
+        <!-- 卡片 2：繁體教學全書 -->
+        <div class="patch-card">
+          <div class="patch-card-title">
+            <span>② 繁體教學檔 (trad_cangjie_tutorial_full.html)</span>
+            <span style="font-size:11px;color:#004080">替換 24 首繁體詩</span>
+          </div>
+          <input type="file" id="fTradTut" accept=".html,text/html" style="font-size:11.5px">
+          <div class="patch-status" id="stTradTut">尚未載入檔案（載入後自動替換 PAGES 內 24 首 poem/rhyme）</div>
+          <button type="button" class="key-button primary" id="btnDlTradTut" disabled onclick="patchAndDownload('tradTut')">⬇ 替換繁體教學詩句並下載</button>
+        </div>
+
+        <!-- 卡片 3：簡倉 / 繁倉 主程式 index.html -->
+        <div class="patch-card">
+          <div class="patch-card-title">
+            <span>③ 主程式 HTML (index.html 內置教學＋離開畫面)</span>
+            <select id="selMainVer" style="font-size:11px;padding:1px 4px;background:#fff;border:1px solid #666">
+              <option value="simp">套用簡體版 24 首</option>
+              <option value="trad">套用繁體版 24 首</option>
+            </select>
+          </div>
+          <input type="file" id="fMainHtml" accept=".html,text/html" style="font-size:11.5px">
+          <div class="patch-status" id="stMainHtml">尚未載入主檔（支援替換內置 TUT_PAGES 詩句及離開畫面 8 句總訣）</div>
+          <button type="button" class="key-button primary" id="btnDlMainHtml" disabled onclick="patchAndDownload('mainHtml')">⬇ 替換主檔詩句並下載 index.html</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 預覽與單首即時編輯視窗 -->
+    <div class="sub-window">
+      <div class="sub-win-title">
+        <span>🎵 全書 48 首口訣詩即時預覽與單句手動編輯器</span>
+        <span id="countBadge" style="font-size:13px;color:#5ff">共顯示 24 首</span>
+      </div>
+
+      <!-- 匯出與批次替換抽屜 -->
+      <div class="export-drawer" id="exportDrawer">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px">
+          <b style="color:#ff5;font-size:14px" id="exportDrawerTitle">📄 匯出目前全書口訣詩代碼 / 批次文字替換</b>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button type="button" class="key-button sm" onclick="generateExport('plain')">純文字定稿 (.md)</button>
+            <button type="button" class="key-button sm" onclick="generateExport('simpJs')">簡體教學 PAGES 代碼</button>
+            <button type="button" class="key-button sm" onclick="generateExport('tradJs')">繁體教學 PAGES 代碼</button>
+            <button type="button" class="key-button sm primary" id="btnCopyExport" onclick="copyExportCode()">📋 複製下方內容</button>
+            <button type="button" class="key-button sm" onclick="toggleExportDrawer()">✕ 關閉</button>
+          </div>
+        </div>
+        <!-- 批次查找替換列 -->
+        <div id="batchReplaceBar" style="background:rgba(0,50,45,.8);border:1px dashed #5ff;padding:6px 10px;margin-bottom:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12.5px">
+          <b style="color:#0ff">⚡ 跨首快速替換：</b>
+          <select id="selBatchScope" style="background:#001a17;color:#fff;border:1px solid #5ff;padding:2px 6px;font-size:12px">
+            <option value="both">繁簡兩版同時</option>
+            <option value="simp">僅簡體版</option>
+            <option value="trad">僅繁體版</option>
+          </select>
+          <span>尋找：</span>
+          <input type="text" id="inpFindStr" class="edit-input" style="max-width:180px" placeholder="例如：字才 或 顯功">
+          <span>替換為：</span>
+          <input type="text" id="inpRepStr" class="edit-input" style="max-width:180px" placeholder="例如：就來 或 亦通">
+          <button type="button" class="key-button sm primary" onclick="runBatchFindReplace()">立即替換</button>
+          <span id="batchMsg" style="color:#5f5;font-weight:bold"></span>
+        </div>
+        <pre class="code-pre" id="exportPre"></pre>
+      </div>
+
+      <div class="toolbar">
+        <div class="tab-group">
+          <button type="button" class="key-button active" id="tabSimp" onclick="setMode('simp')">簡體版（24 首）</button>
+          <button type="button" class="key-button" id="tabTrad" onclick="setMode('trad')">繁體版（24 首）</button>
+          <button type="button" class="key-button" id="tabBoth" onclick="setMode('both')">繁簡對照（48 首）</button>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input type="text" class="search-input" id="searchBox" placeholder="搜尋字母、字根或例字（如：牙、岳、買）…" oninput="render()">
+          <button type="button" class="key-button sm" onclick="expandAllEditors(true)">✏️ 展開全部編輯框</button>
+          <button type="button" class="key-button sm" onclick="expandAllEditors(false)">收合編輯框</button>
+        </div>
+      </div>
+
+      <!-- 顏色圖例說明 -->
+      <div class="legend-bar">
+        <b style="color:#ff5">字體顏色圖例（編輯時點擊色塊按鈕可直接插入標籤）：</b>
+        <span class="legend-item"><span class="dot" style="background:#ff5"></span><span style="color:#ff5;font-weight:bold">亮黃 (.tr)</span>：主字根/例字</span>
+        <span class="legend-item"><span class="dot" style="background:#0ff"></span><span style="color:#0ff;font-weight:bold">亮青 (.ky / C1)</span>：鍵位/第一輔助形</span>
+        <span class="legend-item"><span class="dot" style="background:#5f5"></span><span style="color:#5f5;font-weight:bold">亮綠 (C2)</span>：第二輔助形</span>
+        <span class="legend-item"><span class="dot" style="background:#ff80ab"></span><span style="color:#ff80ab;font-weight:bold">粉紅 (C3)</span>：第三輔助形</span>
+        <span class="legend-item"><span class="dot" style="background:#fa5"></span><span style="color:#fa5;font-weight:bold">亮橙 (.cd)</span>：其餘拆碼字根</span>
+      </div>
+
+      <!-- 前言 4 句（支援點擊修改） -->
+      <div class="bookend-box" id="prefaceBox">
+        <div class="bookend-title">
+          <span>【前言：倉頡廿四字根總綱】</span>
+          <button type="button" class="key-button sm" onclick="toggleBookendEdit('preface')">✏️ 修改前言</button>
+        </div>
+        <div class="bookend-lines" id="prefaceDisplay"></div>
+        <div class="edit-drawer" id="prefaceEditor">
+          <textarea class="edit-textarea" id="prefaceInput" oninput="updateBookend('preface')"></textarea>
+        </div>
+      </div>
+
+      <div class="poem-list" id="poemContainer"></div>
+
+      <!-- 總結 8 句（支援點擊修改） -->
+      <div class="bookend-box" id="summaryBox">
+        <div class="bookend-title">
+          <span>【最後總結：取碼次序與拆字心法（主檔離開畫面 8 句）】</span>
+          <button type="button" class="key-button sm" onclick="toggleBookendEdit('summary')">✏️ 修改總結</button>
+        </div>
+        <div class="bookend-lines" id="summaryDisplay"></div>
+        <div class="edit-drawer" id="summaryEditor">
+          <textarea class="edit-textarea" id="summaryInput" style="height:80px" oninput="updateBookend('summary')"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dos-footer">
+    <span>💡 點擊任一首詩右側「✏️ 編輯」即可即時修改純文字或色碼標籤，修改後可一鍵替換並下載 HTML 教學檔與主檔！</span>
+    <span>《快快快樂學簡倉 / 倉頡》口訣詩維護工具 v1.0</span>
+  </div>
+</div>
+
+<script>
+"use strict";
+const C1="#0ff", C2="#5f5", C3="#ff80ab";
+
+/* 前言與總結預設內容 */
+let PREFACE_LINES = [
+  "哲理筆畫人體形，廿四字根鍵上明。",
+  "難字 <b style=\"color:#0ff\">X</b> 鍵 <b style=\"color:#0ff\">Z</b> 通配，熟背口訣任縱橫。"
+];
+let SUMMARY_LINES = [
+  "由上而下左至右，由外而內視覺求。",
+  "連體首次三尾四，字首頭尾兩碼收。",
+  "字身至多取三碼，合體五碼即封頭。",
+  "精簡先繁後全體，雙手如飛任暢遊。"
+];
+
+/* 簡體版 24 首口訣詩 */
+const SIMP_POEMS = [
+  {key:"A", rad:"日", rhyme:"押韻：光／方／旁，粵音 -ong 平聲", poem:`<i class="tr">日</i>字當頭耀萬光，扁<b style="color:${C1}">曰</b>同歸 <i class="ky">A</i> 鍵方。　<i class="tr">日</i><i class="cd">木戈</i>「<b class="tr">时</b>」<i class="cd">中</i><i class="tr">日</i>「<b class="tr">旧</b>」，<i class="tr">日</i><i class="cd">十心山</i>「<b class="tr">晓</b>」在旁。`},
+  {key:"B", rad:"月", rhyme:"押韻：開／來／來，粵音 -oi 平聲", poem:`<b style="color:${C1}">肉旁</b><b style="color:${C2}">同框</b><i class="tr">月</i>字開，下空三面入 <i class="ky">B</i> 來。　<i class="tr">月</i><i class="cd">竹手一</i>能得「<b style="color:${C1}">胜</b>」，<i class="tr">月</i><i class="cd">卜山大</i>「<b style="color:${C1}">脑</b>」就來。`},
+  {key:"C", rad:"金", rhyme:"押韻：連／邊／前，粵音 -in 平聲", poem:`<b style="color:${C1}">八字</b><b style="color:${C2}">雙點</b><i class="tr">金</i>相連，<b style="color:${C1}">只共兵</b>分守底邊。　<i class="tr">金</i><i class="cd">人口</i>「<b style="color:${C1}">谷</b>」<i class="cd">卜</i><i class="tr">金</i>「<b style="color:${C2}">六</b>」，<i class="tr">金</i><i class="cd">大一土</i><i class="tr">金</i>「<b class="tr">釜</b>」前。`},
+  {key:"D", rad:"木", rhyme:"押韻：林／深／尋，粵音 -am 平聲", poem:`雙<i class="tr">木</i>相依便作<b class="tr">林</b>，三<i class="tr">木</i>聚<b class="tr">森</b>意更深。　<i class="tr">木木</i><i class="cd">竹</i>「<b class="tr">才</b>」<i class="cd">心</i><i class="tr">木</i>「<b class="tr">也</b>」，得<i class="cd">竹</i><i class="tr">木</i><i class="cd">月</i>「<b style="color:${C1}">策</b>」可尋。`},
+  {key:"E", rad:"水", rhyme:"押韻：流／頭／流，粵音 -au 平聲", poem:`<b style="color:${C1}">江河湖海</b><i class="tr">水</i>長流，<b style="color:${C1}">三點水旁</b> <i class="ky">E</i> 鍵頭。　<i class="tr">水</i><i class="cd">戈</i>「<b style="color:${C3}">叉</b>」兮<i class="cd">一</i><i class="tr">水</i>「<b style="color:${C2}">汞</b>」，<i class="cd">十</i><i class="tr">水</i>「<b class="tr">支</b>」<i class="tr">水</i><i class="cd">一</i>「<b style="color:${C1}">江</b>」流。`},
+  {key:"F", rad:"火", rhyme:"押韻：紅／中／通，粵音 -ung 平聲", poem:`<i class="tr">烈焰</i>熊熊映日紅，<b style="color:${C1}">四點</b><b style="color:${C2}">小頭</b>歸<i class="tr">火</i>中。　<i class="cd">日口</i><i class="tr">火</i>「<b style="color:${C1}">照</b>」<i class="tr">火</i><i class="cd">大</i>「<b style="color:${C2}">尖</b>」，<i class="tr">火</i><i class="cd">月口</i>連「<b style="color:${C2}">尚</b>」路通。`},
+  {key:"G", rad:"土", rhyme:"押韻：家／華／誇，粵音 -aa 平聲", poem:`大<b style="color:${C2}">地</b>根<b style="color:${C2}">基</b><i class="tr">土</i><b style="color:${C1}">士</b>家，上<b style="color:${C1}">士</b>下口<b style="color:${C1}">吉</b>字華。　<i class="tr">土土</i>「<b class="tr">圭</b>」<i class="tr">土</i><i class="cd">心木</i>「<b style="color:${C2}">地</b>」，<i class="tr">土</i><i class="cd">木大</i>連「<b style="color:${C2}">块</b>」共誇。`},
+  {key:"H", rad:"竹", rhyme:"押韻：風／同／功，粵音 -ung 平聲", poem:`翠<i class="tr">竹</i><b style="color:${C2}">斜撇</b>迎清風，<b style="color:${C2}">單撇</b><b style="color:${C3}">三撇</b>此鍵同。　<i class="tr">竹</i><i class="cd">十</i>「<b style="color:${C2}">千</b>」<i class="tr">竹竹</i><i class="cd">大</i>「<b style="color:${C1}">笑</b>」，<i class="tr">竹</i><i class="cd">月山廿</i>「<b style="color:${C1}">算</b>」建功。`},
+  {key:"I", rad:"戈", rhyme:"押韻：連／邊／前，粵音 -in 平聲", poem:`<b style="color:${C1}">單點</b><b style="color:${C2}">廣頭</b><i class="tr">戈</i>相連，<b style="color:${C3}">私底三角</b>守下邊。　<i class="tr">戈</i><i class="cd">卜口</i>「<b style="color:${C2}">店</b>」<i class="cd">土</i><i class="tr">戈</i>「<b style="color:${C3}">去</b>」，<i class="cd">一土</i><i class="tr">戈</i>歸「<b style="color:${C1}">玉</b>」在前。`},
+  {key:"J", rad:"十", rhyme:"押韻：橫／間／山，粵音 -aan 平聲", poem:`一豎穿過一長橫，<b style="color:${C1}">寶蓋屋頂</b><i class="tr">十</i>字間。　<i class="tr">十</i><i class="cd">田</i><i class="tr">十</i>「<b style="color:${C2}">車</b>」<i class="tr">十</i><i class="cd">口</i>「<b class="tr">古</b>」，<i class="tr">十</i><i class="cd">一卜人</i>「<b style="color:${C1}">定</b>」軍山。`},
+  {key:"K", rad:"大", rhyme:"押韻：排／懷／猜，粵音 -aai 平聲", poem:`<b style="color:${C1}">撇捺交叉</b><b style="color:${C3}">病字</b>排，<b style="color:${C2}">橫撇在左</b><i class="tr">大</i>入懷。　<i class="tr">大</i><i class="cd">弓人</i>「<b style="color:${C3}">疚</b>」<i class="tr">大</i><i class="cd">戈</i>「<b class="tr">太</b>」，<i class="tr">大</i><i class="cd">竹手一月</i>是「<b style="color:${C1}">猜</b>」。`},
+  {key:"L", rad:"中", rhyme:"押韻：通／中／功，粵音 -ung 平聲", poem:`<b style="color:${C1}">直豎穿心</b>上下通，<b style="color:${C2}">川巾長筆</b>盡歸<i class="tr">中</i>。　<i class="tr">中中中</i><i class="cd">月</i>「<b style="color:${C2}">帅</b>」無敵，<i class="tr">中</i><i class="cd">木竹水</i>「<b style="color:${C1}">被</b>」有功。`},
+  {key:"M", rad:"一", rhyme:"押韻：當／方／狂，粵音 -ong 平聲", poem:`<b style="color:${C3}">平橫</b><b style="color:${C1}">廠框</b><i class="tr">一</i>字當，無點崖邊守上方。　<i class="tr">一</i><i class="cd">土戈</i>「<b style="color:${C2}">玉</b>」<i class="tr">一</i><i class="cd">卜</i>「<b class="tr">下</b>」，<i class="cd">心</i><i class="tr">一一</i><i class="cd">口</i>「<b style="color:${C3}">悟</b>」輕狂。`},
+  {key:"N", rad:"弓", rhyme:"押韻：彎／間／關，粵音 -aan 平聲", poem:`<b style="color:${C1}">豎鉤</b><b style="color:${C2}">橫撇</b>折彎彎，<b style="color:${C3}">雙耳刀旁</b><i class="tr">弓</i>字間。　<i class="tr">弓</i><i class="cd">女尸一</i>是駿「<b style="color:${C2}">马</b>」，<i class="tr">弓</i><i class="cd">卜大</i>連「<b style="color:${C2}">买</b>」過關。`},
+  {key:"O", rad:"人", rhyme:"押韻：行／間／攀，粵音 -aan 平聲", poem:`<b style="color:${C1}">單<i class="tr">人</i>側立</b>企成行，<b style="color:${C2}"><i class="tr">人</i>頭</b><b style="color:${C3}">臥<i class="tr">人</i></b>在此間。　<i class="tr">人</i><i class="cd">一口</i>「<b style="color:${C2}">合</b>」<i class="tr">人</i><i class="cd">戈</i>「<b style="color:${C1}">什</b>」，<i class="tr">人</i><i class="cd">戈大山</i>「<b style="color:${C1}">优</b>」高攀。`},
+  {key:"P", rad:"心", rhyme:"押韻：情／明／情，粵音 -ing 平聲", poem:`<b style="color:${C1}">豎<i class="tr">心</i></b><b style="color:${C2}">包框</b>訴衷<i class="tr">情</i>，<b style="color:${C3}">匕字彎鉤</b> <i class="ky">P</i> 鍵明。　<i class="cd">田</i><i class="tr">心</i>「<b class="tr">思</b>」盡<i class="tr">心</i><i class="cd">口</i>「<b style="color:${C2}">句</b>」，<i class="tr">心</i><i class="cd">手一月</i>總是「<b style="color:${C1}">情</b>」。`},
+  {key:"Q", rad:"手", rhyme:"押韻：連／邊／邊，粵音 -in 平聲", poem:`<b style="color:${C1}">提<i class="tr">手</i></b><b style="color:${C2}">春頭</b><i class="tr">手</i>相連，<b style="color:${C2}">夫青丰表</b>守 <i class="ky">Q</i> 邊。　<i class="tr">手</i><i class="cd">弓戈</i>「<b style="color:${C3}">专</b>」<i class="tr">手</i><i class="cd">戈</i>「<b style="color:${C1}">找</b>」，<i class="tr">手</i><i class="cd">竹尸</i>「<b style="color:${C1}">护</b>」伴身邊。`},
+  {key:"R", rad:"口", rhyme:"押韻：方／堂／攀，粵音 -ong/-aan 通押", poem:`<b style="color:${C1}">四邊圍合</b><i class="tr">口</i>正方，<b style="color:${C2}">三<i class="tr">口</i>聚品</b>入中堂。　<i class="tr">口</i><i class="cd">金</i>「<b style="color:${C1}">只</b>」<i class="cd">戈</i><i class="tr">口</i><i class="cd">一</i>「<b style="color:${C1}">或</b>」，<i class="cd">人一山</i>「<b style="color:${C2}">岳</b>」奮力攀。`},
+  {key:"S", rad:"尸", rhyme:"押韻：頭／收／求，粵音 -au 平聲", poem:`<b class="tr">屋宇</b><b style="color:${C1}">方框</b><i class="tr">尸</i>字頭，<b style="color:${C1}">巨臣匹匠</b>此鍵收。　<i class="tr">尸</i><i class="cd">戈一</i>「<b style="color:${C3}">习</b>」<i class="tr">尸</i><i class="cd">大</i>「<b class="tr">尹</b>」，<i class="tr">尸</i><i class="cd">一一戈</i>「<b style="color:${C1}">层</b>」易求。`},
+  {key:"T", rad:"廿", rhyme:"押韻：栽／來／開，粵音 -oi 平聲", poem:`綠<b style="color:${C1}">草芳菲</b><i class="tr">廿</i>字栽，<b style="color:${C2}">羊頭</b><b style="color:${C3}">皿底並首</b>來。　<i class="tr">廿</i><i class="cd">人心</i>「<b style="color:${C1}">花</b>」<i class="tr">廿</i><i class="cd">金</i>「<b style="color:${C3}">共</b>」，<i class="tr">廿</i><i class="cd">土大</i>連「<b style="color:${C2}">美</b>」盛開。`},
+  {key:"U", rad:"山", rhyme:"押韻：排／懷／佳，粵音 -aai 平聲", poem:`<b class="tr">崇嶺三峰</b>向上排，<b style="color:${C2}">兒底彎鉤</b> <i class="ky">U</i> 入懷。　<i class="cd">水</i><i class="tr">山</i><i class="cd">弓水</i>「<b style="color:${C1}">涵</b>」於內，<i class="cd">竹土竹</i><i class="tr">山</i>「<b style="color:${C2}">先</b>」更佳。`},
+  {key:"V", rad:"女", rhyme:"押韻：連／邊／前，粵音 -in 平聲", poem:`<b style="color:${C1}">撇折彎曲</b><i class="tr">女</i>相連，<b style="color:${C2}">纟旁</b>簡化<i class="tr">女</i><i class="cd">一</i>邊。　<i class="cd">一</i><i class="tr">女</i><i class="cd">木竹</i>「<b class="tr">牙</b>」齒白，<i class="tr">女</i><i class="cd">一戈十</i>「<b style="color:${C2}">线</b>」當前。`},
+  {key:"W", rad:"田", rhyme:"押韻：逢／同／通，粵音 -ung 平聲", poem:`<b style="color:${C1}">四面圍框</b><i class="tr">田</i>裏逢，<b style="color:${C1}">由甲申男</b>一脈同。　<i class="tr">田</i><i class="cd">竹水卜</i>為「<b style="color:${C1}">图</b>」字，<i class="tr">田</i><i class="cd">中弓戈</i>「<b style="color:${C2}">罗</b>」亦通。`},
+  {key:"Y", rad:"卜", rhyme:"押韻：開／來／台，粵音 -oi 平聲", poem:`<b style="color:${C1}">點橫高頂</b><i class="tr">卜</i>字開，<b style="color:${C2}">走之作首</b>第一來。　<i class="tr">卜卜</i><i class="cd">大</i>「<b style="color:${C2}">这</b>」<i class="tr">卜</i><i class="cd">大</i>「<b style="color:${C2}">达</b>」，<i class="tr">卜</i><i class="cd">口火</i>連「<b style="color:${C1}">京</b>」登台。`}
+];
+
+/* 繁體版 24 首口訣詩 */
+const TRAD_POEMS = [
+  {key:"A", rad:"日", rhyme:"押韻：光／方／旁，粵音 -ong 平聲", poem:`<i class="tr">日</i>字當頭耀萬光，<b style="color:${C2}">門</b>框扁<b style="color:${C1}">曰</b> <i class="ky">A</i> 鍵方。　<i class="tr">日</i><i class="cd">弓</i><i class="tr">日</i>「<b style="color:${C2}">間</b>」<i class="tr">日</i><i class="cd">十</i>「<b class="tr">早</b>」，<i class="tr">日</i><i class="cd">土木戈</i>「<b class="tr">時</b>」在旁。`},
+  {key:"B", rad:"月", rhyme:"押韻：開／來／來，粵音 -oi 平聲", poem:`<b style="color:${C1}">肉旁</b><b style="color:${C2}">同框</b><i class="tr">月</i>字開，<b style="color:${C3}">目貝</b>下空入 <i class="ky">B</i> 來。　<i class="cd">中心</i><i class="tr">月</i>「<b style="color:${C1}">背</b>」<i class="cd">大</i><i class="tr">月</i>「<b style="color:${C2}">有</b>」，<i class="tr">月</i><i class="cd">山竹山</i>「<b style="color:${C3}">見</b>」就來。`},
+  {key:"C", rad:"金", rhyme:"押韻：連／邊／前，粵音 -in 平聲", poem:`<b style="color:${C2}">八字</b><b style="color:${C3}">雙點</b><i class="tr">金</i>相連，<b style="color:${C2}">只共兵</b>分守底邊。　<i class="tr">金</i><i class="cd">人口</i>「<b style="color:${C2}">谷</b>」<i class="cd">卜</i><i class="tr">金</i>「<b style="color:${C3}">六</b>」，<i class="tr">金</i><i class="cd">大一土</i><i class="tr">金</i>「<b class="tr">釜</b>」前。`},
+  {key:"D", rad:"木", rhyme:"押韻：林／深／尋，粵音 -am 平聲", poem:`雙<i class="tr">木</i>相依便作<b class="tr">林</b>，三<i class="tr">木</i>聚<b class="tr">森</b>意更深。　<i class="tr">木木</i><i class="cd">竹</i>「<b class="tr">才</b>」<i class="cd">心</i><i class="tr">木</i>「<b class="tr">也</b>」，得<i class="cd">竹</i><i class="tr">木</i><i class="cd">月</i>「<b style="color:${C1}">策</b>」可尋。`},
+  {key:"E", rad:"水", rhyme:"押韻：流／頭／流，粵音 -au 平聲", poem:`<b style="color:${C1}">江河湖海</b><i class="tr">水</i>長流，<b style="color:${C1}">三點水旁</b> <i class="ky">E</i> 鍵頭。　<i class="tr">水</i><i class="cd">戈</i>「<b style="color:${C3}">叉</b>」兮<i class="cd">一</i><i class="tr">水</i>「<b style="color:${C2}">汞</b>」，<i class="cd">十</i><i class="tr">水</i>「<b class="tr">支</b>」<i class="tr">水</i><i class="cd">一</i>「<b style="color:${C1}">江</b>」流。`},
+  {key:"F", rad:"火", rhyme:"押韻：紅／中／通，粵音 -ung 平聲", poem:`<i class="tr">烈焰</i>熊熊映日紅，<b style="color:${C1}">四點</b><b style="color:${C2}">小頭</b>歸<i class="tr">火</i>中。　<i class="cd">日口</i><i class="tr">火</i>「<b style="color:${C1}">照</b>」<i class="tr">火</i><i class="cd">大</i>「<b style="color:${C3}">尖</b>」，<i class="tr">火</i><i class="cd">月口</i>連「<b style="color:${C2}">尚</b>」路通。`},
+  {key:"G", rad:"土", rhyme:"押韻：家／華／誇，粵音 -aa 平聲", poem:`大<b style="color:${C2}">地</b>根<b style="color:${C2}">基</b><i class="tr">土</i><b style="color:${C1}">士</b>家，上<b style="color:${C1}">士</b>下口<b style="color:${C1}">吉</b>字華。　<i class="tr">土土</i>「<b class="tr">圭</b>」<i class="tr">土</i><i class="cd">心木</i>「<b style="color:${C2}">地</b>」，<i class="tr">土</i><i class="cd">日一竹</i>「<b style="color:${C2}">場</b>」共誇。`},
+  {key:"H", rad:"竹", rhyme:"押韻：風／同／功，粵音 -ung 平聲", poem:`翠<i class="tr">竹</i><b style="color:${C2}">斜撇</b>迎清風，<b style="color:${C2}">單撇</b><b style="color:${C3}">三撇</b>此鍵同。　<i class="tr">竹</i><i class="cd">十</i>「<b style="color:${C2}">千</b>」<i class="tr">竹竹</i><i class="cd">大</i>「<b style="color:${C1}">笑</b>」，<i class="tr">竹</i><i class="cd">月山廿</i>「<b style="color:${C1}">算</b>」建功。`},
+  {key:"I", rad:"戈", rhyme:"押韻：連／邊／前，粵音 -in 平聲", poem:`<b style="color:${C1}">單點</b><b style="color:${C2}">廣頭</b><i class="tr">戈</i>相連，<b style="color:${C3}">私底三角</b>守下邊。　<i class="tr">戈</i><i class="cd">卜口</i>「<b style="color:${C2}">店</b>」<i class="cd">土</i><i class="tr">戈</i>「<b style="color:${C3}">去</b>」，<i class="cd">一土</i><i class="tr">戈</i>歸「<b style="color:${C1}">玉</b>」在前。`},
+  {key:"J", rad:"十", rhyme:"押韻：橫／間／山，粵音 -aan 平聲", poem:`一豎穿過一長橫，<b style="color:${C1}">寶蓋屋頂</b><i class="tr">十</i>字間。　<i class="tr">十</i><i class="cd">田</i><i class="tr">十</i>「<b style="color:${C2}">車</b>」<i class="tr">十</i><i class="cd">口</i>「<b class="tr">古</b>」，<i class="tr">十</i><i class="cd">一卜人</i>「<b style="color:${C1}">定</b>」軍山。`},
+  {key:"K", rad:"大", rhyme:"押韻：排／懷／猜，粵音 -aai 平聲", poem:`<b style="color:${C1}">撇捺交叉</b><b style="color:${C3}">病字</b>排，<b style="color:${C2}">橫撇在左</b><i class="tr">大</i>入懷。　<i class="tr">大</i><i class="cd">弓人</i>「<b style="color:${C3}">疚</b>」<i class="tr">大</i><i class="cd">戈</i>「<b class="tr">太</b>」，<i class="tr">大</i><i class="cd">竹手一月</i>是「<b style="color:${C1}">猜</b>」。`},
+  {key:"L", rad:"中", rhyme:"押韻：通／中／功，粵音 -ung 平聲", poem:`<b style="color:${C1}">直豎穿心</b>上下通，<b style="color:${C2}">川巾</b><b style="color:${C3}">衣旁</b>盡歸<i class="tr">中</i>。　<i class="tr">中中</i><i class="cd">一月金</i>「<b style="color:${C2}">順</b>」字，<i class="tr">中</i><i class="cd">木竹水</i>「<b style="color:${C3}">被</b>」有功。`},
+  {key:"M", rad:"一", rhyme:"押韻：當／方／狂，粵音 -ong 平聲", poem:`<b style="color:${C3}">平橫</b><b style="color:${C1}">廠框</b><i class="tr">一</i>字當，無點崖邊守上方。　<i class="tr">一</i><i class="cd">土戈</i>「<b style="color:${C2}">玉</b>」<i class="tr">一</i><i class="cd">卜</i>「<b class="tr">下</b>」，<i class="cd">心</i><i class="tr">一一</i><i class="cd">口</i>「<b style="color:${C3}">悟</b>」輕狂。`},
+  {key:"N", rad:"弓", rhyme:"押韻：彎／間／關，粵音 -aan 平聲", poem:`<b style="color:${C1}">豎鉤</b><b style="color:${C2}">橫撇</b>折彎彎，<b style="color:${C3}">雙耳刀旁</b><i class="tr">弓</i>字間。　<i class="tr">弓</i><i class="cd">尸一女</i>得「<b class="tr">張</b>」字，<i class="cd">十日</i><i class="tr">弓</i><i class="cd">中</i>「<b style="color:${C3}">都</b>」過關。`},
+  {key:"O", rad:"人", rhyme:"押韻：行／間／攀，粵音 -aan 平聲", poem:`<b style="color:${C1}">單<i class="tr">人</i>側立</b>企成行，<b style="color:${C2}"><i class="tr">人</i>頭</b><b style="color:${C3}">臥<i class="tr">人</i></b>在此間。　<i class="tr">人</i><i class="cd">一口</i>「<b style="color:${C2}">合</b>」<i class="tr">人</i><i class="cd">戈</i>「<b style="color:${C1}">什</b>」，<i class="tr">人</i><i class="cd">尸尸</i>連「<b style="color:${C1}">佢</b>」高攀。`},
+  {key:"P", rad:"心", rhyme:"押韻：情／明／情，粵音 -ing 平聲", poem:`<b style="color:${C1}">豎<i class="tr">心</i></b><b style="color:${C2}">包框</b>訴衷<i class="tr">情</i>，<b style="color:${C3}">匕字彎鉤</b> <i class="ky">P</i> 鍵明。　<i class="cd">田</i><i class="tr">心</i>「<b class="tr">思</b>」盡<i class="tr">心</i><i class="cd">口</i>「<b style="color:${C2}">句</b>」，<i class="tr">心</i><i class="cd">手一月</i>總是「<b style="color:${C1}">情</b>」。`},
+  {key:"Q", rad:"手", rhyme:"押韻：連／邊／先，粵音 -in 平聲", poem:`<b style="color:${C1}">提<i class="tr">手</i></b><b style="color:${C2}">春頭</b><i class="tr">手</i>相連，<b style="color:${C2}">夫青丰表</b>守 <i class="ky">Q</i> 邊。　<i class="tr">手</i><i class="cd">戈</i>「<b style="color:${C1}">找</b>」<i class="tr">手</i><i class="cd">一弓</i>「<b style="color:${C1}">打</b>」，<i class="tr">手</i><i class="cd">月月山山</i>「<b style="color:${C2}">靚</b>」先。`},
+  {key:"R", rad:"口", rhyme:"押韻：方／堂／攀，粵音 -ong/-aan 通押", poem:`<b style="color:${C1}">四邊圍合</b><i class="tr">口</i>正方，<b style="color:${C2}">三<i class="tr">口</i>聚品</b>入中堂。　<i class="tr">口</i><i class="cd">金</i>「<b style="color:${C1}">只</b>」<i class="cd">戈</i><i class="tr">口</i><i class="cd">一</i>「<b style="color:${C1}">或</b>」，<i class="cd">人一山</i>「<b style="color:${C2}">岳</b>」奮力攀。`},
+  {key:"S", rad:"尸", rhyme:"押韻：頭／收／求，粵音 -au 平聲", poem:`<b style="color:#ff5">屋宇</b><b style="color:${C1}">方框</b><i class="tr">尸</i>字頭，<b style="color:${C1}">巨臣匹匠</b>此鍵收。　<i class="tr">尸</i><i class="cd">口口口</i>「<b style="color:${C1}">區</b>」仍妙，<i class="tr">尸</i><i class="cd">十口</i>連「<b class="tr">居</b>」易求。`},
+  {key:"T", rad:"廿", rhyme:"押韻：栽／台／開，粵音 -oi 平聲", poem:`綠<b style="color:${C1}">草芳菲</b><i class="tr">廿</i>字栽，<b style="color:${C2}">羊頭</b><b style="color:${C3}">皿底</b>入 <i class="ky">T</i> 台。　<i class="tr">廿</i><i class="cd">人心</i>「<b style="color:${C1}">花</b>」<i class="tr">廿</i><i class="cd">金</i>「<b style="color:${C3}">共</b>」，<i class="tr">廿</i><i class="cd">土大</i>連「<b style="color:${C2}">美</b>」盛開。`},
+  {key:"U", rad:"山", rhyme:"押韻：排／懷／佳，粵音 -aai 平聲", poem:`<b class="tr">崇嶺三峰</b>向上排，<b style="color:${C2}">兒底彎鉤</b> <i class="ky">U</i> 入懷。　<i class="cd">水</i><i class="tr">山</i><i class="cd">弓水</i>「<b style="color:${C1}">涵</b>」於內，<i class="cd">竹土竹</i><i class="tr">山</i>「<b style="color:${C2}">先</b>」更佳。`},
+  {key:"V", rad:"女", rhyme:"押韻：連／邊／先，粵音 -in 平聲", poem:`<b style="color:${C1}">撇折彎曲</b><i class="tr">女</i>相連，<b style="color:${C2}">糹旁</b>首尾<i class="tr">女</i><i class="cd">火</i>邊。　<i class="cd">一</i><i class="tr">女</i><i class="cd">木竹</i>「<b class="tr">牙</b>」齒白，<i class="tr">女</i><i class="cd">火田</i>配「<b style="color:${C2}">細</b>」爭先。`},
+  {key:"W", rad:"田", rhyme:"押韻：逢／同／通，粵音 -ung 平聲", poem:`<b style="color:${C1}">四面圍框</b><i class="tr">田</i>裏逢，<b style="color:${C1}">由甲申男</b>一脈同。　<i class="tr">田</i><i class="cd">戈口一</i>承「<b style="color:${C1}">國</b>」力，<i class="tr">田</i><i class="cd">中月山金</i>「<b style="color:${C2}">買</b>」通。`},
+  {key:"Y", rad:"卜", rhyme:"押韻：開／台／來，粵音 -oi 平聲", poem:`<b style="color:${C1}">點橫高頂</b><i class="tr">卜</i>字開，<b style="color:${C2}">走之</b><b style="color:${C3}">言旁</b>入此台。　<i class="tr">卜</i><i class="cd">口火</i>「<b style="color:${C1}">京</b>」<i class="tr">卜</i><i class="cd">口</i>「<b style="color:${C1}">占</b>」，<i class="tr">卜</i><i class="cd">土口女</i>「<b style="color:${C2}">遠</b>」字來。`}
+];
+
+let curMode = "simp";
+const openEditors = new Set();
+
+const INIT_SIMP_POEMS = JSON.parse(JSON.stringify(SIMP_POEMS));
+const INIT_TRAD_POEMS = JSON.parse(JSON.stringify(TRAD_POEMS));
+const INIT_PREFACE = [...PREFACE_LINES];
+const INIT_SUMMARY = [...SUMMARY_LINES];
+
+function escAttr(str){
+  return String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function stripTags(html){
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return div.textContent || "";
+}
+
+function toTemplateCode(html){
+  return String(html)
+    .replace(/#0ff/gi, "${C1}")
+    .replace(/#5f5/gi, "${C2}")
+    .replace(/#ff80ab/gi, "${C3}");
+}
+
+function fromTemplateCode(str){
+  return String(str)
+    .replace(/\$\{C1\}/g, C1)
+    .replace(/\$\{C2\}/g, C2)
+    .replace(/\$\{C3\}/g, C3);
+}
+
+function renderBookends(){
+  document.getElementById("prefaceDisplay").innerHTML = PREFACE_LINES.map(l=>`<div>${l}</div>`).join("");
+  document.getElementById("prefaceInput").value = PREFACE_LINES.join("\n");
+  document.getElementById("summaryDisplay").innerHTML = SUMMARY_LINES.map(l=>`<div>${l}</div>`).join("");
+  document.getElementById("summaryInput").value = SUMMARY_LINES.join("\n");
+}
+function toggleBookendEdit(type){
+  const el = document.getElementById(type + "Editor");
+  el.classList.toggle("open");
+}
+function updateBookend(type){
+  const val = document.getElementById(type + "Input").value.split(/\r?\n/).filter(Boolean);
+  if(type === "preface") PREFACE_LINES = val;
+  else SUMMARY_LINES = val;
+  document.getElementById(type + "Display").innerHTML = val.map(l=>`<div>${l}</div>`).join("");
+}
+
+function setMode(m){
+  curMode = m;
+  document.getElementById("tabSimp").classList.toggle("active", m === "simp");
+  document.getElementById("tabTrad").classList.toggle("active", m === "trad");
+  document.getElementById("tabBoth").classList.toggle("active", m === "both");
+  render();
+}
+
+function buildItemBlock(ver, idx, item){
+  const id = `${ver}-${idx}`;
+  const isOpen = openEditors.has(id);
+  const verLabel = ver === "simp" ? "簡體版" : "繁體版";
+  const verStyle = ver === "simp" ? "" : "color:#0ff;border-color:#0ff";
+  const plain = stripTags(item.poem);
+  const clauses = plain.split(/[，。　\s]+/).filter(Boolean);
+  const lenInfo = clauses.map(c => [...c].length).join("-");
+  const isAll7 = clauses.length === 4 && clauses.every(c => [...c].length === 7);
+
+  return `
+    <div style="margin-bottom:${curMode==='both'&&ver==='simp'?'10px':'0'}">
+      <div class="poem-meta">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="key-badge"><span class="k">[${item.key}]</span><span class="r">${item.rad}</span><span class="ver" style="${verStyle}">${verLabel}</span></span>
+          <span style="font-size:11.5px;color:${isAll7?'#5f5':'#ff80ab'};font-family:Consolas" id="len-${id}" title="四句字數檢核">字數: ${lenInfo} ${isAll7?'✓':'⚠'}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="rhyme-tag" id="rhyme-disp-${id}">${escAttr(item.rhyme)}</span>
+          <button type="button" class="key-button sm" onclick="toggleEdit('${id}')">✏️ 編輯</button>
+        </div>
+      </div>
+      <div class="poem-line-box" id="box-${id}">${item.poem}</div>
+
+      <div class="edit-drawer ${isOpen?'open':''}" id="ed-${id}">
+        <div class="edit-row">
+          <span class="edit-label">純文字快改：</span>
+          <input type="text" class="edit-input" id="plain-${id}" value="${escAttr(plain)}" placeholder="直接修改純文字（按右側套用）">
+          <button type="button" class="key-button sm primary" onclick="applyPlainEdit('${ver}',${idx})">套用純文字並自動上色</button>
+        </div>
+        <div class="edit-row">
+          <span class="edit-label">押韻標註：</span>
+          <input type="text" class="edit-input" id="rhyme-in-${id}" value="${escAttr(item.rhyme)}" oninput="onRhymeInput('${ver}',${idx})">
+        </div>
+        <div class="tag-bar">
+          <span style="font-size:11.5px;color:#aaa">插入色碼標籤：</span>
+          <button type="button" class="tag-btn" style="color:#ff5" onclick="wrapSelection('${id}','<i class=&quot;tr&quot;>','</i>')">主字根 .tr (黃)</button>
+          <button type="button" class="tag-btn" style="color:#fa5" onclick="wrapSelection('${id}','<i class=&quot;cd&quot;>','</i>')">拆碼 .cd (橙)</button>
+          <button type="button" class="tag-btn" style="color:#0ff" onclick="wrapSelection('${id}','<i class=&quot;ky&quot;>','</i>')">鍵位 .ky (青)</button>
+          <button type="button" class="tag-btn" style="color:#0ff" onclick="wrapSelection('${id}','<b style=&quot;color:\${C1}&quot;>','</b>')">輔助1 C1 (青)</button>
+          <button type="button" class="tag-btn" style="color:#5f5" onclick="wrapSelection('${id}','<b style=&quot;color:\${C2}&quot;>','</b>')">輔助2 C2 (綠)</button>
+          <button type="button" class="tag-btn" style="color:#ff80ab" onclick="wrapSelection('${id}','<b style=&quot;color:\${C3}&quot;>','</b>')">輔助3 C3 (粉)</button>
+        </div>
+        <textarea class="edit-textarea" id="html-in-${id}" oninput="onHtmlInput('${ver}',${idx})">${escAttr(toTemplateCode(item.poem))}</textarea>
+      </div>
+    </div>
+  `;
+}
+
+function render(){
+  const q = document.getElementById("searchBox").value.trim().toUpperCase();
+  const box = document.getElementById("poemContainer");
+  let html = "";
+  let count = 0;
+
+  for(let i = 0; i < 24; i++){
+    const s = SIMP_POEMS[i];
+    const t = TRAD_POEMS[i];
+    const plainS = stripTags(s.poem);
+    const plainT = stripTags(t.poem);
+
+    if(q){
+      const match = s.key.includes(q) || s.rad.includes(q) || plainS.toUpperCase().includes(q) || plainT.toUpperCase().includes(q);
+      if(!match) continue;
+    }
+
+    if(curMode === "simp"){
+      count++;
+      html += `<div class="poem-card">${buildItemBlock("simp", i, s)}</div>`;
+    } else if(curMode === "trad"){
+      count++;
+      html += `<div class="poem-card">${buildItemBlock("trad", i, t)}</div>`;
+    } else {
+      count += 2;
+      html += `<div class="poem-card">${buildItemBlock("simp", i, s)}${buildItemBlock("trad", i, t)}</div>`;
+    }
+  }
+
+  box.innerHTML = html || `<div style="text-align:center;color:#aaa;padding:24px">找不到符合「${q}」的詩句</div>`;
+  document.getElementById("countBadge").textContent = `共顯示 ${count} 首`;
+}
+
+function toggleEdit(id){
+  const el = document.getElementById("ed-" + id);
+  if(!el) return;
+  if(openEditors.has(id)){
+    openEditors.delete(id);
+    el.classList.remove("open");
+  } else {
+    openEditors.add(id);
+    el.classList.add("open");
+  }
+}
+
+function expandAllEditors(open){
+  openEditors.clear();
+  if(open){
+    for(let i=0;i<24;i++){
+      openEditors.add(`simp-${i}`);
+      openEditors.add(`trad-${i}`);
+    }
+  }
+  render();
+}
+
+function onHtmlInput(ver, idx){
+  const id = `${ver}-${idx}`;
+  const arr = ver === "simp" ? SIMP_POEMS : TRAD_POEMS;
+  const raw = document.getElementById("html-in-" + id).value;
+  arr[idx].poem = fromTemplateCode(raw);
+
+  document.getElementById("box-" + id).innerHTML = arr[idx].poem;
+  const plain = stripTags(arr[idx].poem);
+  document.getElementById("plain-" + id).value = plain;
+
+  const clauses = plain.split(/[，。　\s]+/).filter(Boolean);
+  const lenInfo = clauses.map(c => [...c].length).join("-");
+  const isAll7 = clauses.length === 4 && clauses.every(c => [...c].length === 7);
+  const lenEl = document.getElementById("len-" + id);
+  if(lenEl){
+    lenEl.textContent = `字數: ${lenInfo} ${isAll7?'✓':'⚠'}`;
+    lenEl.style.color = isAll7 ? "#5f5" : "#ff80ab";
+  }
+}
+
+function onRhymeInput(ver, idx){
+  const id = `${ver}-${idx}`;
+  const arr = ver === "simp" ? SIMP_POEMS : TRAD_POEMS;
+  const val = document.getElementById("rhyme-in-" + id).value;
+  arr[idx].rhyme = val;
+  document.getElementById("rhyme-disp-" + id).textContent = val;
+}
+
+const ALL_RADS = "日月金木水火土竹戈十大中一弓人心手口尸廿山女田卜";
+function autoColorizePlainClause(clause, mainRad){
+  let res = "";
+  for(let i=0; i<clause.length; i++){
+    const ch = clause[i];
+    if(ch === "「" && clause[i+2] === "」"){
+      const exChar = clause[i+1];
+      res += `「<b style="color:${C1}">${exChar}</b>」`;
+      i += 2;
+    } else if(ch === mainRad){
+      res += `<i class="tr">${ch}</i>`;
+    } else if(ALL_RADS.includes(ch)){
+      res += `<i class="cd">${ch}</i>`;
+    } else if(/^[A-Y]$/.test(ch)){
+      res += `<i class="ky">${ch}</i>`;
+    } else {
+      res += ch;
+    }
+  }
+  return res;
+}
+
+function applyPlainEdit(ver, idx){
+  const id = `${ver}-${idx}`;
+  const arr = ver === "simp" ? SIMP_POEMS : TRAD_POEMS;
+  const newPlain = document.getElementById("plain-" + id).value.trim();
+  if(!newPlain) return;
+
+  const newClauses = newPlain.split(/[，。　\s]+/).filter(Boolean);
+  if(newClauses.length === 4){
+    const oldPlainClauses = stripTags(arr[idx].poem).split(/[，。　\s]+/).filter(Boolean);
+    const m = arr[idx].poem.match(/^([\s\S]+?)，([\s\S]+?)。([\s　]*)([\s\S]+?)，([\s\S]+?)。$/);
+    if(m && oldPlainClauses.length === 4){
+      const c1 = newClauses[0] === oldPlainClauses[0] ? m[1] : autoColorizePlainClause(newClauses[0], arr[idx].rad);
+      const c2 = newClauses[1] === oldPlainClauses[1] ? m[2] : autoColorizePlainClause(newClauses[1], arr[idx].rad);
+      const c3 = newClauses[2] === oldPlainClauses[2] ? m[4] : autoColorizePlainClause(newClauses[2], arr[idx].rad);
+      const c4 = newClauses[3] === oldPlainClauses[3] ? m[5] : autoColorizePlainClause(newClauses[3], arr[idx].rad);
+      arr[idx].poem = `${c1}，${c2}。　${c3}，${c4}。`;
+    } else {
+      arr[idx].poem = `${autoColorizePlainClause(newClauses[0],arr[idx].rad)}，${autoColorizePlainClause(newClauses[1],arr[idx].rad)}。　${autoColorizePlainClause(newClauses[2],arr[idx].rad)}，${autoColorizePlainClause(newClauses[3],arr[idx].rad)}。`;
+    }
+  } else {
+    arr[idx].poem = autoColorizePlainClause(newPlain, arr[idx].rad);
+  }
+
+  document.getElementById("html-in-" + id).value = toTemplateCode(arr[idx].poem);
+  onHtmlInput(ver, idx);
+}
+
+function wrapSelection(id, openTag, closeTag){
+  const ta = document.getElementById("html-in-" + id);
+  if(!ta) return;
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  const sel = ta.value.substring(start, end) || "字";
+  ta.value = ta.value.substring(0, start) + openTag + sel + closeTag + ta.value.substring(end);
+  const [ver, idx] = id.split("-");
+  onHtmlInput(ver, parseInt(idx, 10));
+  ta.focus();
+}
+
+function openBatchQuickModal(){
+  const dr = document.getElementById("exportDrawer");
+  dr.classList.add("open");
+  generateExport("plain");
+  document.getElementById("inpFindStr").focus();
+}
+
+function runBatchFindReplace(){
+  const findStr = document.getElementById("inpFindStr").value;
+  const repStr = document.getElementById("inpRepStr").value;
+  const scope = document.getElementById("selBatchScope").value;
+  const msgEl = document.getElementById("batchMsg");
+  if(!findStr){ msgEl.textContent = "⚠ 請輸入要尋找的文字"; return; }
+
+  let hitCount = 0;
+  const processArr = (arr) => {
+    for(let i=0; i<arr.length; i++){
+      const plain = stripTags(arr[i].poem);
+      if(arr[i].poem.includes(findStr)){
+        arr[i].poem = arr[i].poem.split(findStr).join(repStr);
+        hitCount++;
+      } else if(plain.includes(findStr)){
+        const updatedPlain = plain.split(findStr).join(repStr);
+        const oldPlainClauses = plain.split(/[，。　\s]+/).filter(Boolean);
+        const newClauses = updatedPlain.split(/[，。　\s]+/).filter(Boolean);
+        const m = arr[i].poem.match(/^([\s\S]+?)，([\s\S]+?)。([\s　]*)([\s\S]+?)，([\s\S]+?)。$/);
+        if(m && newClauses.length === 4){
+          const c1 = newClauses[0] === oldPlainClauses[0] ? m[1] : autoColorizePlainClause(newClauses[0], arr[i].rad);
+          const c2 = newClauses[1] === oldPlainClauses[1] ? m[2] : autoColorizePlainClause(newClauses[1], arr[i].rad);
+          const c3 = newClauses[2] === oldPlainClauses[2] ? m[4] : autoColorizePlainClause(newClauses[2], arr[i].rad);
+          const c4 = newClauses[3] === oldPlainClauses[3] ? m[5] : autoColorizePlainClause(newClauses[3], arr[i].rad);
+          arr[i].poem = `${c1}，${c2}。　${c3}，${c4}。`;
+        } else {
+          arr[i].poem = autoColorizePlainClause(updatedPlain, arr[i].rad);
+        }
+        hitCount++;
+      }
+    }
+  };
+
+  if(scope === "both" || scope === "simp") processArr(SIMP_POEMS);
+  if(scope === "both" || scope === "trad") processArr(TRAD_POEMS);
+
+  render();
+  generateExport("plain");
+  msgEl.textContent = hitCount ? `✅ 已成功替換 ${hitCount} 首詩句！` : `⚠ 找不到「${findStr}」`;
+}
+
+function toggleExportDrawer(){
+  const dr = document.getElementById("exportDrawer");
+  dr.classList.toggle("open");
+  if(dr.classList.contains("open")) generateExport("plain");
+}
+
+function generateExport(type){
+  const pre = document.getElementById("exportPre");
+  if(type === "plain"){
+    let out = "### 【前言】倉頡廿四字根總綱（4 句）\n\n" + PREFACE_LINES.map(stripTags).join("\n") + "\n\n";
+    out += "### 一、 簡體版全書口訣詩（共 24 首）\n\n";
+    SIMP_POEMS.forEach(p => { out += `* **${p.key} ${p.rad}**：${stripTags(p.poem)}\n`; });
+    out += "\n### 二、 繁體版全書口訣詩（共 24 首）\n\n";
+    TRAD_POEMS.forEach(p => { out += `* **${p.key} ${p.rad}**：${stripTags(p.poem)}\n`; });
+    out += "\n### 【最後總結】取碼次序與拆字心法（8 句）\n\n" + SUMMARY_LINES.map(stripTags).join("\n");
+    pre.textContent = out;
+  } else if(type === "simpJs" || type === "tradJs"){
+    const arr = type === "simpJs" ? SIMP_POEMS : TRAD_POEMS;
+    let out = `/* ${type === "simpJs" ? "簡體版" : "繁體版"} 24 首口訣詩教學檔 PAGES 欄位代碼 */\n\n`;
+    arr.forEach(p => {
+      out += `// [${p.key} ${p.rad}]\n    rhyme:"${p.rhyme}",\n    poem:\`${toTemplateCode(p.poem)}\`\n\n`;
+    });
+    pre.textContent = out;
+  }
+}
+
+function copyExportCode(){
+  const txt = document.getElementById("exportPre").textContent;
+  const btn = document.getElementById("btnCopyExport");
+  const ta = document.createElement("textarea");
+  ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select();
+  try{
+    document.execCommand("copy");
+    const orig = btn.textContent;
+    btn.textContent = "✅ 已複製！";
+    setTimeout(() => btn.textContent = orig, 1500);
+  }catch(e){}
+  ta.remove();
+}
+
+function resetAllPoems(){
+  for(let i=0; i<24; i++){
+    SIMP_POEMS[i] = JSON.parse(JSON.stringify(INIT_SIMP_POEMS[i]));
+    TRAD_POEMS[i] = JSON.parse(JSON.stringify(INIT_TRAD_POEMS[i]));
+  }
+  PREFACE_LINES = [...INIT_PREFACE];
+  SUMMARY_LINES = [...INIT_SUMMARY];
+  renderBookends();
+  render();
+  const dr = document.getElementById("exportDrawer");
+  if(dr && dr.classList.contains("open")) generateExport("plain");
+}
+
+const loadedFiles = {
+  simpTut: { name: "cangjie_tutorial_full.html", text: "" },
+  tradTut: { name: "trad_cangjie_tutorial_full.html", text: "" },
+  mainHtml: { name: "index.html", text: "" }
+};
+
+function bindFileInput(inputId, slotKey, statusId, btnId){
+  document.getElementById(inputId).addEventListener("change", e => {
+    const f = e.target.files?.[0];
+    if(!f) return;
+    const fr = new FileReader();
+    fr.onload = () => {
+      loadedFiles[slotKey].name = f.name;
+      loadedFiles[slotKey].text = String(fr.result || "");
+      document.getElementById(statusId).textContent = `✅ 已載入 ${f.name} (${loadedFiles[slotKey].text.length.toLocaleString()} 字元)`;
+      document.getElementById(btnId).disabled = false;
+    };
+    fr.readAsText(f, "utf-8");
+  });
+}
+bindFileInput("fSimpTut", "simpTut", "stSimpTut", "btnDlSimpTut");
+bindFileInput("fTradTut", "tradTut", "stTradTut", "btnDlTradTut");
+bindFileInput("fMainHtml", "mainHtml", "stMainHtml", "btnDlMainHtml");
+
+function replacePoemsInHtmlContent(htmlText, poemArray, isMainFile){
+  let out = htmlText;
+  let replacedCount = 0;
+
+  for(const item of poemArray){
+    // 主檔 (如 index_simp.html) 內未宣告 C1/C2/C3 變數，須保留實際色碼並以 <br> 分上下兩行；教學全書檔則使用 ${C1}/${C2}/${C3} 樣板變數
+    const targetPoemCode = isMainFile
+      ? item.poem.replace(/。\s*　+\s*/, "。<br>")
+      : toTemplateCode(item.poem);
+
+    // 同時相容教學全書檔的 key:"A" 與主檔 TUT_PAGES 的 rad:"A"
+    const blockRegex = new RegExp(`(\\{[^{}]*?\\b(?:key|rad)\\s*:\\s*["']${item.key}["'][\\s\\S]*?)(?=\\n\\s*\\{\\s*(?:key|rad|type|label)\\s*:|\\n\\s*\\]\\s*;)`);
+    if(blockRegex.test(out)){
+      out = out.replace(blockRegex, (block) => {
+        let updatedBlock = block;
+        let hit = false;
+        if(/\b(?:rhyme|rh)\s*:\s*["'][^"']*["']/.test(updatedBlock)){
+          updatedBlock = updatedBlock.replace(/(\b(?:rhyme|rh)\s*:\s*["'])[^"']*(["'])/, `$1${item.rhyme.replace(/\$/g, "$$$$")}$2`);
+        }
+        if(/\bpoem\s*:\s*`[^`]*`/.test(updatedBlock)){
+          updatedBlock = updatedBlock.replace(/(\bpoem\s*:\s*`)[^`]*(`)/, (_, p1, p2) => `${p1}${targetPoemCode}${p2}`);
+          hit = true;
+        } else if(/\bpoem\s*:\s*"(?:\\.|[^"\\])*"/.test(updatedBlock)){
+          updatedBlock = updatedBlock.replace(/(\bpoem\s*:\s*")((?:\\.|[^"\\])*)(")/, (_, p1, _old, p3) => `${p1}${targetPoemCode.replace(/"/g, '\\"')}${p3}`);
+          hit = true;
+        }
+        if(hit) replacedCount++;
+        return updatedBlock;
+      });
+    }
+  }
+
+  // 若為主檔（index.html / index_simp.html），同步更新或插入離開畫面（DOS_EXIT）的「最後八句總結」
+  let exitUpdated = false;
+  if(isMainFile){
+    const summaryBlockHtml = `<div id="exitPoemSummaryBox" data-exit-poem="1" style="background:rgba(0,25,22,.85);border:2px double #5ff;padding:10px 24px;margin:10px auto;display:inline-block;text-align:center;font-size:16px;line-height:1.85;color:#fff;letter-spacing:1.5px;font-family:'BiauKaiHK','DFKai-SB','標楷體',serif"><div style="color:#0ff;font-size:13.5px;font-weight:bold;margin-bottom:3px">【倉頡取碼心法總訣】</div>${SUMMARY_LINES.map(l=>`<div>${l}</div>`).join("")}<!-- END_EXIT_POEM --></div>`;
+    if(out.includes('id="exitPoemSummaryBox"')){
+      out = out.replace(/<div id="exitPoemSummaryBox"[\s\S]*?<!-- END_EXIT_POEM --><\/div>/, () => summaryBlockHtml);
+      exitUpdated = true;
+    } else if(/(<div>程式結束。<\/div>)/.test(out)){
+      out = out.replace(/(<div>程式結束。<\/div>)/, (_, m1) => `${m1}${summaryBlockHtml}`);
+      exitUpdated = true;
+    } else if(/(感謝使用《快快快樂學[^<]*》[！!]?<\/div>)/.test(out)){
+      out = out.replace(/(感謝使用《快快快樂學[^<]*》[！!]?<\/div>)/, (_, m1) => `${m1}\n${summaryBlockHtml}`);
+      exitUpdated = true;
+    }
+  }
+
+  return { out, replacedCount, exitUpdated };
+}
+
+function patchAndDownload(slotKey){
+  const fileObj = loadedFiles[slotKey];
+  if(!fileObj || !fileObj.text) return;
+
+  let poemArr = SIMP_POEMS;
+  let statusId = "stSimpTut";
+  if(slotKey === "tradTut"){
+    poemArr = TRAD_POEMS;
+    statusId = "stTradTut";
+  } else if(slotKey === "mainHtml"){
+    const ver = document.getElementById("selMainVer").value;
+    poemArr = ver === "trad" ? TRAD_POEMS : SIMP_POEMS;
+    statusId = "stMainHtml";
+  }
+
+  const { out, replacedCount, exitUpdated } = replacePoemsInHtmlContent(fileObj.text, poemArr, slotKey === "mainHtml");
+  document.getElementById(statusId).textContent = `🎉 已成功替換 ${replacedCount} 首口訣詩${exitUpdated?'（含離開畫面總訣）':''}，正在下載 ${fileObj.name}！`;
+
+  const blob = new Blob([out], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileObj.name;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { a.remove(); URL.revokeObjectURL(url); }, 250);
+}
+
+window.onload = function(){
+  renderBookends();
+  render();
+};
+</script>
+</body>
+</html>
