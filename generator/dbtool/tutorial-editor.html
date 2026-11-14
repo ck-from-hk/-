@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>《快快快樂學簡倉 / 倉頡》26 頁全書教材修改器 v1.6</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;width:100%;max-width:100%;overflow-x:hidden;background:#111;color:#fff;font-family:"BiauKaiHK","DFKai-SB","標楷體","Microsoft JhengHei",serif;min-height:100vh}
+body{padding:10px 8px}
+.dos-frame{width:100%;max-width:1160px;margin:0 auto;background:#005a52;border:3px solid #808080;box-shadow:0 0 25px rgba(0,0,0,.9);display:flex;flex-direction:column}
+.dos-header{min-height:48px;display:flex;align-items:center;justify-content:space-between;padding:6px 16px;border-bottom:2px solid #003833;gap:10px;flex-wrap:wrap}
+.slop-logo{display:flex;align-items:center;justify-content:center;width:88px;height:30px;flex-shrink:0}
+.title-group{display:flex;align-items:center;flex:1;justify-content:center;gap:12px;min-width:200px}
+.magenta-double-line{flex:1;height:8px;border-top:3px solid #f0f;border-bottom:3px solid #f0f;min-width:14px}
+.dos-main-title{color:#ff0;font-size:clamp(17px,2.4vw,23px);font-weight:bold;letter-spacing:2px;text-shadow:2px 2px #000;text-align:center}
+.dos-stage{padding:12px 14px;display:flex;flex-direction:column;gap:12px}
+
+/* 經典銀灰對話框 */
+.dialog-box{background:#c0c0c0;color:#000;border:3px solid;border-color:#fff #404040 #404040 #fff;padding:10px 14px;box-shadow:4px 4px 0 rgba(0,0,0,.45)}
+.dialog-title{font-size:15.5px;font-weight:bold;color:#000080;border-bottom:2px solid #808080;padding-bottom:4px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+
+/* 深墨綠雙線子視窗 */
+.sub-window{background:#003833;border:3px double #5ff;padding:12px 14px;box-shadow:4px 4px 0 rgba(0,0,0,.5);display:flex;flex-direction:column;gap:10px}
+.sub-win-title{color:#ff5;font-size:17px;font-weight:bold;border-bottom:2px solid #5ff;padding-bottom:4px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+
+/* DOS 立體按鈕 */
+.key-button{background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;color:#000080;font-weight:bold;font-size:12.5px;padding:4px 10px;cursor:pointer;font-family:Consolas,"Microsoft JhengHei",monospace;display:inline-flex;align-items:center;justify-content:center;gap:4px}
+.key-button:active:not(:disabled){border-color:#404040 #fff #fff #404040;background:#a8a8a8}
+.key-button:disabled{opacity:.45;cursor:not-allowed;color:#555}
+.key-button.primary{color:#800000;font-size:13px;padding:5px 14px}
+.key-button.sm{padding:2px 7px;font-size:11.5px}
+.key-button.active-pill{background:#ffe600;color:#000;border-color:#404040 #fff #fff #404040}
+
+/* 檔案載入與匯出列 */
+.io-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;background:#b0b0b0;padding:8px 10px;border:1px inset #808080}
+.file-drop-btn{position:relative;overflow:hidden;cursor:pointer}
+.file-drop-btn input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+
+/* 26 頁頁籤網格 */
+.pager-grid{display:grid;grid-template-columns:repeat(13,1fr);gap:4px}
+@media(max-width:720px){.pager-grid{grid-template-columns:repeat(7,1fr)}}
+.tut-pill{height:26px;font-size:12px;padding:0 2px;min-width:0}
+
+/* 雙欄主工作區：左編輯、右預覽 */
+.workspace-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:12px;align-items:start}
+@media(max-width:900px){.workspace-grid{grid-template-columns:1fr}}
+
+.editor-panel,.preview-panel{background:#002420;border:1.5px solid #5ff;padding:12px;border-radius:3px;display:flex;flex-direction:column;gap:9px}
+.panel-hdr{font-size:14.5px;font-weight:bold;color:#0ff;border-bottom:1px dashed #5ff;padding-bottom:4px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+
+.field-row{display:flex;flex-direction:column;gap:3px}
+.field-row-inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fld-lbl{font-size:12.5px;color:#ff5;font-weight:bold}
+.dos-input,.dos-textarea,.dos-select{background:#001210;border:1.5px solid #5ff;color:#fff;padding:5px 8px;font-size:13.5px;font-family:"Microsoft JhengHei",Consolas,monospace;width:100%;outline:none}
+.dos-input:focus,.dos-textarea:focus{border-color:#ff0;background:#001b18}
+.dos-textarea{resize:vertical;line-height:1.55}
+
+/* 例字卡片清單 */
+.ex-card{background:#001815;border:1px solid #00897b;padding:7px 9px;border-radius:3px;display:flex;flex-direction:column;gap:5px}
+.ex-top{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.ex-char{width:56px;text-align:center;font-weight:bold;color:#0ff;font-size:15px}
+.ex-code{width:145px;text-transform:uppercase;color:#fa5;font-weight:bold;font-family:Consolas,monospace}
+.ex-badge-sel{width:auto;padding:4px 6px;font-size:12px}
+
+/* 色碼插入工具列 */
+.tag-bar{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.tag-btn{background:#003833;border:1px solid #5ff;color:#fff;font-size:11.5px;padding:2px 7px;cursor:pointer;border-radius:2px;font-family:inherit}
+.tag-btn:hover{border-color:#ff0;background:#004d40}
+
+/* 實機預覽框（完全還原主程式 #tutPageContent 樣式） */
+.dos-preview-screen{background:#003833;border:2px inset #5ff;padding:12px 14px;min-height:310px;max-height:480px;overflow-y:auto;font-size:14.5px;color:#fff;line-height:1.75}
+.tut-h{font-weight:bold;font-size:16px;margin-top:12px}
+.tut-h:first-child{margin-top:0}
+.tut-h.y{color:#ff5}.tut-h.g{color:#5f5}.tut-h.o{color:#fa5}
+.dos-preview-screen i{font-style:normal;font-weight:bold}
+.dos-preview-screen .tr{color:#ff5}.dos-preview-screen .rh{color:#5f5}.dos-preview-screen .ky{color:#0ff}.dos-preview-screen .cd{color:#fa5}
+.dos-preview-screen .bi{color:#5f5;font-size:11.5px}.dos-preview-screen .std{color:#9ab;font-size:11.5px}
+
+/* 狀態提示橫幅（取代 alert） */
+.toast-bar{display:none;background:#002220;border:2px solid #ff0;color:#ff5;padding:8px 12px;font-size:13px;font-weight:bold;align-items:center;justify-content:space-between;gap:8px;line-height:1.5}
+.toast-bar.err{background:#600;border-color:#ff8a80;color:#fff}
+
+/* 匯出預覽彈層區 */
+.export-box{display:none;background:#001513;border:2px solid #ff0;padding:10px;margin-top:4px}
+.export-box.open{display:block}
+.code-pre{background:#000c0a;border:1px solid #5ff;color:#cfd8dc;padding:8px;max-height:200px;overflow:auto;font-size:12px;white-space:pre-wrap;word-break:break-all;font-family:Consolas,monospace;margin:6px 0}
+
+.dos-footer{min-height:34px;background:#c0c0c0;border-top:2px solid #fff;display:flex;align-items:center;justify-content:space-between;padding:4px 14px;color:#222;font-size:12px;font-weight:bold;flex-wrap:wrap;gap:6px}
+@media(max-width:600px){.magenta-double-line{display:none}.slop-logo{width:70px}}
+</style>
+</head>
+<body>
+<div class="dos-frame">
+  <div class="dos-header">
+    <div class="slop-logo" title="SLOP 經典標誌">
+      <svg viewBox="0 0 120 40" width="88" height="28"><ellipse cx="60" cy="20" rx="55" ry="16" fill="none" stroke="#0ff" stroke-width="2"/><text x="50%" y="62%" text-anchor="middle" fill="#f0f" font-size="20" font-weight="900" font-style="italic" font-family="Arial">SLOP</text></svg>
+    </div>
+    <div class="title-group">
+      <div class="magenta-double-line"></div>
+      <div class="dos-main-title">26 頁全書教材修改器</div>
+      <div class="magenta-double-line"></div>
+    </div>
+    <span style="color:#5ff;font-size:12px;font-family:Consolas,monospace">v1.6</span>
+  </div>
+
+  <div class="dos-stage">
+    <!-- 步驟 1：檔案載入與儲存工作台 -->
+    <div class="dialog-box">
+      <div class="dialog-title">
+        <span>📂 檔案載入與寫回工作台（完整支援主程式 index.html 與繁／簡獨立教學全書 HTML）</span>
+        <span id="hostTypeBadge" style="font-size:12px;color:#800000;font-weight:bold">目前來源：內建預設教材範本</span>
+      </div>
+
+      <div class="io-bar">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <button type="button" class="key-button primary" onclick="document.getElementById('fileInput').click()">
+            📁 載入 HTML / JSON 教材
+          </button>
+          <input type="file" id="fileInput" accept=".html,.htm,.json,text/html,application/json" style="display:none">
+          <button type="button" class="key-button" onclick="loadBuiltInTemplate('simp')">載入簡體內建範本</button>
+          <button type="button" class="key-button" onclick="loadBuiltInTemplate('trad')">載入繁體內建範本</button>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <button type="button" class="key-button" onclick="toggleExportBox()">📄 檢視 / 複製 JS 代碼</button>
+          <button type="button" class="key-button" onclick="downloadJsonBackup()">💾 匯出 JSON 備份</button>
+          <button type="button" class="key-button primary" id="btnPatchDownload" disabled onclick="patchAndDownloadHtml()">⬇ 寫入並下載修改後 HTML</button>
+        </div>
+      </div>
+
+      <div id="fileStatusLine" style="font-size:12.5px;color:#004080;font-weight:bold;margin-top:6px">
+        💡 提示：請點擊「📁 載入 HTML / JSON 教材」選取您的 <code>index.html</code>、<code>index_simp.html</code> 或 <code>cangjie_tutorial_full.html</code>（也可直接將檔案拖放至視窗內）。
+      </div>
+
+      <div class="export-box" id="exportBox">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+          <b style="color:#ff5;font-size:13px">生成的 26 頁完整 JavaScript 陣列代碼：</b>
+          <div style="display:flex;gap:6px">
+            <button type="button" class="key-button sm primary" id="btnCopyJs" onclick="copyJsCode()">📋 複製代碼</button>
+            <button type="button" class="key-button sm" onclick="toggleExportBox()">✕ 關閉</button>
+          </div>
+        </div>
+        <pre class="code-pre" id="exportCodePre"></pre>
+      </div>
+    </div>
+
+    <!-- 通知訊息列（絕不使用 alert） -->
+    <div class="toast-bar" id="toastBar">
+      <span id="toastText"></span>
+      <button type="button" class="key-button sm" onclick="hideToast()">✕</button>
+    </div>
+
+    <!-- 步驟 2：26 頁導覽與雙欄編輯預覽區 -->
+    <div class="sub-window">
+      <div class="sub-win-title">
+        <span id="currentPageHeader">📖 正在編輯：第 1 / 26 頁（引言）</span>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button type="button" class="key-button sm" onclick="navPage(-1)">◀ 上一頁</button>
+          <button type="button" class="key-button sm" onclick="navPage(1)">下一頁 ▶</button>
+          <button type="button" class="key-button sm" style="color:#800000" onclick="resetCurrentPage()">↺ 還原此頁</button>
+        </div>
+      </div>
+
+      <!-- 兩行 13 列頁籤 -->
+      <div class="pager-grid" id="pagerGrid"></div>
+
+      <!-- 左側編輯器 ＋ 右側即時預覽 -->
+      <div class="workspace-grid">
+        <!-- 左欄：結構化編輯表單 -->
+        <div class="editor-panel" id="editorFormContainer"></div>
+
+        <!-- 右欄：DOS 實機效果預覽 -->
+        <div class="preview-panel">
+          <div class="panel-hdr">
+            <span>🖥️ DOS 視窗即時預覽效果</span>
+            <span style="font-size:11.5px;color:#5f5">所見即所得</span>
+          </div>
+          <div class="dos-preview-screen" id="livePreviewBox"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dos-footer">
+    <span>⌨️ 支援快捷鍵：非輸入框焦點時按 <b>← / →</b> 切換上下頁 ｜ 引言、24 字根例字碼與解說、總結皆可即時編輯寫回</span>
+    <span>《快快快樂學簡倉 / 倉頡》教材修改器 v1.6</span>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ===== 內建簡體預設 26 頁教材範本 ===== */
+const DEFAULT_SIMP_PAGES = [
+  {
+    label:"引言",
+    html:`<div class="tut-h y">《快快快樂學簡倉》簡體字專屬拆碼全書</div>
+<div style="margin-top:6px;font-size:13px">本教材已嚴格對照本程式<b style="color:#5f5">內建字庫主碼</b>逐一校訂，徹底根除「簡體字套用繁體字碼」之誤。例如：<br>• 「<i class="ky">见</i>」內建主碼為 <i class="cd">月中山 (BLU)</i>，絕非繁體「見」之 BUHU；<br>• 「<i class="ky">欢</i>」＝ <i class="cd">水弓人 (ENO)</i>｜「<i class="ky">话</i>」＝ <i class="cd">戈女竹十 (IVHJ)</i>｜「<i class="ky">铁</i>」＝ <i class="cd">OVHQO / CHQO</i>。</div>
+<div class="tut-h g" style="margin-top:10px">廿四基本字根總覽</div>
+<div style="font-size:13px">哲理類：日月金木水火土（A-G）｜筆畫類：竹戈十大中一弓（H-N）｜人體類：人心手口（O-R）｜字形類：尸廿山女田卜（S-Y）。<br>每個字母除「基本形」外，另有一組<b>輔助字形</b>——形狀相近、取碼相同的變形字根；字母基本形獨立成字只取一碼（日=A｜月=B｜…）。</div>
+<div class="tut-h g" style="margin-top:10px">全書結構與翻頁</div>
+<div style="font-size:13px">全書共 <b style="color:#ff5">26 頁</b>：引言＋廿四字根（A 日 ～ Y 卜，每字根一頁）＋總結。<br>• 點擊下方<b style="color:#ff5">兩行頁籤</b>可直接跳頁；<br>• 實體鍵盤 <b>← / →</b> 或 PageUp / PageDown 翻頁；虛擬鍵盤 <b>PU / PD</b> 鍵翻頁。<br></div>`
+  },
+  {label:"A日",rad:"A",name:"日",en:"Sun",sub:"旭日東昇，簡體日形結構與時間推移",aux:"基本形「日」（A），輔助形「曰」（扁日）。凡四面封閉且中間僅有一橫的方框，統一按 A。",ex:[["时","ADI","左字首「日」取 A，右字身「寸」拆為「木戈」（DI），組為 日木戈 (ADI)。","std"],["旧","LA","左字首單筆直豎「丨」歸入 中(L)，右字身「日」(A)，連為 中日 (LA)。","bi"]],rh:"押韻：光／方／旁，粵音 -ong 平聲",poem:`<i class="tr">日</i>字當頭耀萬<i class="rh">光</i>，扁<i class="tr">曰</i>同歸 <i class="ky">A</i> 鍵<i class="rh">方</i>。<br><i class="cd">日木戈</i>組「<i class="ky">时</i>」三碼，左<i class="cd">中</i>右<i class="cd">日</i>「<i class="ky">旧</i>」相<i class="rh">旁</i>。`},
+  {label:"B月",rad:"B",name:"月",en:"Moon",sub:"皎潔明月，簡體肉身肌理與外框包覆",aux:"基本形「月」（B），輔助形為「肉月旁」及下方開口的三面框「冂」（同字框）。",ex:[["脏","BIG","左字首肉月旁取 月(B)，右字身「庄」外广(I)內土(G)，組為 月戈土 (BIG)。","std"],["见","BLU","【勘誤重點】簡體「见」上為下開口框「冂」取 月(B)，中撇縱貫取 中(L)，右下豎彎鉤「乚」取 山(U) → 月中山 (BLU)；絕非繁體「見」之 BUHU。","bi"]],rh:"押韻：開／來／才，粵音 -oi 平聲",poem:`肉旁同框<i class="tr">月</i>字<i class="rh">開</i>，下空三面入 <i class="ky">B</i> <i class="rh">來</i>。<br><i class="cd">月戈土</i>組「<i class="ky">脏</i>」三碼，<i class="cd">月中山</i>現「<i class="ky">见</i>」字<i class="rh">才</i>。`},
+  {label:"C金",rad:"C",name:"金",en:"Metal",sub:"金融財寶，簡體金字旁與八字底端",aux:"基本形「金」（C），輔助形為正八字與倒八字底（如只、共、兴的底部）。簡體「钅」旁在內建字庫中同時支援 C（金）與 OP / OV。",ex:[["兴","FMC","上半三點加一橫取 火一(FM)，下半八字底取 金(C)，組為 火一金 (FMC)。","std"],["针","CJ","左「钅」取 金(C)，右「十」取 十(J)，連為 金十 (CJ)。","std"]],rh:"押韻：連／邊／前，粵音 -in 平聲",poem:`八字雙點<i class="tr">金</i>相<i class="rh">連</i>，只共兵分守底<i class="rh">邊</i>。<br><i class="cd">火一金</i>組「<i class="ky">兴</i>」三碼，<i class="cd">金十</i>相連「<i class="ky">针</i>」當<i class="rh">前</i>。`},
+  {label:"D木",rad:"D",name:"木",en:"Wood",sub:"參天大樹，簡體木旁與重疊特殊字",aux:"基本形「木」（D），輔助形為朩、寸（木戈 DI）。注意簡體「东」拆為 大木 (KD)。",ex:[["机","DHN","左字首「木」(D)，右字身「几」拆為 竹弓(HN)，拼為 木竹弓 (DHN)。","std"],["树","DNDI","左「木」(D)，中「又」取首碼 弓(N)，右「寸」拆為 木戈(DI)，現出 木弓木戈 (DNDI)。","std"]],rh:"押韻：林／深／尋，粵音 -am 平聲",poem:`雙<i class="tr">木</i>相依便作<i class="rh">林</i>，三木聚森意更<i class="rh">深</i>。<br><i class="cd">木竹弓</i>拼「<i class="ky">机</i>」三碼，<i class="cd">木弓木戈</i>「<i class="ky">树</i>」易<i class="rh">尋</i>。`},
+  {label:"E水",rad:"E",name:"水",en:"Water",sub:"滔滔江河，三點水旁與叉形曲筆",aux:"基本形「水」（E），輔助形為「氵（三點水）」、「氺」及簡體「欢、戏」左側的叉形「又」。",ex:[["汉","ENK","左字首「氵」取 水(E)，右字身「又」拆為 弓大(NK)，組為 水弓大 (ENK)。","std"],["欢","ENO","左「又」變體取 水(E)，右「欠」拆為 弓人(NO)，拼為 水弓人 (ENO)。","bi"]],rh:"押韻：流／頭／求，粵音 -au 平聲",poem:`江河湖海<i class="tr">水</i>長<i class="rh">流</i>，三點水旁 <i class="ky">E</i> 鍵<i class="rh">頭</i>。<br><i class="cd">水弓大</i>組「<i class="ky">汉</i>」三碼，<i class="cd">水弓人</i>拼「<i class="ky">欢</i>」易<i class="rh">求</i>。`},
+  {label:"F火",rad:"F",name:"火",en:"Fire",sub:"烈火烹油，四點底座與小字變體",aux:"基本形「火」（F），輔助形為「灬（四點底）」與「⺌（尚字頭／小字頭）」。",ex:[["点","YRF","上字首「占」拆為 卜口(YR)，下字身「灬」取 火(F)，結為 卜口火 (YRF)。","std"],["当","FSM","上字首「⺌」取 火(F)，下字身「彐」拆為 尸一(SM)，連為 火尸一 (FSM)。","std"]],rh:"押韻：紅／中／通，粵音 -ung 平聲",poem:`烈焰熊熊映日<i class="rh">紅</i>，四點小頭歸<i class="tr">火</i><i class="rh">中</i>。<br><i class="cd">卜口火</i>結「<i class="ky">点</i>」三碼，<i class="cd">火尸一</i>連「<i class="ky">当</i>」路<i class="rh">通</i>。`},
+  {label:"G土",rad:"G",name:"土",en:"Earth",sub:"厚德載物，土士相連與場所建設",aux:"基本形「土」（G），合體字中「士」亦歸入 G。",ex:[["坏","GMF","左字首「土」(G)，右字身「不」拆為 一火(MF)，組為 土一火 (GMF)。","std"],["场","GNHH","左「土」(G)，右「𠃓」上折鉤取 弓(N)、下雙撇取 竹竹(HH)，連為 土弓竹竹 (GNHH)。","std"]],rh:"押韻：家／華／誇，粵音 -aa 平聲",poem:`大地根基<i class="tr">土</i>士<i class="rh">家</i>，上士下口吉字<i class="rh">華</i>。<br><i class="cd">土一火</i>組「<i class="ky">坏</i>」三碼，<i class="cd">土弓竹竹</i>「<i class="ky">场</i>」共<i class="rh">誇</i>。`},
+  {label:"H竹",rad:"H",name:"竹",en:"Bamboo",sub:"竹韻清風，斜撇筆畫與千竹字頭",aux:"基本形「竹」（H），輔助形為「⺮（竹字頭）」、「丿（獨立斜撇）」與「彡（三撇）」。",ex:[["丢","HGI","頂部斜撇取 竹(H)，中間取 土(G)，底部「厶」取 戈(I)，結為 竹土戈 (HGI)。","std"],["鸟","HVSM","頂撇取 竹(H)，中點與豎折取 女(V)，橫折鉤取 尸(S)，底橫取 一(M)，為 竹女尸一 (HVSM)。","bi"]],rh:"押韻：風／中／功，粵音 -ung 平聲",poem:`翠<i class="tr">竹</i>斜撇迎清<i class="rh">風</i>，單撇三撇歸此<i class="rh">中</i>。<br><i class="cd">竹土戈</i>結「<i class="ky">丢</i>」三碼，<i class="cd">竹女尸一</i>「<i class="ky">鸟</i>」顯<i class="rh">功</i>。`},
+  {label:"I戈",rad:"I",name:"戈",en:"Halberd",sub:"戈矛兵器，廣字頭框與簡體言旁首筆",aux:"基本形「戈」（I），輔助形為「丶（獨立單點）」、「广（廣字頭）」與「厶（私字底）」。",ex:[["云","MMI","上「二」取 一一(MM)，下「厶」取 戈(I)，歸為 一一戈 (MMI)。","bi"],["话","IVHJ","【勘誤重點】內建簡體主碼為四碼 IVHJ：左「讠」取 戈女(IV)，右「舌」取上撇與十 竹十(HJ)、省去底口；同時兼容繁體碼 YRHJR。","bi"]],rh:"押韻：開／台／來，粵音 -oi 平聲",poem:`單點廣頭<i class="tr">戈</i>字<i class="rh">開</i>，私底三角入此<i class="rh">台</i>。<br><i class="cd">一一戈</i>歸「<i class="ky">云</i>」三碼，<i class="cd">戈女竹十</i>「<i class="ky">话</i>」字<i class="rh">來</i>。`},
+  {label:"J十",rad:"J",name:"十",en:"Cross",sub:"十字交錯，寶蓋屋頂與簡體寶實結構",aux:"基本形「十」（J），輔助形為帶點的屋頂「宀（寶蓋頭）」。",ex:[["宝","JMGI","上寶蓋頭取 十(J)，下「玉」拆為 一土戈(MGI)，為 十一土戈 (JMGI)。","std"],["实","JYK","上寶蓋頭取 十(J)，下簡體「头」拆為 卜大(YK)，連為 十卜大 (JYK)。","bi"]],rh:"押韻：橫／間／難，粵音 -aan 平聲",poem:`一豎穿過一長<i class="rh">橫</i>，寶蓋屋頂<i class="tr">十</i>字<i class="rh">間</i>。<br><i class="cd">十一土戈</i>為「<i class="ky">宝</i>」字，<i class="cd">十卜大</i>連「<i class="ky">实</i>」唔<i class="rh">難</i>。`},
+  {label:"K大",rad:"K",name:"大",en:"Big",sub:"頂天立地，病字頭框與交叉乂形",aux:"基本形「大」（K），輔助形為交叉「乂」、左上橫撇「ナ」與醫療「疒（病字頭）」。",ex:[["疗","KNN","外框「疒」取 大(K)，內部「了」拆為 弓弓(NN)，現為 大弓弓 (KNN)。","std"],["义","IK","上點取 戈(I)，下「乂」取 大(K)，連為 戈大 (IK)。","bi"]],rh:"押韻：開／來／才，粵音 -oi 平聲",poem:`撇捺交叉病字<i class="rh">開</i>，橫撇在左<i class="tr">大</i>中<i class="rh">來</i>。<br><i class="cd">大弓弓</i>現「<i class="ky">疗</i>」三碼，<i class="cd">戈大</i>相連「<i class="ky">义</i>」字<i class="rh">才</i>。`},
+  {label:"L中",rad:"L",name:"中",en:"Middle",sub:"筆直中線，直豎單杆與簡體門臨結構",aux:"基本形「中」（L），輔助形為獨立直豎「丨」及「巾、川」的主幹。",ex:[["问","LSR / ILSR","簡體門框「门」取 中尸(LS)（或連點 ILS），內部「口」取 口(R)，組為 中尸口 (LSR)。","bi"],["临","LLOS","左雙直豎取 中中(LL)，右躺人取 人(O)，右下品框取 尸(S)，現為 中中人尸 (LLOS)。","bi"]],rh:"押韻：通／中／功，粵音 -ung 平聲",poem:`直豎穿心上下<i class="rh">通</i>，川巾長筆盡歸<i class="tr">中</i>。<br><i class="cd">中尸口</i>組「<i class="ky">问</i>」三碼，<i class="cd">中中人尸</i>「<i class="ky">临</i>」顯<i class="rh">功</i>。`},
+  {label:"M一",rad:"M",name:"一",en:"One",sub:"長橫大地，廠字斜崖與簡體開歷結構",aux:"基本形「一」（M），輔助形為無點懸崖「厂（廠字框）」與提筆「㇀」。",ex:[["开","MJ","上橫取 一(M)，下「廾」取 十(J)，組為 一十 (MJ)。","bi"],["历","MKS","外框「厂」取 一(M)，內部「力」拆為 大尸(KS)，拼為 一大尸 (MKS)。","std"]],rh:"押韻：開／台／來，粵音 -oi 平聲",poem:`平橫廠框<i class="tr">一</i>字<i class="rh">開</i>，無點崖邊按此<i class="rh">台</i>。<br>上<i class="cd">一</i>下<i class="cd">十</i>組「<i class="ky">开</i>」字，<i class="cd">一大尸</i>拼「<i class="ky">历</i>」字<i class="rh">來</i>。`},
+  {label:"N弓",rad:"N",name:"弓",en:"Bow",sub:"彎曲弓箭，簡體馬魚買與轉折鉤畫",aux:"基本形「弓」（N），輔助形為豎鉤「亅」、橫鉤「乛」、橫撇「フ」、乙字鉤及雙耳旁「阝（NL）」。",ex:[["马","NVSM","上橫折取 弓(N)，豎折取 女(V)，橫折鉤取 尸(S)，底橫取 一(M)，為 弓女尸一 (NVSM)。","bi"],["买","NYK / NUK","上橫鉤取 弓(N)，下「头」拆為 卜大(YK)（或 UK），連為 弓卜大 (NYK)。","bi"]],rh:"押韻：彎／間／難，粵音 -aan 平聲",poem:`豎鉤橫撇折彎<i class="rh">彎</i>，雙耳刀旁<i class="tr">弓</i>字<i class="rh">間</i>。<br><i class="cd">弓女尸一</i>為「<i class="ky">马</i>」字，<i class="cd">弓卜大</i>連「<i class="ky">买</i>」唔<i class="rh">難</i>。`},
+  {label:"O人",rad:"O",name:"人",en:"Man",sub:"亭亭玉立，單人旁與簡體倉會結構",aux:"基本形「人」（O），輔助形為「亻（單人旁）」、「𠆢（人字頭）」與「𠂉（撇橫頭）」。",ex:[["会","OMMI","上人字頭取 人(O)，下「云」拆為 一一戈(MMI)，為 人一一戈 (OMMI)。","bi"],["体","ODM","左單人旁取 人(O)，右「本」拆為 木一(DM)，連為 人木一 (ODM)。","bi"]],rh:"押韻：行／間／難，粵音 -aan 平聲",poem:`單人側立企成<i class="rh">行</i>，入字人頭在此<i class="rh">間</i>。<br><i class="cd">人一一戈</i>為「<i class="ky">会</i>」字，<i class="cd">人木一</i>連「<i class="ky">体</i>」唔<i class="rh">難</i>。`},
+  {label:"P心",rad:"P",name:"心",en:"Heart",sub:"仁心仁術，豎心旁與匕勺包圍結構",aux:"基本形「心」（P），輔助形為「忄（豎心旁）」、「勹（包字頭）」與「匕（湯匙形）」。",ex:[["怀","PMF","左豎心旁取 心(P)，右「不」拆為 一火(MF)，組為 心一火 (PMF)。","std"],["忆","PN","左豎心旁取 心(P)，右「乙」取 弓(N)，連為 心弓 (PN)。","std"]],rh:"押韻：情／明／清，粵音 -ing 平聲",poem:`豎心包框訴衷<i class="rh">情</i>，匕字彎鉤 <i class="ky">P</i> 鍵<i class="rh">明</i>。<br><i class="cd">心一火</i>組「<i class="ky">怀</i>」三碼，左<i class="cd">心</i>右<i class="cd">弓</i>「<i class="ky">忆</i>」字<i class="rh">清</i>。`},
+  {label:"Q手",rad:"Q",name:"手",en:"Hand",sub:"巧手靈心，提手旁與三橫豐夫結構",aux:"基本形「手」（Q），輔助形為「扌（提手旁）」及「龶／春字頭（三橫貫穿結構）」。",ex:[["专","QNI / QII","上半手字變體取 手(Q)，下半折點取 弓戈(NI)，結為 手弓戈 (QNI)。","bi"],["护","QIS","左提手旁取 手(Q)，右「户」拆為 戈尸(IS)，連為 手戈尸 (QIS)。","std"]],rh:"押韻：開／台／來，粵音 -oi 平聲",poem:`提手春頭<i class="tr">手</i>字<i class="rh">開</i>，夫青丰表入 <i class="ky">Q</i> <i class="rh">台</i>。<br><i class="cd">手弓戈</i>結「<i class="ky">专</i>」三碼，<i class="cd">手戈尸</i>連「<i class="ky">护</i>」字<i class="rh">來</i>。`},
+  {label:"R口",rad:"R",name:"口",en:"Mouth",sub:"鳴叫歌唱，純四方口與言足嘴部",aux:"基本形「口」（R），凡內部空無一物之小方框均取 R。",ex:[["叶","RJ","左「口」(R)右「十」(J)，拼為 口十 (RJ)。","std"],["响","RHBR","左「口」(R)，右「向」拆為頂撇 竹(H)、外框 月(B)、內 口(R)，連為 口竹月口 (RHBR)。","std"]],rh:"押韻：開／台／來，粵音 -oi 平聲",poem:`四方空心<i class="tr">口</i>字<i class="rh">開</i>，三口聚品上高<i class="rh">台</i>。<br>左<i class="cd">口</i>右<i class="cd">十</i>拼「<i class="ky">叶</i>」字，<i class="cd">口竹月口</i>「<i class="ky">响</i>」聲<i class="rh">來</i>。`},
+  {label:"S尸",rad:"S",name:"尸",en:"Corpse",sub:"側身屋宇，匚形字框與橫折封底",aux:"基本形「尸」（S），輔助形為右開口框「匚／匸」與左開口折框「コ／彐」。",ex:[["医","SOK","外框「匚」取 尸(S)，內部「矢」拆為 人大(OK)，組為 尸人大 (SOK)。","std"],["层","SMMI","外框「尸」取 尸(S)，內部「云」拆為 一一戈(MMI)，現為 尸一一戈 (SMMI)。","std"]],rh:"押韻：開／台／來，粵音 -oi 平聲",poem:`屋宇方框<i class="tr">尸</i>字<i class="rh">開</i>，巨臣匹匠入斯<i class="rh">台</i>。<br><i class="cd">尸人大</i>組「<i class="ky">医</i>」三碼，<i class="cd">尸一一戈</i>「<i class="ky">层</i>」字<i class="rh">來</i>。`},
+  {label:"T廿",rad:"T",name:"廿",en:"Twenty",sub:"綠草如茵，草字頭與並排雙豎結構",aux:"基本形「廿」（T），輔助形為「艹（草字頭）」與「䒑（羊字頭／前字頭）」。",ex:[["艺","TNU","上草字頭取 廿(T)，下「乙」拆為 弓山(NU)，組為 廿弓山 (TNU)。","std"],["节","TSL","上草字頭取 廿(T)，下單耳刀「卩」拆為 尸中(SL)，連為 廿尸中 (TSL)。","std"]],rh:"押韻：開／栽／來，粵音 -oi 平聲",poem:`綠草芳菲<i class="tr">廿</i>字<i class="rh">開</i>，羊頭並首此中<i class="rh">栽</i>。<br><i class="cd">廿弓山</i>組「<i class="ky">艺</i>」三碼，<i class="cd">廿尸中</i>連「<i class="ky">节</i>」字<i class="rh">來</i>。`},
+  {label:"U山",rad:"U",name:"山",en:"Mountain",sub:"巍峨高山，凵形開口與出擊結構",aux:"基本形「山」（U），輔助形為上開口三面框「凵」與儿字底右下角的豎彎鉤「乚」。",ex:[["岁","UNI","上字首「山」(U)，下字身「夕」拆為 弓戈(NI)，結為 山弓戈 (UNI)。","std"],["击","MJU","上半兩橫一豎拆為 一十(MJ)，底部「凵」框取 山(U)，連為 一十山 (MJU)。","std"]],rh:"押韻：開／來／台，粵音 -oi 平聲",poem:`崇嶺三峰向上<i class="rh">開</i>，儿底彎鉤入 <i class="ky">U</i> <i class="rh">來</i>。<br><i class="cd">山弓戈</i>結「<i class="ky">岁</i>」三碼，<i class="cd">一十山</i>連「<i class="ky">击</i>」登<i class="rh">台</i>。`},
+  {label:"V女",rad:"V",name:"女",en:"Woman",sub:"溫婉女性，簡體絞絲旁（纟）與曲折撇折",aux:"基本形「女」（V），輔助形為撇折「ㄑ」、衣字底「㇂」及簡體絞絲旁「纟（VM）」。",ex:[["丝","VVM","左右兩個雙撇折取 女女(VV)，底部長橫取 一(M)，結為 女女一 (VVM)。","bi"],["经","VMNOM","左「纟」取 女一(VM)，右上橫撇點取 弓人(NO)、下「工」取 一(M)，連為 女一弓人一 (VMNOM)。","std"]],rh:"押韻：連／邊／前，粵音 -in 平聲",poem:`撇折彎曲<i class="tr">女</i>相<i class="rh">連</i>，<i class="cd">纟</i>旁簡化<i class="cd">女一</i><i class="rh">邊</i>。<br><i class="cd">女女一</i>結「<i class="ky">丝</i>」三碼，<i class="cd">女一弓人一</i>「<i class="ky">经</i>」<i class="rh">前</i>。`},
+  {label:"W田",rad:"W",name:"田",en:"Field",sub:"萬頃良田，四方國框與母字交叉",aux:"基本形「田」（W），輔助形為內部包有其他部件的四方大外框「囗（國字框）」。",ex:[["国","WMGI","外框「囗」取 田(W)，內部「玉」拆為 一土戈(MGI)，為 田一土戈 (WMGI)。","bi"],["图","WHEY","外框「囗」取 田(W)，內部「冬」拆為 竹水卜(HEY)，現為 田竹水卜 (WHEY)。","std"]],rh:"押韻：中／通／功，粵音 -ung 平聲",poem:`四面圍框入<i class="tr">田</i><i class="rh">中</i>，由甲申电一脈<i class="rh">通</i>。<br><i class="cd">田一土戈</i>為「<i class="ky">国</i>」字，<i class="cd">田竹水卜</i>「<i class="ky">图</i>」顯<i class="rh">功</i>。`},
+  {label:"Y卜",rad:"Y",name:"卜",en:"Oracle",sub:"占卜未來，走之旁首與點橫字頭",aux:"基本形「卜」（Y），輔助形為「亠（點橫頭）」與「辶（走之旁，永遠作第一碼字首取 Y）」。",ex:[["这","YYK / YIK","外圍「辶」先取 卜(Y)，內部「文」拆為 卜大(YK)，組為 卜卜大 (YYK)。","bi"],["远","YMMU","外圍「辶」先取 卜(Y)，內部「元」拆為 一一山(MMU)，連為 卜一一山 (YMMU)。","std"]],rh:"押韻：開／來／台，粵音 -oi 平聲",poem:`點橫高頂<i class="tr">卜</i>字<i class="rh">開</i>，走之作首第一<i class="rh">來</i>。<br><i class="cd">卜卜大</i>組「<i class="ky">这</i>」三碼，<i class="cd">卜一一山</i>「<i class="ky">远</i>」登<i class="rh">台</i>。`},
+  {
+    label:"總結",
+    html:`<div class="tut-h y">總結——拆碼心法</div>
+<div style="margin-top:6px;font-size:13px"><b style="color:#5f5">取碼次序：</b>憑視覺（非筆順、非字義）分割，由上至下、由左至右、由外至內；字首＝最左／最上／最外部分，其餘為字身。<br>• 上下形：想=DUP(木山心)｜安=JV(十女)　• 左右形：明=AB(日月)｜林=DD(木木)　• 內外形：回=WR(田口)。</div>
+<div class="tut-h g" style="margin-top:8px">簡體字輸入特點</div>
+<div style="font-size:13px">• <b>言字旁（讠）</b>：取 戈女(IV) 起筆——话=IVHJ、许=IVYY（以查碼覆核）。<br>• <b>金字旁（钅）</b>：對應 金(C)。<br>• <b>絞絲旁（纟）</b>：對應 女一(VM)——丝=VVM、经=VMNOM。<br>• <b>門字框（门）</b>：取 中尸(LS)——问=LSR／门=ILS或LS。</div>
+<div class="tut-h g" style="margin-top:8px">學習建議</div>
+<div style="font-size:13px">① 每晚誦一頁口訣詩，連讀廿四日；② 入「打字練習」配合一／二／三級字範圍實戰；③ 卡關即用「倉頡查碼」反查覆核；④ 打滿廿字一組，計算速度與準確率，循序渐进。</div>
+<div class="tut-h o" style="margin-top:8px">🎓 全書完——按「開始練習 [Enter]」即時實戰！</div>`
+  }
+];
+
+/* 繁體預設範本 */
+const DEFAULT_TRAD_PAGES = JSON.parse(JSON.stringify(DEFAULT_SIMP_PAGES)).map(p => {
+  if(p.label === "引言"){
+    p.html = p.html.replace("《快快快樂學簡倉》簡體字專屬拆碼全書", "《快快快樂學倉頡》繁體字專屬拆碼全書")
+      .replace("见", "見").replace("月中山 (BLU)", "月山竹山 (BUHU)").replace("徹底根除「簡體字套用繁體字碼」之誤", "香港粵語常用字亦已完整收錄")
+      .replace("欢", "歡").replace("水弓人 (ENO)", "廿人弓人 (TONO)").replace("话", "話").replace("戈女竹十 (IVHJ)", "卜口竹十口 (YRHJR)");
+  } else if(p.rad === "B"){
+    p.ex = [["勝","BHQM","左肉月旁取 月(B)，右「券」上部與「力」拆為 竹手一(HQM)，組為 月竹手一 (BHQM)。","bi"],["見","BUHU","上「目」外框取 月(B)、內部兩橫取 山(U)，下「儿」拆為 竹山(HU)，組為 月山竹山 (BUHU)。","bi"]];
+  } else if(p.rad === "I"){
+    p.ex = [["玉","MGI","「王」拆為 一土(MG)，右下點取 戈(I)，組為 一土戈 (MGI)。","bi"],["店","IYR","外框「广」取 戈(I)，內部「占」拆為 卜口(YR)，連為 戈卜口 (IYR)。","std"]];
+  } else if(p.rad === "V"){
+    p.ex = [["紅","VFM","左「糹」首尾取 女火(VF)，右「工」取 一(M)，結為 女火一 (VFM)。","bi"],["細","VFW","左「糹」取 女火(VF)，右「田」取 田(W)，連為 女火田 (VFW)。","bi"]];
+  }
+  return p;
+});
+
+/* ===== 狀態與工作副本 ===== */
+let pagesData = JSON.parse(JSON.stringify(DEFAULT_SIMP_PAGES));
+let backupPagesData = JSON.parse(JSON.stringify(DEFAULT_SIMP_PAGES));
+let curPage = 0;
+let dataSourceLabel = "內建預設教材範本";
+let hostFile = {
+  name: "",
+  text: "",
+  mode: "NONE",       // NONE | MAIN_TUT_PAGES | STANDALONE_PAGES | STANDALONE_OBJECT | DOM_PAGES
+  varName: "",
+  spanStart: -1,
+  spanEnd: -1,
+  had24Only: false,
+  introSpan: null,
+  outroSpan: null,
+  colorVars: {}
+};
+
+const $=id=>document.getElementById(id);
+const escAttr=s=>String(s??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+function showToast(msg, isErr=false, persist=false){
+  const bar=$("toastBar"), txt=$("toastText");
+  bar.classList.toggle("err", !!isErr);
+  txt.textContent = msg;
+  bar.style.display = "flex";
+  clearTimeout(showToast._t);
+  if(!persist && !isErr){
+    showToast._t = setTimeout(hideToast, 6000);
+  }
+}
+function hideToast(){ $("toastBar").style.display = "none"; }
+
+/* ===== 實機渲染邏輯 ===== */
+function buildTutHtml(p){
+  if(!p) return "";
+  if(p.rad){
+    const exList = Array.isArray(p.ex) ? p.ex : [];
+    const rhymeStr = p.rh || p.rhyme || "";
+    return `<div class="tut-h y">【${escAttr(p.rad)}】${escAttr(p.name||"")} (${escAttr(p.en||"")}) ── ${escAttr(p.sub||"")}</div>`
+      + `<div style="margin-top:6px;font-size:13.5px"><b style="color:#5f5">輔助字形：</b>${p.aux||""}</div>`
+      + `<div style="margin-top:8px;font-size:13.5px"><b style="color:#5f5">標準拆碼：</b><br>`
+      + exList.map(e => `• 「<i class="ky">${escAttr(e[0])}</i>」<i class="${e[3]==="bi"?"bi":"std"}">${e[3]==="bi"?"內建核對✓":"標準碼"}</i>（<i class="cd">${escAttr(e[1])}</i>）：${e[2]||""}`).join("<br>")
+      + `</div>`
+      + `<div class="tut-h o" style="margin-top:10px">🎵 粵語七言口訣詩（${escAttr(rhymeStr)}）</div>`
+      + `<div style="font-size:15px;line-height:2.1">${p.poem||""}</div>`;
+  }
+  return p.html || "";
+}
+
+function updateLivePreview(){
+  const p = pagesData[curPage];
+  if(!p) return;
+  $("livePreviewBox").innerHTML = buildTutHtml(p);
+  $("currentPageHeader").textContent = `📖 正在編輯：第 ${curPage+1} / ${pagesData.length} 頁（${p.label || p.rad || "頁面"}）｜來源：${dataSourceLabel}`;
+  const exp = $("exportBox");
+  if(exp && exp.classList.contains("open")){
+    $("exportCodePre").textContent = hostFile.mode === "MAIN_TUT_PAGES" ? serializeTutPagesJs() : serializeStandalonePagesJs();
+  }
+}
+/* ===== 智慧結構提取輔助函式（v1.6 全詞法分析器 + 沙盒代理） ===== */
+function loadBuiltInTemplate(ver){
+  const src = ver === "trad" ? DEFAULT_TRAD_PAGES : DEFAULT_SIMP_PAGES;
+  pagesData = JSON.parse(JSON.stringify(src));
+  backupPagesData = JSON.parse(JSON.stringify(src));
+  curPage = 0;
+  dataSourceLabel = ver === "trad" ? "繁體內建範本" : "簡體內建範本";
+  hostFile = { name:"", text:"", mode:"NONE", varName:"", spanStart:-1, spanEnd:-1, had24Only:false, introSpan:null, outroSpan:null, colorVars:{} };
+  $("hostTypeBadge").textContent = `目前來源：${dataSourceLabel}`;
+  $("hostTypeBadge").style.color = "#800000";
+  $("btnPatchDownload").disabled = true;
+  renderPager();
+  renderEditorForm();
+  updateLivePreview();
+  showToast(`✅ 已切換至「${dataSourceLabel}（26 頁）」！`);
+}
+
+/* 完整 JS 詞法感知括號匹配器（支援註解、字串、模板字串巢狀 ${...} 與正則字面量） */
+function extractBalancedJsLiteral(text, openIdx, openCh, closeCh){
+  if(openIdx < 0 || text[openIdx] !== openCh) return null;
+  let depth = 0;
+  let mode = "code"; // code | sq | dq | tpl | regex | lineComment | blockComment
+  let inClass = false;
+  let lastSig = "";
+  let lastWord = "";
+  const tplBraceStack = [];
+  const REGEX_PREV = /[([{,;:!=&|?+\-*%^~<>]/;
+  const REGEX_KEYWORDS = /^(?:return|typeof|instanceof|in|of|new|delete|void|throw|case|do|else|yield|await)$/;
+
+  let i = openIdx;
+  while(i < text.length){
+    const ch = text[i];
+    const next = text[i + 1] || "";
+
+    if(mode === "lineComment"){
+      if(ch === "\n") mode = "code";
+      i++; continue;
+    }
+    if(mode === "blockComment"){
+      if(ch === "*" && next === "/"){ mode = "code"; i += 2; continue; }
+      i++; continue;
+    }
+    if(mode === "sq" || mode === "dq"){
+      const q = mode === "sq" ? "'" : '"';
+      if(ch === "\\"){ i += 2; continue; }
+      if(ch === q){ mode = "code"; lastSig = q; lastWord = ""; }
+      i++; continue;
+    }
+    if(mode === "tpl"){
+      if(ch === "\\"){ i += 2; continue; }
+      if(ch === "`"){ mode = "code"; lastSig = "`"; lastWord = ""; i++; continue; }
+      if(ch === "$" && next === "{"){
+        tplBraceStack.push(depth);
+        mode = "code";
+        lastSig = "{"; lastWord = "";
+        i += 2; continue;
+      }
+      i++; continue;
+    }
+    if(mode === "regex"){
+      if(ch === "\\"){ i += 2; continue; }
+      if(ch === "["){ inClass = true; i++; continue; }
+      if(ch === "]"){ inClass = false; i++; continue; }
+      if(ch === "/" && !inClass){
+        mode = "code"; i++;
+        while(i < text.length && /[a-z]/i.test(text[i])) i++;
+        lastSig = "/"; lastWord = "";
+        continue;
+      }
+      i++; continue;
+    }
+
+    if(ch === " " || ch === "\t" || ch === "\r" || ch === "\n"){ i++; continue; }
+    if(ch === "/" && next === "/"){ mode = "lineComment"; i += 2; continue; }
+    if(ch === "/" && next === "*"){ mode = "blockComment"; i += 2; continue; }
+    if(ch === "'"){ mode = "sq"; i++; continue; }
+    if(ch === '"'){ mode = "dq"; i++; continue; }
+    if(ch === "`"){ mode = "tpl"; i++; continue; }
+
+    if(ch === "/"){
+      const canRegex = (lastSig === "") || REGEX_PREV.test(lastSig) || (lastWord && REGEX_KEYWORDS.test(lastWord));
+      if(canRegex){ mode = "regex"; inClass = false; i++; continue; }
+      lastSig = "/"; lastWord = ""; i++; continue;
+    }
+
+    if(/[A-Za-z_$]/.test(ch)){
+      let j = i;
+      while(j < text.length && /[A-Za-z0-9_$]/.test(text[j])) j++;
+      lastWord = text.slice(i, j);
+      lastSig = text[j - 1];
+      i = j; continue;
+    }
+
+    if(ch === "}" && tplBraceStack.length && tplBraceStack[tplBraceStack.length - 1] === depth){
+      tplBraceStack.pop();
+      mode = "tpl";
+      lastSig = "}"; lastWord = "";
+      i++; continue;
+    }
+
+    if(ch === openCh){
+      depth++;
+      lastSig = ch; lastWord = "";
+      i++; continue;
+    }
+    if(ch === closeCh){
+      depth--;
+      lastSig = ch; lastWord = "";
+      if(depth === 0){
+        return { start: openIdx, end: i + 1, literal: text.slice(openIdx, i + 1) };
+      }
+      i++; continue;
+    }
+
+    lastSig = ch; lastWord = "";
+    i++;
+  }
+  return null;
+}
+
+/* 萃取腳本內所有色碼與字串/數字常數（支援逗號連續宣告 const C1="#0ff", C2="#5f5";） */
+function extractScriptEnv(raw){
+  const env = {
+    C1:"#0ff", C2:"#5f5", C3:"#ff80ab", C4:"#fa5", C5:"#fff",
+    Y:"#ff5", C:"#0ff", G:"#5f5", O:"#fa5", P:"#ff80ab", R:"#ff80ab", W:"#fff"
+  };
+  const scriptRegex = /<script\b(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script\s*>/gi;
+  let sm;
+  while((sm = scriptRegex.exec(raw)) !== null){
+    const code = sm[1];
+    for(const m of code.matchAll(/\b([A-Za-z_$][\w$]{0,20})\s*=\s*(["'])(#[0-9a-fA-F]{3,8}|[^"'\\\n]{1,40})\2/g)){
+      env[m[1]] = m[3];
+    }
+  }
+  return env;
+}
+
+/* 使用 Proxy 沙盒安全求值 JS 字面量（遇未知色碼變數或輔助函式不報 ReferenceError） */
+function safeEvalJsLiteral(literal, baseEnv){
+  const dummyFn = function(...args){
+    return args.length ? String(args[0]) : "";
+  };
+  dummyFn.toString = () => "#0ff";
+  dummyFn[Symbol.toPrimitive] = () => "#0ff";
+
+  const proxy = new Proxy(Object.assign({}, baseEnv), {
+    has(target, key){
+      if(key === Symbol.unscopables) return false;
+      return true;
+    },
+    get(target, key){
+      if(key === Symbol.unscopables) return undefined;
+      if(key in target) return target[key];
+      return dummyFn;
+    }
+  });
+  const fn = new Function("sandbox", "with(sandbox){ return (" + literal + "); }");
+  return fn(proxy);
+}
+
+/* 掃描腳本中所有包含 HTML 標籤的模板字串 ``...``（排除指定區間），依關鍵字定位外置引言／總結 */
+function findExternalHtmlTemplate(raw, excludeRange, keywordRegex, antiRegex){
+  const candidates = [];
+  const openTagRe = /<script\b(?![^>]*\bsrc=)[^>]*>/gi;
+  const closeTagRe = /<\/script\s*>/gi;
+  let om;
+  while((om = openTagRe.exec(raw)) !== null){
+    const bodyStart = om.index + om[0].length;
+    closeTagRe.lastIndex = bodyStart;
+    const cm = closeTagRe.exec(raw);
+    const scriptLimit = cm ? cm.index : raw.length;
+
+    let inStr = null, esc = false, tplStart = -1;
+    for(let j = bodyStart; j < scriptLimit; j++){
+      const ch = raw[j];
+      if(esc){ esc = false; continue; }
+      if(ch === "\\"){ esc = true; continue; }
+      if(inStr){
+        if(ch === inStr){
+          if(inStr === "`" && tplStart !== -1){
+            const tplEnd = j + 1;
+            const overlapsExclude = excludeRange && !(tplEnd <= excludeRange.start || tplStart >= excludeRange.end);
+            if(!overlapsExclude){
+              const inner = raw.slice(tplStart + 1, j);
+              if(/<(?:div|p|h[1-4]|table|ul|ol|b|i|span)\b/i.test(inner) && inner.length >= 40){
+                candidates.push({ start: tplStart, end: tplEnd, html: inner });
+              }
+            }
+          }
+          inStr = null;
+          tplStart = -1;
+        }
+        continue;
+      }
+      if(ch === '"' || ch === "'" || ch === "`"){
+        inStr = ch;
+        if(ch === "`") tplStart = j;
+      }
+    }
+    if(!cm) break;
+    openTagRe.lastIndex = cm.index + cm[0].length;
+  }
+
+  const matched = candidates.filter(c => keywordRegex.test(c.html) && (!antiRegex || !antiRegex.test(c.html)));
+  if(!matched.length) return null;
+  matched.sort((a, b) => b.html.length - a.html.length);
+  return matched[0];
+}
+
+/* 將色彩樣板變數還原為預覽可顯示色碼 */
+function resolveColorVars(html, colorVars){
+  let out = String(html || "");
+  if(colorVars){
+    out = out.replace(/\$\{([A-Za-z_$][\w$]*)\}/g, (m, k) => (k in colorVars ? colorVars[k] : m));
+  }
+  return out
+    .replace(/\$\{C1\}/g, "#0ff")
+    .replace(/\$\{C2\}/g, "#5f5")
+    .replace(/\$\{C3\}/g, "#ff80ab")
+    .replace(/\$\{C4\}/g, "#fa5")
+    .replace(/\$\{C5\}/g, "#fff");
+}
+
+/* 從 HTML 內文抽取「• 「字」...（碼）：解說」格式的例字（供純 HTML 頁面使用） */
+function extractExamplesFromHtmlBody(htmlStr){
+  const res = [];
+  const plain = stripHtmlTags(htmlStr || "");
+  const lineRe = /[•・\-]\s*[「『]([^」』]{1,4})[」』][^（(]*[（(]([A-Z\s\/]+)[）)]\s*[：:]\s*([^\n•・]+)/gi;
+  let m;
+  while((m = lineRe.exec(plain)) !== null){
+    const isBi = /內建|核對/.test(m[0]);
+    res.push([m[1].trim(), m[2].trim().toUpperCase(), m[3].trim(), isBi ? "bi" : "std"]);
+  }
+  return res;
+}
+
+function goPage(idx){
+  if(idx < 0 || idx >= pagesData.length) return;
+  curPage = idx;
+  renderPager();
+  renderEditorForm();
+  updateLivePreview();
+}
+function navPage(delta){
+  goPage((curPage + delta + pagesData.length) % pagesData.length);
+}
+function resetCurrentPage(){
+  if(backupPagesData[curPage]){
+    pagesData[curPage] = JSON.parse(JSON.stringify(backupPagesData[curPage]));
+    renderPager();
+    renderEditorForm();
+    updateLivePreview();
+    showToast(`✅ 已還原第 ${curPage+1} 頁至載入時的初始狀態！`);
+  }
+}
+
+/* ===== 編輯器表單渲染 ===== */
+function renderEditorForm(){
+  const p = pagesData[curPage];
+  const box = $("editorFormContainer");
+  if(!p){ box.innerHTML = ""; return; }
+
+  /* 引言／總結（說明頁） */
+  if(!p.rad){
+    box.innerHTML = `
+      <div class="panel-hdr">
+        <span>✏️ 編輯「${escAttr(p.label||"說明頁")}」內容</span>
+        <span style="font-size:11.5px;color:#5f5">支援直接修改文字與色碼標籤</span>
+      </div>
+      <div class="field-row">
+        <span class="fld-lbl">頁籤名稱：</span>
+        <input type="text" class="dos-input" style="max-width:160px" value="${escAttr(p.label||"")}" oninput="onFieldChange('label', this.value)">
+      </div>
+      <div class="tag-bar">
+        <span style="font-size:11.5px;color:#aaa">快捷插入區塊：</span>
+        <button type="button" class="tag-btn" style="color:#ff5" onclick="insertHtmlSnippet('html','<div class=&quot;tut-h y&quot;>黃色主標題</div>\\n')">+ 黃色大標題</button>
+        <button type="button" class="tag-btn" style="color:#5f5" onclick="insertHtmlSnippet('html','<div class=&quot;tut-h g&quot; style=&quot;margin-top:8px&quot;>綠色小標題</div>\\n')">+ 綠色小標題</button>
+        <button type="button" class="tag-btn" style="color:#fa5" onclick="insertHtmlSnippet('html','<div class=&quot;tut-h o&quot; style=&quot;margin-top:8px&quot;>橙色結語</div>\\n')">+ 橙色結語</button>
+        <button type="button" class="tag-btn" style="color:#0ff" onclick="insertHtmlSnippet('html','<i class=&quot;ky&quot;>字</i>')">+ 青色字</button>
+        <button type="button" class="tag-btn" style="color:#fa5" onclick="insertHtmlSnippet('html','<i class=&quot;cd&quot;>字碼</i>')">+ 橙色碼</button>
+      </div>
+      <div class="field-row">
+        <span class="fld-lbl">頁面 HTML 內文：</span>
+        <textarea id="taPageHtml" class="dos-textarea" rows="13" oninput="onFieldChange('html', this.value)">${escAttr(p.html||"")}</textarea>
+      </div>
+    `;
+    return;
+  }
+
+  /* 24 字根專屬結構化表單 */
+  const exList = Array.isArray(p.ex) ? p.ex : (p.ex = []);
+  const rhymeVal = p.rh !== undefined ? p.rh : (p.rhyme || "");
+  const plainPoem = stripHtmlTags(p.poem || "");
+  const clauses = plainPoem.split(/[，。　\s]+/).filter(Boolean);
+  const lenStr = clauses.map(c => [...c].length).join("-");
+  const isAll7 = clauses.length === 4 && clauses.every(c => [...c].length === 7);
+
+  const exHtml = exList.map((e, ei) => `
+    <div class="ex-card">
+      <div class="ex-top">
+        <span style="color:#5ff;font-size:12px;font-weight:bold">#${ei+1}</span>
+        <input type="text" class="dos-input ex-char" maxlength="6" value="${escAttr(e[0]||"")}" placeholder="例字" oninput="onExChange(${ei},0,this.value)">
+        <input type="text" class="dos-input ex-code" maxlength="24" value="${escAttr(e[1]||"")}" placeholder="倉頡碼（如 BLU）" oninput="onExChange(${ei},1,this.value.toUpperCase())">
+        <select class="dos-select ex-badge-sel" onchange="onExChange(${ei},3,this.value)">
+          <option value="bi" ${e[3]==="bi"?"selected":""}>內建核對✓</option>
+          <option value="std" ${e[3]!=="bi"?"selected":""}>標準碼</option>
+        </select>
+        <span style="flex:1"></span>
+        <button type="button" class="key-button sm" ${ei===0?"disabled":""} onclick="moveEx(${ei},-1)" title="上移">↑</button>
+        <button type="button" class="key-button sm" ${ei===exList.length-1?"disabled":""} onclick="moveEx(${ei},1)" title="下移">↓</button>
+        <button type="button" class="key-button sm" style="color:#800000" onclick="removeEx(${ei})" title="刪除此例字">✕</button>
+      </div>
+      <input type="text" class="dos-input" style="font-size:12.5px" value="${escAttr(e[2]||"")}" placeholder="輸入拆碼結構解說…" oninput="onExChange(${ei},2,this.value)">
+    </div>
+  `).join("");
+
+  const fieldHint = p.exField ? `（來源欄位：${escAttr(p.exField)}）` : "";
+
+  box.innerHTML = `
+    <div class="panel-hdr">
+      <span>✏️ 編輯【${escAttr(p.rad)}】${escAttr(p.name||"")} 教學內容</span>
+      <span style="font-size:11.5px;color:#5f5">例字、字碼、解說、口訣皆可即時修改</span>
+    </div>
+
+    <div class="field-row-inline">
+      <div style="width:72px">
+        <span class="fld-lbl">鍵位：</span>
+        <input type="text" class="dos-input" maxlength="2" value="${escAttr(p.rad||"")}" oninput="onFieldChange('rad', this.value.toUpperCase())">
+      </div>
+      <div style="width:82px">
+        <span class="fld-lbl">字根名：</span>
+        <input type="text" class="dos-input" maxlength="4" value="${escAttr(p.name||"")}" oninput="onFieldChange('name', this.value)">
+      </div>
+      <div style="width:110px">
+        <span class="fld-lbl">英文代稱：</span>
+        <input type="text" class="dos-input" maxlength="16" value="${escAttr(p.en||"")}" oninput="onFieldChange('en', this.value)">
+      </div>
+      <div style="flex:1;min-width:180px">
+        <span class="fld-lbl">副標題（心法主題）：</span>
+        <input type="text" class="dos-input" value="${escAttr(p.sub||"")}" oninput="onFieldChange('sub', this.value)">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <span class="fld-lbl">輔助字形說明：</span>
+      <textarea class="dos-textarea" rows="2" oninput="onFieldChange('aux', this.value)">${escAttr(p.aux||"")}</textarea>
+    </div>
+
+    <div class="field-row">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="fld-lbl">標準拆碼例字、字碼與字例介紹（共 ${exList.length} 個）<span style="color:#5ff;font-weight:normal;font-size:11.5px">${fieldHint}</span>：</span>
+        <button type="button" class="key-button sm primary" onclick="addEx()">＋ 新增例字</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">${exHtml || '<div style="color:#8ab;font-size:12.5px;padding:6px">此頁尚無例字，請按右上角「＋ 新增例字」。</div>'}</div>
+    </div>
+
+    <div class="field-row">
+      <span class="fld-lbl">粵語押韻標註：</span>
+      <input type="text" class="dos-input" value="${escAttr(rhymeVal)}" oninput="onRhymeChange(this.value)">
+    </div>
+
+    <div class="field-row">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px">
+        <span class="fld-lbl">粵語七言口訣詩（HTML 含色碼）：</span>
+        <span id="poemMeterBadge" style="font-size:11.5px;font-family:Consolas;color:${isAll7?'#5f5':'#ff80ab'}">句長檢核：${lenStr||"無"} ${isAll7?"✓ (7-7-7-7)":"⚠"}</span>
+      </div>
+      <div class="tag-bar">
+        <span style="font-size:11px;color:#aaa">選取文字後上色：</span>
+        <button type="button" class="tag-btn" style="color:#ff5" onclick="wrapPoemTag('<i class=&quot;tr&quot;>','</i>')">主字根 .tr</button>
+        <button type="button" class="tag-btn" style="color:#fa5" onclick="wrapPoemTag('<i class=&quot;cd&quot;>','</i>')">拆碼 .cd</button>
+        <button type="button" class="tag-btn" style="color:#0ff" onclick="wrapPoemTag('<i class=&quot;ky&quot;>','</i>')">例字/鍵 .ky</button>
+        <button type="button" class="tag-btn" style="color:#5f5" onclick="wrapPoemTag('<i class=&quot;rh&quot;>','</i>')">韻腳 .rh</button>
+        <button type="button" class="tag-btn" onclick="wrapPoemTag('<br>','')">換行 &lt;br&gt;</button>
+      </div>
+      <textarea id="taPoemHtml" class="dos-textarea" rows="3" oninput="onPoemChange(this.value)">${escAttr(p.poem||"")}</textarea>
+    </div>
+  `;
+}
+
+/* ===== 表單資料雙向綁定 ===== */
+function stripHtmlTags(html){
+  const d = document.createElement("div");
+  d.innerHTML = html;
+  return d.textContent || "";
+}
+function onFieldChange(key, val){
+  pagesData[curPage][key] = val;
+  if(key === "rad" || key === "name"){
+    const p = pagesData[curPage];
+    if(p.rad) p.label = p.rad + (p.name || "");
+    renderPager();
+  }
+  updateLivePreview();
+}
+function onRhymeChange(val){
+  const p = pagesData[curPage];
+  if("rh" in p) p.rh = val;
+  else p.rhyme = val;
+  updateLivePreview();
+}
+function onPoemChange(val){
+  pagesData[curPage].poem = val;
+  const plain = stripHtmlTags(val);
+  const clauses = plain.split(/[，。　\s]+/).filter(Boolean);
+  const lenStr = clauses.map(c => [...c].length).join("-");
+  const isAll7 = clauses.length === 4 && clauses.every(c => [...c].length === 7);
+  const badge = $("poemMeterBadge");
+  if(badge){
+    badge.textContent = `句長檢核：${lenStr||"無"} ${isAll7?"✓ (7-7-7-7)":"⚠"}`;
+    badge.style.color = isAll7 ? "#5f5" : "#ff80ab";
+  }
+  updateLivePreview();
+}
+function onExChange(exIdx, colIdx, val){
+  if(!Array.isArray(pagesData[curPage].ex)) pagesData[curPage].ex = [];
+  if(!Array.isArray(pagesData[curPage].ex[exIdx])) pagesData[curPage].ex[exIdx] = ["","","","std"];
+  pagesData[curPage].ex[exIdx][colIdx] = val;
+  updateLivePreview();
+}
+function addEx(){
+  if(!Array.isArray(pagesData[curPage].ex)) pagesData[curPage].ex = [];
+  const tplSchema = pagesData[curPage].exSchemas?.[0] || null;
+  pagesData[curPage].ex.push(["字", "ABC", "輸入拆碼結構解說。", "std"]);
+  if(pagesData[curPage].exSchemas) pagesData[curPage].exSchemas.push(tplSchema);
+  renderEditorForm();
+  updateLivePreview();
+}
+function removeEx(exIdx){
+  pagesData[curPage].ex.splice(exIdx, 1);
+  if(pagesData[curPage].exSchemas) pagesData[curPage].exSchemas.splice(exIdx, 1);
+  renderEditorForm();
+  updateLivePreview();
+}
+function moveEx(exIdx, dir){
+  const arr = pagesData[curPage].ex;
+  const target = exIdx + dir;
+  if(target < 0 || target >= arr.length) return;
+  [arr[exIdx], arr[target]] = [arr[target], arr[exIdx]];
+  if(pagesData[curPage].exSchemas){
+    const s = pagesData[curPage].exSchemas;
+    [s[exIdx], s[target]] = [s[target], s[exIdx]];
+  }
+  renderEditorForm();
+  updateLivePreview();
+}
+function wrapPoemTag(openTag, closeTag){
+  const ta = $("taPoemHtml");
+  if(!ta) return;
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  const sel = ta.value.substring(s, e) || (closeTag ? "字" : "");
+  ta.value = ta.value.substring(0, s) + openTag + sel + closeTag + ta.value.substring(e);
+  onPoemChange(ta.value);
+  ta.focus();
+}
+function insertHtmlSnippet(field, snippet){
+  const ta = $("taPageHtml");
+  if(!ta) return;
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  ta.value = ta.value.substring(0, s) + snippet + ta.value.substring(e);
+  onFieldChange(field, ta.value);
+  ta.focus();
+}
+
+/* ===== 26 頁頁籤渲染 ===== */
+function renderPager(){
+  const grid = $("pagerGrid");
+  if(!grid) return;
+  grid.innerHTML = pagesData.map((p, idx) => {
+    const lbl = p.label || (p.rad ? (p.rad + (p.name || "")) : `第${idx + 1}頁`);
+    const active = idx === curPage ? " active-pill" : "";
+    return `<button type="button" class="key-button tut-pill${active}" onclick="goPage(${idx})" title="第 ${idx + 1} 頁：${escAttr(lbl)}">${escAttr(lbl)}</button>`;
+  }).join("");
+}
+
+/* 智慧評分偵測物件中的「例字陣列」欄位（避開 aux 輔助字形陣列） */
+function detectBestExamplesField(item){
+  const skipKeys = new Set(["aux","auxGlyphs","auxiliary","radicals","sections","blocks","tags","keys"]);
+  const preferredNames = ["examples","ex","egs","exs","sample","samples","demo","demos","words","chars","charList","breakdown","cases","list","items"];
+
+  const scoreArray = (arr, keyName) => {
+    if(!Array.isArray(arr) || arr.length === 0) return -1;
+    let score = preferredNames.includes(keyName) ? 20 : 0;
+    for(const el of arr){
+      if(Array.isArray(el)){
+        if(el.length >= 2 && typeof el[1] === "string" && /^[A-Z\s\/()]+$/i.test(el[1].trim())) score += 15;
+        if(el.length >= 3 && typeof el[2] === "string" && el[2].trim().length >= 3) score += 10;
+      } else if(el && typeof el === "object"){
+        const vals = Object.values(el);
+        const hasCode = vals.some(v => typeof v === "string" && /^[A-Z]{1,6}(?:\s*\/\s*[A-Z]{1,6})*$/i.test(v.trim()));
+        const hasDesc = vals.some(v => typeof v === "string" && [...v.trim()].length >= 4 && /[\u4e00-\u9fff]/.test(v));
+        if(hasCode) score += 15;
+        if(hasDesc) score += 10;
+        if("g" in el && !hasCode) score -= 30; // 明顯是輔助字形 {g:"曰"}
+      }
+    }
+    return score;
+  };
+
+  let bestKey = null;
+  let bestScore = 0;
+  for(const k of Object.keys(item)){
+    if(skipKeys.has(k)) continue;
+    if(Array.isArray(item[k])){
+      const sc = scoreArray(item[k], k);
+      if(sc > bestScore){
+        bestScore = sc;
+        bestKey = k;
+      }
+    }
+  }
+  return bestKey;
+}
+
+/* 將任意物件中的例字陣列正規化並記住原始欄位名稱 */
+function normalizeExampleEntry(e){
+  if(Array.isArray(e)){
+    const isBi = (e[3] === "bi" || e[3] === true || /內建|核對/.test(String(e[3]||"")));
+    return {
+      tuple: [String(e[0]||""), String(e[1]||""), String(e[2]||""), isBi ? "bi" : "std"],
+      schema: { isArray: true, origLen: e.length, origFourth: e[3] }
+    };
+  }
+  if(e && typeof e === "object"){
+    const keys = Object.keys(e);
+    const chKeys = ["ch","char","w","word","hanzi","c","z","han","zi","character"];
+    const cdKeys = ["code","cd","cj","cangjie","codes","keys","m","ma","val","input"];
+    const dsKeys = ["desc","note","exp","explain","explanation","intro","info","detail","d","s","p","comment","tip","txt","text","meaning"];
+    const bgKeys = ["badge","tag","type","builtin","verified","src","kind"];
+
+    let kCh = chKeys.find(k => k in e);
+    let kCd = cdKeys.find(k => k in e);
+    let kDs = dsKeys.find(k => k in e);
+    let kBg = bgKeys.find(k => k in e);
+
+    // 若鍵名較特別，根據值的特徵自動推斷
+    if(!kCh) kCh = keys.find(k => typeof e[k] === "string" && [...e[k].trim()].length >= 1 && [...e[k].trim()].length <= 4 && /[\u4e00-\u9fff]/.test(e[k]));
+    if(!kCd) kCd = keys.find(k => k !== kCh && typeof e[k] === "string" && /^[A-Z\s\/()]+$/i.test(e[k].trim()) && e[k].trim().length <= 24);
+    if(!kDs) kDs = keys.find(k => k !== kCh && k !== kCd && typeof e[k] === "string" && e[k].trim().length >= 2);
+
+    const chVal = kCh ? String(e[kCh] || "") : "";
+    const cdVal = kCd ? String(e[kCd] || "") : "";
+    const dsVal = kDs ? String(e[kDs] || "") : "";
+    const rawBg = kBg ? e[kBg] : "";
+    const isBi = (rawBg === "bi" || rawBg === true || /內建|核對/.test(String(rawBg)));
+
+    return {
+      tuple: [chVal, cdVal, dsVal, isBi ? "bi" : "std"],
+      schema: { isArray: false, kCh: kCh || "ch", kCd: kCd || "code", kDs: kDs || "desc", kBg, origObj: JSON.parse(JSON.stringify(e)) }
+    };
+  }
+  return { tuple: ["","","","std"], schema: { isArray: true, origLen: 4 } };
+}
+
+/* 將引言 / 總結物件還原為完整 HTML，並記錄其原始欄位結構 */
+function extractNonRadicalHtml(item, idx){
+  if(typeof item === "string") return { html: item, schema: { directString: true } };
+  if(!item || typeof item !== "object") return { html: "", schema: {} };
+
+  for(const k of ["html", "content", "body", "markup"]){
+    if(typeof item[k] === "string" && item[k].trim()){
+      return { html: item[k], schema: { htmlKey: k } };
+    }
+  }
+
+  for(const arrKey of ["sections", "blocks", "cards", "paragraphs", "lines", "items"]){
+    if(Array.isArray(item[arrKey]) && item[arrKey].length){
+      const parts = [];
+      const hasTopTitle = typeof item.title === "string" && item.title.trim().length > 0;
+      if(hasTopTitle){
+        parts.push(`<div class="tut-h y">${item.title}</div>`);
+      }
+      const secSchemas = [];
+      item[arrKey].forEach((sec, si) => {
+        if(typeof sec === "string"){
+          parts.push(`<div style="margin-top:6px;font-size:13.5px">${sec}</div>`);
+          secSchemas.push({ isString: true });
+        } else if(sec && typeof sec === "object"){
+          const hKey = ["h", "heading", "title", "subtitle", "head"].find(k => typeof sec[k] === "string");
+          const bKey = ["body", "content", "html", "text", "desc", "lines", "items"].find(k => k in sec);
+          const cls = sec.cls || (si === 0 && !hasTopTitle ? "y" : "g");
+          if(hKey && sec[hKey]){
+            parts.push(`<div class="tut-h ${escAttr(cls)}" style="${si>0||hasTopTitle?'margin-top:8px':''}">${sec[hKey]}</div>`);
+          }
+          const rawBody = bKey ? sec[bKey] : "";
+          const bodyHtml = Array.isArray(rawBody) ? rawBody.join("<br>") : String(rawBody || "");
+          if(bodyHtml){
+            parts.push(`<div style="font-size:13.5px">${bodyHtml}</div>`);
+          }
+          secSchemas.push({
+            isString: false,
+            hKey: hKey || "title",
+            bKey: bKey || "body",
+            isArrayBody: Array.isArray(rawBody),
+            origSec: JSON.parse(JSON.stringify(sec))
+          });
+        }
+      });
+      return {
+        html: parts.join("\n"),
+        schema: { arrKey, hasTopTitle, secSchemas }
+      };
+    }
+  }
+
+  const fallbackText = item.text || item.desc || item.subtitle || item.sub || item.title || "";
+  return { html: String(fallbackText), schema: { htmlKey: "html" } };
+}
+
+/* 將編輯後的引言 / 總結 HTML 還原為原本的 sections / blocks 陣列結構 */
+function htmlBackToSections(htmlStr, schema){
+  const tmp = document.createElement("div");
+  tmp.innerHTML = htmlStr || "";
+  const children = [...tmp.children];
+  const out = [];
+  let curSec = null;
+
+  const pushSec = () => {
+    if(!curSec) return;
+    const idx = out.length;
+    const sch = schema.secSchemas && schema.secSchemas[idx];
+    if(sch && sch.isString){
+      out.push(curSec.bodyLines.join("<br>"));
+    } else {
+      const obj = sch && sch.origSec ? Object.assign({}, sch.origSec) : {};
+      const hk = (sch && sch.hKey) || "title";
+      const bk = (sch && sch.bKey) || "body";
+      if(curSec.heading) obj[hk] = curSec.heading;
+      const joined = curSec.bodyLines.join("<br>");
+      obj[bk] = (sch && sch.isArrayBody) ? joined.split(/<br\s*\/?>/i) : joined;
+      out.push(obj);
+    }
+    curSec = null;
+  };
+
+  children.forEach((el, ci) => {
+    if(schema.hasTopTitle && ci === 0 && el.classList.contains("tut-h")){
+      return;
+    }
+    if(el.classList.contains("tut-h") || /^H[1-4]$/.test(el.tagName)){
+      pushSec();
+      curSec = { heading: el.innerHTML, bodyLines: [] };
+    } else {
+      if(!curSec) curSec = { heading: "", bodyLines: [] };
+      curSec.bodyLines.push(el.innerHTML);
+    }
+  });
+  pushSec();
+
+  if(!out.length && (htmlStr || "").trim()){
+    const sch = schema.secSchemas && schema.secSchemas[0];
+    if(sch && sch.isString) return [htmlStr.trim()];
+    const obj = sch && sch.origSec ? Object.assign({}, sch.origSec) : {};
+    obj[(sch && sch.bKey) || "body"] = htmlStr.trim();
+    return [obj];
+  }
+  return out;
+}
+
+/* ===== 載入檔案主流程（v1.6 萬用自動偵測引擎） ===== */
+function handleUploadedFile(file){
+  if(!file) return;
+  showToast(`⏳ 正在讀取並分析「${file.name}」…`, false, true);
+  const fr = new FileReader();
+  fr.onerror = () => {
+    showToast(`❌ 讀取檔案「${file.name}」失敗，請確認檔案未損毀或被鎖定。`, true, true);
+  };
+  fr.onload = () => {
+    const raw = String(fr.result || "");
+    const scriptEnv = extractScriptEnv(raw);
+
+    /* 1. JSON 專案備份檔 */
+    if(/\.json$/i.test(file.name)){
+      try{
+        const arr = JSON.parse(raw);
+        if(Array.isArray(arr) && arr.length > 0){
+          pagesData = arr;
+          backupPagesData = JSON.parse(JSON.stringify(arr));
+          curPage = 0;
+          dataSourceLabel = `JSON 備份：${file.name}`;
+          $("hostTypeBadge").textContent = `目前來源：${dataSourceLabel}`;
+          $("hostTypeBadge").style.color = "#004080";
+          renderPager(); renderEditorForm(); updateLivePreview();
+          showToast(`✅ 已從 JSON 備份「${file.name}」載入 ${arr.length} 頁教材！`);
+          return;
+        }
+        showToast("⚠️ JSON 檔案內容為空或格式不符。", true, true);
+        return;
+      }catch(e){
+        showToast("❌ JSON 格式解析失敗：" + e.message, true, true);
+        return;
+      }
+    }
+
+    /* 2. 掃描所有 JS 陣列宣告，自動找出 TUT_PAGES 或獨立教學 PAGES（不限變數名稱） */
+    const arrayDeclRe = /(?:window\.|const\s+|let\s+|var\s+)\s*([A-Za-z_$][\w$]*)\s*=\s*\[/g;
+    let dm;
+    let parseErrors = [];
+
+    while((dm = arrayDeclRe.exec(raw)) !== null){
+      const varName = dm[1];
+      const bracketIdx = raw.indexOf("[", dm.index);
+      const span = extractBalancedJsLiteral(raw, bracketIdx, "[", "]");
+      if(!span) continue;
+
+      let parsed = null;
+      try{
+        parsed = safeEvalJsLiteral(span.literal, scriptEnv);
+      }catch(e){
+        if(/PAGES|TUT|RADICAL|BOOK|MANUAL/i.test(varName)){
+          parseErrors.push(`${varName}: ${e.message}`);
+        }
+        continue;
+      }
+
+      if(!Array.isArray(parsed) || parsed.length < 20 || parsed.length > 35) continue;
+
+      const radCount = parsed.filter(item => {
+        if(!item || typeof item !== "object") return false;
+        const k = item.key || item.rad;
+        return typeof k === "string" && /^[A-Y]$/i.test(k.trim());
+      }).length;
+
+      if(radCount < 20) continue;
+
+      /* 2A. 主程式內置 TUT_PAGES 格式 */
+      if(varName === "TUT_PAGES" || parsed.some(p => p && typeof p.html === "string" && !p.rad)){
+        hostFile = {
+          name: file.name,
+          text: raw,
+          mode: "MAIN_TUT_PAGES",
+          varName,
+          spanStart: span.start,
+          spanEnd: span.end,
+          had24Only: false,
+          introSpan: null,
+          outroSpan: null,
+          colorVars: scriptEnv
+        };
+        pagesData = parsed;
+        backupPagesData = JSON.parse(JSON.stringify(parsed));
+        curPage = 0;
+        dataSourceLabel = `已載入檔案：${file.name}`;
+        const exTotal = parsed.reduce((s, p) => s + (Array.isArray(p.ex) ? p.ex.length : 0), 0);
+        $("hostTypeBadge").textContent = `✅ 目標主檔：${file.name}（${varName}，共 ${parsed.length} 頁）`;
+        $("hostTypeBadge").style.color = "#005a00";
+        $("fileStatusLine").textContent = `✅ 已完整載入 ${file.name}：引言 ＋ 24 字根（共 ${exTotal} 個例字）＋ 總結（合計 ${parsed.length} 頁），修改後按右側「⬇ 寫入並下載修改後 HTML」即可！`;
+        $("btnPatchDownload").disabled = false;
+        renderPager(); renderEditorForm(); updateLivePreview();
+        showToast(`✅ 成功載入主檔「${file.name}」（含引言、24 字根共 ${exTotal} 個例字與總結）！`);
+        return;
+      }
+
+      /* 2B. 獨立教學全書格式（PAGES / RADICALS / BOOK_PAGES 等） */
+      let externalExMap = null;
+      const extExRe = /(?:const|let|var|window\.)\s*(?:EXAMPLES|RAD_EXAMPLES|CHAR_EXAMPLES|EX_MAP)\s*=\s*\{/g;
+      const em = extExRe.exec(raw);
+      if(em){
+        const braceIdx = raw.indexOf("{", em.index);
+        const objSpan = extractBalancedJsLiteral(raw, braceIdx, "{", "}");
+        if(objSpan){
+          try{ externalExMap = safeEvalJsLiteral(objSpan.literal, scriptEnv); }catch(_){}
+        }
+      }
+
+      let normPages = parsed.map((item, idx) => {
+        const singleKey = item.key || item.rad;
+        const isRadical = typeof singleKey === "string" && /^[A-Y]$/i.test(singleKey.trim());
+        if(isRadical){
+          const k = singleKey.trim().toUpperCase();
+          const nm = (item.name && item.name !== k)
+            ? item.name
+            : (item.rad && item.rad !== k ? item.rad : (item.title ? item.title.replace(/^【[A-Y]】\s*/,"").split(/\s+/)[0] : k));
+
+          const exField = detectBestExamplesField(item);
+          let rawEx = (exField && Array.isArray(item[exField]))
+            ? item[exField]
+            : (externalExMap && Array.isArray(externalExMap[k]) ? externalExMap[k] : []);
+
+          const normTuples = [];
+          const exSchemas = [];
+          if(rawEx.length){
+            rawEx.forEach(e => {
+              const res = normalizeExampleEntry(e);
+              normTuples.push(res.tuple);
+              exSchemas.push(res.schema);
+            });
+          } else if(typeof item.html === "string" || typeof item.content === "string"){
+            const extracted = extractExamplesFromHtmlBody(item.html || item.content);
+            extracted.forEach(t => {
+              normTuples.push(t);
+              exSchemas.push({ isArray: true, origLen: 4 });
+            });
+          }
+
+          return {
+            label: k + nm,
+            rad: k,
+            name: nm,
+            en: item.en || "",
+            sub: item.sub || item.subtitle || "",
+            aux: typeof item.aux === "string" ? item.aux : (item.auxDesc || ""),
+            ex: normTuples,
+            exField: exField || "examples",
+            exSchemas,
+            rh: item.rhyme || item.rh || "",
+            poem: resolveColorVars(item.poem || "", scriptEnv),
+            _origItem: JSON.parse(JSON.stringify(item))
+          };
+        }
+
+        const ext = extractNonRadicalHtml(item, idx);
+        return {
+          label: item.label || (idx === 0 ? "引言" : "總結"),
+          origType: item.type || (idx === 0 ? "intro" : "outro"),
+          html: resolveColorVars(ext.html, scriptEnv),
+          _nonRadSchema: ext.schema,
+          _origItem: JSON.parse(JSON.stringify(item))
+        };
+      });
+
+      const had24Only = normPages.every(p => !!p.rad);
+      const isTrad = /繁體|倉頡入門全書/.test(raw) && !/簡體字專屬/.test(raw);
+      const fallbackTpl = isTrad ? DEFAULT_TRAD_PAGES : DEFAULT_SIMP_PAGES;
+
+      const introSpan = findExternalHtmlTemplate(
+        raw,
+        span,
+        /廿四基本字根|專屬拆碼全書|全書結構|翻頁操作|哲理類|基本字根總覽|本教材/,
+        /取碼次序|全書完/
+      );
+      const outroSpan = findExternalHtmlTemplate(
+        raw,
+        span,
+        /取碼次序|學習建議|全書完|拆碼心法|由上而下|字首|字身/,
+        /廿四基本字根|全書結構/
+      );
+
+      if(had24Only){
+        const introPage = {
+          label: "引言",
+          origType: "intro",
+          html: introSpan ? resolveColorVars(introSpan.html, scriptEnv) : fallbackTpl[0].html,
+          _externalSpan: introSpan ? "intro" : null
+        };
+        const outroPage = {
+          label: "總結",
+          origType: "outro",
+          html: outroSpan ? resolveColorVars(outroSpan.html, scriptEnv) : fallbackTpl[fallbackTpl.length - 1].html,
+          _externalSpan: outroSpan ? "outro" : null
+        };
+        normPages = [introPage, ...normPages, outroPage];
+      } else {
+        const firstP = normPages[0];
+        if(firstP && !firstP.rad && !/<div\s+class="tut-h/i.test(firstP.html || "") && stripHtmlTags(firstP.html || "").length < 100 && introSpan){
+          firstP.html = resolveColorVars(introSpan.html, scriptEnv);
+          firstP._externalSpan = "intro";
+        }
+        const lastP = normPages[normPages.length - 1];
+        if(lastP && !lastP.rad && !/<div\s+class="tut-h/i.test(lastP.html || "") && stripHtmlTags(lastP.html || "").length < 100 && outroSpan){
+          lastP.html = resolveColorVars(outroSpan.html, scriptEnv);
+          lastP._externalSpan = "outro";
+        }
+      }
+
+      hostFile = {
+        name: file.name,
+        text: raw,
+        mode: "STANDALONE_PAGES",
+        varName,
+        spanStart: span.start,
+        spanEnd: span.end,
+        had24Only,
+        introSpan,
+        outroSpan,
+        colorVars: scriptEnv
+      };
+
+      pagesData = normPages;
+      backupPagesData = JSON.parse(JSON.stringify(normPages));
+      curPage = 0;
+      dataSourceLabel = `已載入檔案：${file.name}`;
+
+      const exTotal = normPages.reduce((s, p) => s + (Array.isArray(p.ex) ? p.ex.length : 0), 0);
+      $("hostTypeBadge").textContent = `✅ 目標教學全書：${file.name}（${varName}，共 ${normPages.length} 頁）`;
+      $("hostTypeBadge").style.color = "#005a00";
+      $("fileStatusLine").textContent = `✅ 已完整解析 ${file.name}：引言 ✓ ｜ 24 字根（共 ${exTotal} 個例字與解說）✓ ｜ 總結 ✓，可直接編輯並寫回下載！`;
+      $("btnPatchDownload").disabled = false;
+      renderPager(); renderEditorForm(); updateLivePreview();
+      showToast(`✅ 成功載入「${file.name}」：引言、24 字根（${exTotal} 個例字）、總結全部就緒！`);
+      return;
+    }
+
+    /* 3. 若未找到陣列，掃描物件對照表 const PAGES = { A:{...}, B:{...}, ... } */
+    const objDeclRe = /(?:window\.|const\s+|let\s+|var\s+)\s*([A-Za-z_$][\w$]*)\s*=\s*\{/g;
+    let om;
+    while((om = objDeclRe.exec(raw)) !== null){
+      const varName = om[1];
+      const braceIdx = raw.indexOf("{", om.index);
+      const span = extractBalancedJsLiteral(raw, braceIdx, "{", "}");
+      if(!span) continue;
+
+      let parsedObj = null;
+      try{
+        parsedObj = safeEvalJsLiteral(span.literal, scriptEnv);
+      }catch(e){
+        continue;
+      }
+      if(!parsedObj || typeof parsedObj !== "object" || Array.isArray(parsedObj)) continue;
+
+      const radKeys = Object.keys(parsedObj).filter(k => /^[A-Y]$/i.test(k));
+      if(radKeys.length < 20) continue;
+
+      const order = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","Y"];
+      const normPages = [];
+
+      if(parsedObj.intro || parsedObj.INTRO){
+        const ext = extractNonRadicalHtml(parsedObj.intro || parsedObj.INTRO, 0);
+        normPages.push({ label:"引言", origType:"intro", html:resolveColorVars(ext.html, scriptEnv), _objKey: parsedObj.intro ? "intro" : "INTRO", _nonRadSchema: ext.schema, _origItem: JSON.parse(JSON.stringify(parsedObj.intro || parsedObj.INTRO)) });
+      } else {
+        normPages.push({ label:"引言", origType:"intro", html:DEFAULT_TRAD_PAGES[0].html });
+      }
+
+      for(const k of order){
+        const item = parsedObj[k] || parsedObj[k.toLowerCase()];
+        if(!item) continue;
+        const nm = item.name || item.rad || k;
+        const exField = detectBestExamplesField(item);
+        const rawEx = (exField && Array.isArray(item[exField])) ? item[exField] : [];
+        const normTuples = [], exSchemas = [];
+        rawEx.forEach(e => { const r = normalizeExampleEntry(e); normTuples.push(r.tuple); exSchemas.push(r.schema); });
+        normPages.push({
+          label: k + nm, rad: k, name: nm, en: item.en || "", sub: item.sub || item.subtitle || "",
+          aux: typeof item.aux === "string" ? item.aux : "", ex: normTuples, exField: exField || "examples", exSchemas,
+          rh: item.rhyme || item.rh || "", poem: resolveColorVars(item.poem || "", scriptEnv),
+          _objKey: (k in parsedObj) ? k : k.toLowerCase(), _origItem: JSON.parse(JSON.stringify(item))
+        });
+      }
+
+      if(parsedObj.outro || parsedObj.OUTRO || parsedObj.summary){
+        const ok = parsedObj.outro ? "outro" : (parsedObj.OUTRO ? "OUTRO" : "summary");
+        const ext = extractNonRadicalHtml(parsedObj[ok], 25);
+        normPages.push({ label:"總結", origType:"outro", html:resolveColorVars(ext.html, scriptEnv), _objKey: ok, _nonRadSchema: ext.schema, _origItem: JSON.parse(JSON.stringify(parsedObj[ok])) });
+      } else {
+        normPages.push({ label:"總結", origType:"outro", html:DEFAULT_TRAD_PAGES[25].html });
+      }
+
+      hostFile = {
+        name: file.name, text: raw, mode: "STANDALONE_OBJECT", varName,
+        spanStart: span.start, spanEnd: span.end, had24Only: false, introSpan: null, outroSpan: null, colorVars: scriptEnv
+      };
+      pagesData = normPages;
+      backupPagesData = JSON.parse(JSON.stringify(normPages));
+      curPage = 0;
+      dataSourceLabel = `已載入檔案：${file.name}`;
+      const exTotal = normPages.reduce((s, p) => s + (Array.isArray(p.ex) ? p.ex.length : 0), 0);
+      $("hostTypeBadge").textContent = `✅ 目標教學全書：${file.name}（物件映射 ${varName}，共 ${normPages.length} 頁）`;
+      $("hostTypeBadge").style.color = "#005a00";
+      $("fileStatusLine").textContent = `✅ 已完整解析 ${file.name}（物件結構 ${varName}，共 ${exTotal} 個例字），可直接編輯並寫回下載！`;
+      $("btnPatchDownload").disabled = false;
+      renderPager(); renderEditorForm(); updateLivePreview();
+      showToast(`✅ 成功載入「${file.name}」（物件映射模式，共 ${normPages.length} 頁）！`);
+      return;
+    }
+
+    const errDetail = parseErrors.length ? `（解析異常：${parseErrors.join("; ")}）` : "";
+    $("hostTypeBadge").textContent = `⚠️ 載入失敗：${file.name}（仍顯示${dataSourceLabel}）`;
+    $("hostTypeBadge").style.color = "#b71c1c";
+    showToast(`❌ 無法從「${file.name}」識別出 24 字根教材陣列或物件${errDetail}。請確認檔案內容完整未截斷。`, true, true);
+  };
+  fr.readAsText(file, "utf-8");
+}
+
+$("fileInput").addEventListener("change", e => {
+  if(e.target.files && e.target.files[0]) handleUploadedFile(e.target.files[0]);
+  e.target.value = "";
+});
+
+/* 全視窗拖放支援 */
+document.addEventListener("dragover", e => e.preventDefault());
+document.addEventListener("drop", e => {
+  e.preventDefault();
+  if(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]){
+    handleUploadedFile(e.dataTransfer.files[0]);
+  }
+});
+
+/* ===== 序列化與寫回下載 ===== */
+function serializeTutPagesJs(){
+  const escTpl = s => String(s ?? "").replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$\{/g, "\\${");
+  const lines = pagesData.map(p => {
+    if(p.rad){
+      const obj = {
+        label: p.label || (p.rad + (p.name||"")),
+        rad: p.rad,
+        name: p.name || "",
+        en: p.en || "",
+        sub: p.sub || "",
+        aux: p.aux || "",
+        ex: p.ex || [],
+        rh: p.rh || p.rhyme || ""
+      };
+      const head = JSON.stringify(obj).slice(0, -1);
+      return `${head},"poem":\`${escTpl(p.poem||"")}\`}`;
+    } else {
+      return `{"label":${JSON.stringify(p.label||"頁面")},"html":\`${escTpl(p.html||"")}\`}`;
+    }
+  });
+  return `window.TUT_PAGES=[\n${lines.join(",\n")}\n];`;
+}
+
+function serializeStandalonePagesJs(){
+  const escTpl = s => String(s ?? "").replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$\{/g, "\\${")
+    .replace(/#0ff/gi, "${C1}").replace(/#5f5/gi, "${C2}").replace(/#ff80ab/gi, "${C3}");
+
+  // 若原檔 PAGES 原本只含 24 頁，序列化 PAGES 陣列時只輸出中間 24 個字根頁（引言與總結另外寫回）
+  const targetList = hostFile.had24Only ? pagesData.filter(p => !!p.rad) : pagesData;
+
+  const lines = targetList.map((p, idx) => {
+    if(p.rad){
+      const outEx = (p.ex || []).map((e, ei) => {
+        const sch = p.exSchemas && p.exSchemas[ei];
+        if(sch && !sch.isArray){
+          const o = Object.assign({}, sch.origObj || {});
+          o[sch.kCh] = e[0] || "";
+          o[sch.kCd] = e[1] || "";
+          o[sch.kDs] = e[2] || "";
+          if(sch.kBg){
+            if(typeof o[sch.kBg] === "boolean") o[sch.kBg] = (e[3] === "bi");
+            else if(/內建|核對/.test(String(o[sch.kBg])) || e[3] === "bi") o[sch.kBg] = e[3] === "bi" ? "內建核對✓" : "標準碼";
+            else o[sch.kBg] = e[3] || "std";
+          }
+          return o;
+        }
+        if(sch && sch.isArray && sch.origLen === 3 && e[3] === "std"){
+          return [e[0] || "", e[1] || "", e[2] || ""];
+        }
+        return e;
+      });
+
+      const obj = Object.assign({}, p._origItem || {});
+      if("key" in obj || !("rad" in obj)) obj.key = p.rad;
+      if("rad" in obj) obj.rad = (p._origItem && p._origItem.rad === p.rad) ? p.rad : (p.name || p.rad);
+      if("name" in obj) obj.name = p.name || p.rad;
+      if("en" in obj) obj.en = p.en || "";
+      if("title" in obj) obj.title = `【${p.rad}】${p.name||""} ${p.en?"("+p.en+")":""}`.trim();
+      if("sub" in obj) obj.sub = p.sub || "";
+      else if("subtitle" in obj) obj.subtitle = p.sub || "";
+      if(typeof obj.aux === "string") obj.aux = p.aux || "";
+      obj[p.exField || "examples"] = outEx;
+      if("rhyme" in obj || !("rh" in obj)) obj.rhyme = p.rh || p.rhyme || "";
+      else obj.rh = p.rh || p.rhyme || "";
+      delete obj.poem;
+
+      const head = JSON.stringify(obj).slice(0, -1);
+      return `  ${head}, poem:\`${escTpl(p.poem||"")}\` }`;
+    } else {
+      const obj = Object.assign({}, p._origItem || {});
+      // 若此頁是透過 _externalSpan 寫回外部模板，則保留原檔 PAGES[0]/PAGES[25] 的精簡 metadata 不破壞原結構
+      if(p._externalSpan && p._origItem){
+        return `  ${JSON.stringify(obj)}`;
+      }
+      obj.type = p.origType || (idx === 0 ? "intro" : "outro");
+      if("label" in obj) obj.label = p.label || (idx === 0 ? "引言" : "總結");
+
+      const sch = p._nonRadSchema || { htmlKey: "html" };
+      if(sch.arrKey){
+        if(sch.hasTopTitle){
+          const tmp = document.createElement("div");
+          tmp.innerHTML = p.html || "";
+          const firstH = tmp.querySelector(".tut-h, h1, h2, h3");
+          if(firstH) obj.title = firstH.innerHTML;
+        }
+        obj[sch.arrKey] = htmlBackToSections(p.html || "", sch);
+        delete obj.html;
+        const head = JSON.stringify(obj);
+        return `  ${head}`;
+      } else {
+        const hk = sch.htmlKey || "html";
+        delete obj[hk];
+        const head = JSON.stringify(obj).slice(0, -1);
+        return `  ${head}, ${hk}:\`${escTpl(p.html||"")}\` }`;
+      }
+    }
+  });
+  return `const PAGES = [\n${lines.join(",\n")}\n];`;
+}
+
+function patchAndDownloadHtml(){
+  if(!hostFile.text || hostFile.mode === "NONE"){
+    showToast("⚠️ 請先載入目標 HTML 檔案！", true, true);
+    return;
+  }
+  let out = hostFile.text;
+  const escTpl = s => String(s ?? "").replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$\{/g, "\\${")
+    .replace(/#0ff/gi, "${C1}").replace(/#5f5/gi, "${C2}").replace(/#ff80ab/gi, "${C3}");
+
+  if(hostFile.mode === "MAIN_TUT_PAGES"){
+    const span = (hostFile.spanStart >= 0 && hostFile.spanEnd > hostFile.spanStart)
+      ? { start: hostFile.spanStart, end: hostFile.spanEnd }
+      : null;
+    if(!span){ showToast("❌ 無法定位原檔中的 TUT_PAGES", true, true); return; }
+    const newArr = serializeTutPagesJs().replace(/^window\.TUT_PAGES=/, "").replace(/;$/, "");
+    out = out.slice(0, span.start) + newArr + out.slice(span.end);
+  } else if(hostFile.mode === "STANDALONE_PAGES" || hostFile.mode === "STANDALONE_OBJECT"){
+    const extraPatches = [];
+    const introPage = pagesData.find(p => p._externalSpan === "intro");
+    const outroPage = pagesData.find(p => p._externalSpan === "outro");
+    if(hostFile.introSpan && introPage){
+      extraPatches.push({ start: hostFile.introSpan.start, end: hostFile.introSpan.end, val: "`" + escTpl(introPage.html) + "`" });
+    }
+    if(hostFile.outroSpan && outroPage){
+      extraPatches.push({ start: hostFile.outroSpan.start, end: hostFile.outroSpan.end, val: "`" + escTpl(outroPage.html) + "`" });
+    }
+
+    if(hostFile.spanStart < 0 || hostFile.spanEnd <= hostFile.spanStart){
+      showToast("❌ 無法定位原檔中的教材結構", true, true);
+      return;
+    }
+
+    if(hostFile.mode === "STANDALONE_OBJECT"){
+      const objOut = {};
+      for(const p of pagesData){
+        if(p._objKey){
+          const item = Object.assign({}, p._origItem || {});
+          if(p.rad){
+            item.sub = p.sub || item.sub;
+            if(typeof item.aux === "string") item.aux = p.aux;
+            item[p.exField || "examples"] = p.ex || [];
+            item.rhyme = p.rh || item.rhyme;
+            item.poem = p.poem || "";
+          } else {
+            item.html = p.html || "";
+          }
+          objOut[p._objKey] = item;
+        }
+      }
+      extraPatches.push({ start: hostFile.spanStart, end: hostFile.spanEnd, val: JSON.stringify(objOut, null, 2) });
+    } else {
+      const newArr = serializeStandalonePagesJs().replace(/^const\s+PAGES\s*=\s*/, "").replace(/;$/, "");
+      extraPatches.push({ start: hostFile.spanStart, end: hostFile.spanEnd, val: newArr });
+    }
+
+    extraPatches.sort((a, b) => b.start - a.start);
+    for(const pt of extraPatches){
+      out = out.slice(0, pt.start) + pt.val + out.slice(pt.end);
+    }
+  }
+
+  const exTotal = pagesData.reduce((s, p) => s + (Array.isArray(p.ex) ? p.ex.length : 0), 0);
+  triggerDownload(out, hostFile.name, "text/html;charset=utf-8");
+  showToast(`🎉 已將全部 ${pagesData.length} 頁（含引言、${exTotal} 個例字與總結）寫入並下載「${hostFile.name}」！`);
+}
+
+function downloadJsonBackup(){
+  const json = JSON.stringify(pagesData, null, 2);
+  triggerDownload(json, "cangjie_tut_pages_backup.json", "application/json;charset=utf-8");
+  showToast("💾 已匯出 26 頁教材 JSON 備份檔！");
+}
+
+function triggerDownload(content, filename, mime){
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { a.remove(); URL.revokeObjectURL(url); }, 300);
+}
+
+function toggleExportBox(){
+  const box = $("exportBox");
+  box.classList.toggle("open");
+  if(box.classList.contains("open")){
+    $("exportCodePre").textContent = hostFile.mode === "STANDALONE_PAGES" ? serializeStandalonePagesJs() : serializeTutPagesJs();
+  }
+}
+
+function copyJsCode(){
+  const txt = $("exportCodePre").textContent;
+  const ta = document.createElement("textarea");
+  ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select();
+  try{
+    document.execCommand("copy");
+    showToast("✅ 已複製完整教材 JS 陣列代碼到剪貼簿！");
+  }catch(e){}
+  ta.remove();
+}
+
+/* 鍵盤左右鍵快速翻頁（輸入框外） */
+window.addEventListener("keydown", e => {
+  const el = document.activeElement;
+  if(el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT")) return;
+  if(e.key === "ArrowLeft"){ e.preventDefault(); navPage(-1); }
+  else if(e.key === "ArrowRight"){ e.preventDefault(); navPage(1); }
+});
+
+/* 啟動初始化 */
+renderPager();
+renderEditorForm();
+updateLivePreview();
+</script>
+</body>
+</html>
