@@ -304,7 +304,7 @@ html.js #jsNote{display:none}
 </div>
 <div class="result-view" id="resultView">
 <div class="result-table-box"><div class="result-table-header" id="resTableHeader">您的成績</div><div class="result-row"><div class="result-label">輸入速度</div><div class="result-val">每分鐘 <span class="num" id="resSpeed">0</span> 字</div></div><div class="result-row"><div class="result-label">準確率</div><div class="result-val"><span class="num" id="resAccuracy">0</span> %</div></div></div>
-<div class="result-name-bar"><span>登錄姓名：</span><input type="text" id="resultNameInput" class="result-name-input" value="倉頡小高手" maxlength="12"><button class="key-button" id="btnSaveResult" style="height:22px;font-size:12px">保存 [Enter]</button></div>
+<div class="result-name-bar"><span>登錄姓名：</span><input type="text" id="resultNameInput" class="result-name-input" value="簡倉小高手" maxlength="12"><button class="key-button" id="btnSaveResult" style="height:22px;font-size:12px">保存 [Enter]</button></div>
 <div id="resultHintBar" style="color:#5ff;font-size:13px;margin-top:8px">[Enter 保存｜Esc 不保存返回]</div>
 </div>
 <div class="sub-window" id="practiceWindow">
@@ -337,7 +337,7 @@ html.js #jsNote{display:none}
 <div class="sub-window" id="leaderboardWindow">
 <div class="sub-win-title"><span>🏆 最佳成績排行榜</span><span style="font-size:13px;color:#aaa" id="lbStatusHint">[Esc] 返回</span></div>
 <div style="max-height:260px;overflow-y:auto"><table class="retro-table"><thead><tr><th>名次</th><th>姓名</th><th>模式</th><th>時長</th><th>速度</th><th>準確率</th><th>日期</th></tr></thead><tbody id="lbTableBody"></tbody></table></div>
-<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:6px"><button class="key-button" id="clearLbBtn" style="color:#800000">重置</button><button class="key-button" id="closeLbBtn">返回 [Esc]</button></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:6px"><button class="key-button" id="clearLbBtn" style="color:#800000">重置</button><button class="key-button" id="dlProjectBtn" title="下載整個專案（兩個檔案）：本程式檔（保留現有檔名）＋ tutorial_simp.html——下載後放同一資料夾即可使用">📦 下載專案</button><button class="key-button" id="closeLbBtn">返回 [Esc]</button></div>
 </div>
 <div class="sub-window" id="aboutWindow" style="max-width:640px">
 <div class="sub-win-title"><span>軟體簡介</span><span style="font-size:13px;color:#aaa">[Esc] 返回</span></div>
@@ -668,7 +668,7 @@ function resolveKey(e,isIn){
 const VIEWS={MENU:"mainMenuPanel",EXIT_CONFIRM:"exitConfirmDialog",DOS_EXIT:"dosExitScreen",EXAM_SETUP:"examSetupDialog",EXAM:"exam18Screen",RESULT:"resultView",PRACTICE:"practiceWindow",QUERY:"queryWindow",LEADERBOARD:"leaderboardWindow",ABOUT:"aboutWindow",TUTORIAL:"tutorialWindow"};
 function poolStatusText(){if(S.poolSel>0){const p=window.MULTI_POOLS&&window.MULTI_POOLS[S.poolSel];return p?`✅ 已選擇：題庫${"一二三四"[S.poolSel-1]}「${p.name}」（${p.articles.length} 篇，每局隨機抽一篇）`:"⚠️ 題庫未載入"}return "已選擇：內建詞庫"}
 function applyPoolSel(){if(S.poolSel>0){const p=window.MULTI_POOLS&&window.MULTI_POOLS[S.poolSel];S.atcPool=p?p.articles.slice():null;S.compPool=null}else{S.atcPool=null}
-  for(let k=0;k<5;k++){const b=$("poolOpt"+k);if(b){const on=k===S.poolSel;b.style.background=on?"#ffe600":"";b.style.color=on?"#000":""}}
+  for(let k=0;k<5;k++){const b=$("poolOpt"+k);if(b){const on=k===S.poolSel;if(k>0){const p=window.MULTI_POOLS&&window.MULTI_POOLS[k],cn="一二三四"[k-1];if(p){b.textContent=p.name;b.title=`題庫${cn}「${p.name}」｜${p.articles.length} 篇文章`}else{b.textContent=`題庫${cn}（未載入）`;b.title=`未載入（缺 multi-${k}.js）`}}b.style.background=on?"#ffe600":"";b.style.color=on?"#000":""}}
   const st=$("compPoolStatus");if(st){st.style.color=S.poolSel>0?"#004080":"";st.textContent=poolStatusText()}}
 function syncSetup(){const c=S.type==="COMPUTER";$("radioComputer").classList.toggle("active",c);$("radioCustom").classList.toggle("active",!c);$("customTextInputGroup").style.display=c?"none":"flex";$("compPoolGroup").style.display=c?"flex":"none";if(typeof applyPoolSel==="function")applyPoolSel()}
 function setView(v,opt={}){
@@ -697,6 +697,16 @@ function setView(v,opt={}){
 }
 function menuAction(i){
   if(i!==7)sound.key();
+  if(i===2){
+    const f="tutorial_simp.html"; // 目標改為 tutorial_simp.html
+    const s=document.createElement("script"),oldErr=window.onerror;
+    const fin=ok=>{window.onerror=oldErr;s.remove();ok?location.href=f:setView("TUTORIAL")};
+    window.onerror=()=>true; // 暫時靜音 HTML 的 "<" 語法報錯
+    s.onload=()=>fin(true);  // 檔案存在才會觸發 onload -> 跳轉外部教學！
+    s.onerror=()=>fin(false);// 檔案不存在必觸發 onerror -> 開內置教學！
+    s.src=f;
+    return document.head.appendChild(s);
+  }
   const m=["","ABOUT","TUTORIAL","PRACTICE","EXAM_SETUP","QUERY","LEADERBOARD"];
   if(i>=1&&i<=6)setView(m[i]);
   else if(i===7){
@@ -927,13 +937,14 @@ function renderLB(){const b=$("lbTableBody"),l=getLB();b.innerHTML=l.length?l.ma
 
 const dlFile=(s,fn,mime)=>{try{const u=URL.createObjectURL(new Blob([s],{type:mime})),a=document.createElement("a");a.href=u;a.download=fn;a.style.display="none";document.body.appendChild(a);a.click();const h=$("lbStatusHint");if(h)h.textContent=`✅ 已匯出 ${fn}`;sfxToast(`✅ 已匯出下載：${fn}`,true);setTimeout(()=>{try{a.remove()}catch(e){}URL.revokeObjectURL(u)},1e3)}catch(e){sfxToast("⚠️ 匯出失敗（環境限制）")}};
 function exportDict(isJs){const ks=Object.keys(DICT);if(!ks.length)return $("lbStatusHint").textContent="⚠️ 無字碼可匯出";let s="# 倉頡三代碼表\n";ks.forEach(c=>DICT[c].forEach(v=>s+=`${c} ${v}\n`));isJs?dlFile(`/* chinese_dict.js */\nwindow.EXTERNAL_CHINESE_TT=${JSON.stringify(s)};`,"chinese_dict.js","text/javascript;charset=utf-8"):dlFile(s,"chinese.tt","text/plain;charset=utf-8")}
-function exportSelfHtml(){
+function curHtmlName(){try{return decodeURIComponent((location.pathname.split("/").pop()||"").trim())||"index.html"}catch(e){return"index.html"}}
+function exportSelfHtml(name){if(typeof name!=="string"||!name.trim())name=null;
   sound.ok();
   const clone=document.documentElement.cloneNode(true);
   clone.classList.remove("js");
   const tk=clone.querySelector("#touchKeypad"),ka=clone.querySelector("#kpAbc"),kr=clone.querySelector("#kpRad"),eb=clone.querySelector("#errorBanner"),ds=clone.querySelector("#dosScreen");
   if(tk)tk.style.display="none";if(ka)ka.innerHTML="";if(kr)kr.innerHTML="";if(eb)eb.style.display="none";if(ds)ds.style.transform="";
-  dlFile("<!DOCTYPE html>\n"+clone.outerHTML,"index.html","text/html;charset=utf-8");
+  dlFile("<!DOCTYPE html>\n"+clone.outerHTML,name||curHtmlName(),"text/html;charset=utf-8");
 }
 
 function downloadBlob(blob, filename){
@@ -969,6 +980,24 @@ async function downloadRemoteLatest(){
     if (ok >= 1) sfxToast(`✅ 已從專案下載 ${ok} 個檔案`, true);
     else sfxToast("❌ 下載失敗——請手動前往 GitHub 專案主頁", true);
   } finally { if (btn) setTimeout(() => { btn.disabled = false; }, 2000); }
+}
+
+function dlAnchor(url,name){try{const a=document.createElement("a");a.href=url;a.download=name||"";a.target="_blank";a.rel="noopener";a.style.display="none";document.body.appendChild(a);a.click();setTimeout(()=>{try{a.remove()}catch(e){}},1200);return true}catch(e){return false}}
+async function downloadProject(){
+  const n=curHtmlName(),h=$("lbStatusHint");
+  sound.ok();
+  if(h)h.textContent="[Esc] 返回";
+  sfxToast("⏳ 正在準備下載專案（本檔＋tutorial_simp.html）…",true);
+  let ok=0,got=false;
+  try{const r=await fetch(location.href,{cache:"no-store"});if(r.ok){await downloadBlob(await r.blob(),n);got=true}}catch(e){}
+  if(!got)exportSelfHtml(n);else ok++; /* file:// 無 fetch：以 DOM 快照匯出本檔（保留現有檔名） */
+  await new Promise(res=>setTimeout(res,600));
+  let t=false;
+  try{const r=await fetch("tutorial_simp.html",{cache:"no-store"});if(r.ok){await downloadBlob(await r.blob(),"tutorial_simp.html");t=true}}catch(e){}
+  if(!t)t=dlAnchor("tutorial_simp.html","tutorial_simp.html"); /* file:// 後備：以 <a download> 下載同目錄檔案 */
+  if(t)ok++;
+  if(h)h.textContent=ok>=2?"✅ 專案已下載":"⚠️ 下載未完整";
+  sfxToast(ok>=2?`✅ 已下載專案：${n} ＋ tutorial_simp.html（兩檔須放同一資料夾）`:"⚠️ 已嘗試下載；若 tutorial_simp.html 未出現，請允許瀏覽器「下載多個檔案」或從原資料夾複製該檔",true);
 }
 
 function applyDict(raw){const res=buildDict(raw);DICT=res.dict;rebuild();S.list.forEach(it=>{if(DICT[it.char])Object.assign(it,mkItem(it.char))});updatePracticeScopeUI();if(S.view==="PRACTICE"&&S.list.length)renderPractice();const s=$("dictSizeDisplay");if(s)s.textContent=Object.keys(DICT).length;return res.extCount}
@@ -1049,6 +1078,7 @@ const bootApp=()=>{
     $("exportSelfHtmlBtn")?.addEventListener("click",safe(exportSelfHtml));
     $("btnDlSelfAbout")?.addEventListener("click",safe(exportSelfHtml));
     $("btnDlRemoteAbout")?.addEventListener("click",safe(downloadRemoteLatest));
+    $("dlProjectBtn")?.addEventListener("click",safe(downloadProject));
     $("queryBtnDo").addEventListener("click",safe(()=>doQuery($("queryCharInput").value)));
     ["closeQueryBtn","closeAboutBtn","closeTutorialBackBtn","closeLbBtn"].forEach(id=>$(id)?.addEventListener("click",safe(()=>setView("MENU"))));
     $("closeTutorialBtn").addEventListener("click",safe(()=>setView("PRACTICE")));
