@@ -377,11 +377,6 @@ function dispatchVirtualKey(k,ev){
     if(k==="ESC")return exitExam();
     return examKey(k);
   }
-  if(S.view==="TUTORIAL"){
-    if(k==="PAGEUP"){sound.nav();return tutNav(-1)}
-    if(k==="PAGEDOWN"){sound.nav();return tutNav(1)}
-    return;
-  }
   if(S.view==="PRACTICE"){
     if(k==="ESC")return S.buf?clearSlots():setView("MENU");
     if(k==="ENTER")return practiceKey("ENTER");
@@ -535,6 +530,16 @@ function setView(v,opt={}){
 }
 function menuAction(i){
   if(i!==7)sound.key();
+  if(i===2){
+    const f="tutorial.html"; // 主程式改寫
+    const s=document.createElement("script"),oldErr=window.onerror;
+    const fin=ok=>{window.onerror=oldErr;s.remove();ok?location.href=f:setView("TUTORIAL")};
+    window.onerror=()=>true; // 暫時靜音 HTML 的 "<" 語法報錯
+    s.onload=()=>fin(true);  // 檔案存在才會觸發 onload -> 跳轉外部教學！
+    s.onerror=()=>fin(false);// 檔案不存在必觸發 onerror -> 開內置教學！
+    s.src=f;
+    return document.head.appendChild(s);
+  }
   const m=["","ABOUT","TUTORIAL","PRACTICE","EXAM_SETUP","QUERY","LEADERBOARD"];
   if(i>=1&&i<=6)setView(m[i]);
   else if(i===7){
