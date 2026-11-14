@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<title>快快快樂學倉頡 — 仿DOS重構版</title>
+<meta name="description" content="九十年代 DOS 打字教學程式致敬之作，單一 HTML 檔、離線可玩。含打字練習、實力測驗、文章卷測驗、倉頡查碼與最佳成績排行榜。">
+<script id="rawSrc" type="text/plain"></script>
+<script>document.documentElement.classList.add("js")</script>
+<script src="chinese_dict.js" onerror="void 0"></script>
+<script src="words_dict.js" onerror="void 0"></script>
+<script src="limit.js" onerror="void 0"></script>
+<script>window.__HAS_LIMIT_JS=()=>{const l=window.charList||(typeof charList!=="undefined"?charList:null);return Array.isArray(l)&&l.length>0};</script>
+<style>
+*{box-sizing:border-box;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+input,textarea{user-select:text;-webkit-user-select:text;font-size:16px}
+html,body{overscroll-behavior:none;margin:0;background:#111;width:100vw;height:100vh;height:100dvh;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:"BiauKaiHK","DFKai-SB","標楷體","Microsoft JhengHei",serif;overflow:hidden}
+body.handheld-land{justify-content:flex-start;padding-top:4px}
+.dos-screen{width:960px;height:540px;background:#005a52;position:relative;border:3px solid #808080;box-shadow:0 0 25px rgba(0,0,0,.9);display:flex;flex-direction:column;justify-content:space-between;transform-origin:center;flex-shrink:0}
+body.handheld-land .dos-screen{transform-origin:top center}
+@media(pointer:coarse)and(hover:none){.key-button,.menu-btn,.tk-btn{min-height:44px;font-size:18px}.dos-footer{height:60px}.menu-item-row{min-height:44px}}
+.key-button,.menu-item-row,.cand-item,.tk-btn{touch-action:manipulation}
+#touchKeypad{position:fixed;bottom:0;left:0;right:0;width:100%;display:none;background:rgba(20,20,20,.96);border-top:2px solid #555;padding:6px 6px calc(12px + env(safe-area-inset-bottom,0px));flex-direction:column;gap:4px;z-index:9999;touch-action:none}
+#touchKeypad.kp-left{width:40%;left:0;right:auto;border-right:2px solid #555}
+#touchKeypad.kp-right{width:40%;left:auto;right:0;border-left:2px solid #555}
+#touchKeypad.kp-left .tk-btn,#touchKeypad.kp-right .tk-btn{font-size:13px;min-width:0}
+#touchKeypad.kp-left .tk-btn .kb-rad,#touchKeypad.kp-right .tk-btn .kb-rad{font-size:13px}
+#touchKeypad.kp-left .tk-btn .kb-key,#touchKeypad.kp-right .tk-btn .kb-key{font-size:9px}
+.tk-row{display:flex;justify-content:center;gap:4px}
+.tk-sp{pointer-events:none;visibility:hidden}
+.tk-btn{background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;color:#000;font-weight:bold;font-size:16px;height:40px;flex:1;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.tk-btn:active{background:#888;border-color:#404040 #fff #fff #404040}
+#kpFloatBar{position:absolute;top:-20px;right:8px;display:flex;gap:6px;z-index:10000}
+.kp-pill{color:#5ff;font-size:10px;background:#2a2a2a;border:1px solid #555;border-radius:9px;padding:2px 10px;cursor:pointer;white-space:nowrap;line-height:1.2}
+.kp-pill:active{background:#444}
+.tk-btn.col{flex-direction:column;line-height:1.05;gap:0;padding:2px 0}
+.tk-btn .kb-rad{font-size:16px;color:#004080;font-family:inherit}
+.tk-btn .kb-key{font-size:10px;color:#555;font-family:Consolas,monospace}
+.dos-header{height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0}
+.slop-logo{display:flex;align-items:center;justify-content:center;width:95px;height:32px}
+.title-group{display:flex;align-items:center;flex:1;justify-content:center;gap:16px}
+.magenta-double-line{flex:1;height:8px;border-top:3px solid #f0f;border-bottom:3px solid #f0f}
+.dos-main-title{color:#ff0;font-size:32px;font-weight:bold;letter-spacing:6px;text-shadow:2px 2px #000;white-space:nowrap;padding:0 10px}
+.dos-stage{flex:1;position:relative;display:flex;justify-content:center;align-items:center;padding:6px 18px;overflow:hidden}
+.menu-panel,.dialog-box,.exit-dialog-box{background:#c0c0c0;border:3px solid;border-color:#fff #404040 #404040 #fff;display:flex;flex-direction:column}
+.menu-panel{padding:8px;width:275px;gap:5px;position:absolute;left:245px;top:15px;z-index:10}
+.menu-item-row{display:flex;align-items:center;gap:6px;cursor:pointer}
+.menu-item-row:active,.menu-item-row:active .menu-btn{background:#ffe600!important;color:#000!important}
+.menu-check-box,.dialog-radio,.dialog-input{border:2px solid;border-color:#404040 #fff #fff #404040}
+.menu-check-box{width:20px;height:22px;background:#c0c0c0;display:flex;align-items:center;justify-content:center}
+.sound-indicator{width:12px;height:12px;background:#0ff;border-radius:1px}
+.menu-num{color:#800000;font-weight:bold;font-size:17px;font-family:Consolas,monospace;width:14px;text-align:center}
+.menu-btn,.key-button{background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;font-weight:bold}
+.menu-btn{flex:1;height:26px;display:flex;align-items:center;padding-left:6px;font-size:16px;color:#000;letter-spacing:1px}
+.menu-item-row.selected .menu-btn{background:#a0a0a0;border-color:#404040 #fff #fff #404040;color:#ff5}
+.dos-footer{height:36px;background:#c0c0c0;border-top:2px solid #fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0;z-index:10}
+.key-button{height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;color:#000080;cursor:pointer;font-family:Consolas,"Microsoft JhengHei",monospace;padding:0 14px}
+.key-button:active,.key-button.focused-choice{border-color:#404040 #fff #fff #404040;background:#a8a8a8;outline:1px dotted #000;outline-offset:-4px}
+.exam-18-screen{display:none;width:100%;height:100%;background:#d8dcd8;border:2px inset #808080;flex-direction:column;padding:2px 10px;font-family:"BiauKaiHK","DFKai-SB","標楷體",monospace}
+.exam-line{width:100%;flex:1;min-height:0;display:flex;align-items:center;white-space:pre;overflow:hidden;font-size:20px;line-height:1}
+.exam-line-status1{background:#000080;color:#ff5;padding:0 8px;justify-content:space-between;font-size:16px;font-weight:bold}
+.exam-line-status2{background:#005a52;color:#fff;padding:0 8px;justify-content:space-between;font-size:15px;border-bottom:1px solid #000}
+.char-grid-row{display:grid;grid-template-columns:repeat(32,1fr);width:100%;flex:1;min-height:0;align-items:center}
+.char-cell{text-align:center;font-size:20px;font-weight:bold;line-height:1;height:100%;display:flex;align-items:center;justify-content:center}
+.typed-row .char-cell.correct{color:#00f}
+.typed-row .char-cell.wrong{color:#f00}
+.typed-row .char-cell.skipped{color:#888}
+.typed-row .char-cell.active-cursor{background:rgba(0,0,255,.18);border-bottom:2px solid #00f}
+.prompt-row{background:rgba(0,0,0,.04)}
+.prompt-row .char-cell{color:#000}
+.prompt-row .char-cell.skipped{color:#888}
+.exam-line-17{border-top:1px solid #000;color:#800000;background:#c8ccc8;padding:0 8px;font-size:18px;font-weight:bold;gap:14px}
+.exam-line-18{background:#b8bcb8;color:#000;padding:0 8px;font-size:18px;font-weight:bold;justify-content:space-between;border-top:1px dotted #666}
+.compose-box{display:inline-flex;align-items:center;gap:12px}
+.compose-radicals{color:#000080;background:#fff;padding:1px 8px;border:1px solid #404040;min-width:130px}
+.compose-preview-char{color:#00f;background:#ffc;padding:1px 10px;border:1px solid #000080;min-width:44px;text-align:center}
+.result-view{display:none;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;position:relative;top:-10px}
+.result-table-box{width:395px;background:#00f;border:3px double #ff0;outline:2px solid #ff0;outline-offset:1px;color:#fff;margin-top:10px;box-shadow:4px 4px 0 rgba(0,0,0,.4)}
+.result-table-header{text-align:center;font-size:20px;color:#ff5;padding:6px 0;font-weight:bold;letter-spacing:4px;border-bottom:1px solid #ff0}
+.result-row{display:flex;height:38px;border-bottom:1px solid #ff0}
+.result-row:last-child{border-bottom:none}
+.result-label{width:130px;display:flex;align-items:center;justify-content:center;font-size:18px;letter-spacing:4px;font-weight:bold;color:#ff5;border-right:1px solid #ff0}
+.result-val{flex:1;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:bold;color:#fff;font-family:Consolas,"BiauKaiHK",monospace}
+.result-val span.num{color:#fff;font-size:24px;margin:0 8px}
+.result-name-bar{margin-top:12px;background:#0000a8;border:1px solid #ff0;padding:6px 14px;display:flex;align-items:center;gap:8px;color:#ff5;font-size:15px}
+.result-name-input{background:#000050;border:1px solid #5ff;color:#fff;font-size:16px;padding:2px 8px;width:140px;font-family:inherit;outline:none}
+.sub-window{background:#003833;border:3px double #5ff;width:820px;min-height:400px;padding:16px;display:none;flex-direction:column;justify-content:space-between;box-shadow:6px 6px 0 rgba(0,0,0,.5);z-index:10}
+.dialog-box{width:620px;padding:18px;display:none;gap:12px;box-shadow:6px 6px 0 rgba(0,0,0,.5);z-index:20}
+.exit-dialog-box{width:420px;padding:18px 22px;display:none;gap:16px;box-shadow:8px 8px 0 rgba(0,0,0,.65);z-index:30}
+.dos-exit-screen{display:none;position:absolute;inset:0;width:100%;height:100%;background:#000;color:#c0c0c0;font-family:Consolas,monospace;font-size:18px;padding:28px 32px;flex-direction:column;justify-content:space-between;z-index:100}
+@keyframes blinkCursor{0%,49%{opacity:1}50%,100%{opacity:0}}
+.dos-cursor{display:inline-block;width:10px;height:18px;background:#c0c0c0;vertical-align:text-bottom;animation:blinkCursor 1s infinite}
+.dialog-title{font-size:18px;font-weight:bold;color:#000080;border-bottom:2px solid #808080;padding-bottom:6px;display:flex;justify-content:space-between}
+.dialog-option-row{display:flex;align-items:center;gap:12px;cursor:pointer}
+.dialog-radio{width:18px;height:18px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dialog-radio.active::after{content:"";width:8px;height:8px;background:#000}
+.dialog-label,.dialog-input{font-size:16px;font-weight:bold;color:#000}
+.dialog-input{padding:4px 8px;background:#fff;outline:none;font-family:inherit}
+.sub-win-title{color:#ff5;font-size:20px;font-weight:bold;border-bottom:2px solid #5ff;padding-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.practice-char-box{width:160px;height:160px;border:2px solid #ff0;background:rgba(0,0,0,.45);margin:10px auto;display:flex;align-items:center;justify-content:center;font-size:105px;color:#fff;position:relative}
+.practice-code-slots{display:flex;gap:8px;justify-content:center;margin-top:6px}
+.p-slot{width:48px;height:50px;border:2px solid #5ff;background:#002220;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ff5;font-size:18px;font-weight:bold;line-height:1.15}
+.p-slot.ok{border-color:#5f5;background:rgba(85,255,85,.2)}
+.p-slot.err{border-color:#f55;background:rgba(255,85,85,.25)}
+.retro-table{width:100%;border-collapse:collapse;color:#fff;font-size:14px;margin-top:8px}
+.retro-table th,.retro-table td{border:1px solid #5ff;padding:5px 8px;text-align:center}
+.retro-table th{background:#002220;color:#ff5}
+.retro-table tr.latest-score-row td{background:rgba(255,255,0,.22)}
+.category-badge{background:#004b45;border:1px solid #5ff;color:#ff5;font-size:13px;padding:2px 6px;margin-right:6px}
+#errorBanner{display:none;background:#a00;color:#fff;padding:4px 10px;font-size:12px;font-family:Consolas,monospace;position:absolute;top:0;left:0;right:0;z-index:99999;border-bottom:2px solid #ff0;pointer-events:none}
+.tut-h{font-weight:bold;font-size:16px;margin-top:16px}
+.tut-h.y{color:#ff5}.tut-h.g{color:#5f5}.tut-h.o{color:#fa5}
+#jsNote{border:2px dashed #a00;background:#ffd;color:#800;font-size:12px;font-weight:bold;padding:6px;margin-bottom:6px;line-height:1.5;pointer-events:none}
+html.js #jsNote{display:none}
+@media(max-width:480px){.dos-screen{transform:scale(.4)}}
+@media(min-width:481px)and(max-width:768px){.dos-screen{transform:scale(.6)}}
+</style>
+</head>
+<body>
+<noscript><div style="position:fixed;top:0;left:0;right:0;z-index:99999;background:#a00;color:#fff;font-weight:bold;padding:8px;text-align:center">JavaScript 已停用 — 請以 Safari/Chrome 開啟本檔案</div></noscript>
+<div id="errorBanner"></div>
+<div class="dos-screen" id="dosScreen">
+<div class="dos-exit-screen" id="dosExitScreen">
+<div style="line-height:1.7"><div>感謝使用《快快快樂學倉頡》！</div><div>程式結束。</div><div id="exitPoemSummaryBox" data-exit-poem="1" style="background:rgba(0,25,22,.85);border:2px double #5ff;padding:10px 24px;margin:10px auto;display:inline-block;text-align:center;font-size:16px;line-height:1.85;color:#fff;letter-spacing:1.5px;font-family:'BiauKaiHK','DFKai-SB','標楷體',serif"><div style="color:#0ff;font-size:13.5px;font-weight:bold;margin-bottom:3px">【倉頡取碼心法總訣】</div><div>由上而下左至右，由外而內視覺求。</div><div>連體首次三尾四，字首頭尾兩碼收。</div><div>字身至多取三碼，合體五碼即封頭。</div><!-- END_EXIT_POEM --></div><br><div>C:\CANGJIE&gt;<span class="dos-cursor"></span></div></div>
+<div style="border-top:1px dashed #555;padding-top:10px;display:flex;justify-content:space-between;align-items:center;font-size:14px;color:#888"><span>💡 程式已結束</span><button class="key-button" id="btnRestartDos" style="height:24px;font-size:13px">重新啟動 [Enter]</button></div>
+</div>
+<div class="dos-header" id="topHeaderBar">
+<div class="slop-logo" title="SLOP 經典標誌"><svg viewBox="0 0 120 40" width="95" height="32"><ellipse cx="60" cy="20" rx="55" ry="16" fill="none" stroke="#0ff" stroke-width="2"/><text x="50%" y="62%" text-anchor="middle" fill="#f0f" font-size="20" font-weight="900" font-style="italic" font-family="Arial">SLOP</text></svg></div>
+<div class="title-group"><div class="magenta-double-line"></div><div class="dos-main-title">快快快樂學倉頡</div><div class="magenta-double-line"></div></div>
+</div>
+<div class="dos-stage">
+<div class="menu-panel" id="mainMenuPanel">
+<div id="jsNote">⚠️ 此預覽已停用 JavaScript，程式無法執行。<br>iOS 請改用網頁版連結，或傳送至電腦開啟。</div>
+<div class="menu-item-row selected" data-i="1" onclick="__menuGo(1)"><div class="menu-check-box"></div><div class="menu-num">1</div><div class="menu-btn">軟體簡介</div></div>
+<div class="menu-item-row" data-i="2" onclick="__menuGo(2)"><div class="menu-check-box"></div><div class="menu-num">2</div><div class="menu-btn">倉頡入門</div></div>
+<div class="menu-item-row" data-i="3" onclick="__menuGo(3)"><div class="menu-check-box"></div><div class="menu-num">3</div><div class="menu-btn">打字練習</div></div>
+<div class="menu-item-row" data-i="4" onclick="__menuGo(4)"><div class="menu-check-box"></div><div class="menu-num">4</div><div class="menu-btn">實力測驗</div></div>
+<div class="menu-item-row" data-i="5" onclick="__menuGo(5)"><div class="menu-check-box"></div><div class="menu-num">5</div><div class="menu-btn">倉頡查碼</div></div>
+<div class="menu-item-row" data-i="6" onclick="__menuGo(6)"><div class="menu-check-box"></div><div class="menu-num">6</div><div class="menu-btn">最佳成績排行榜</div></div>
+<div class="menu-item-row" data-i="7" onclick="__menuGo(7)"><div class="menu-check-box"><div class="sound-indicator" id="soundDot" style="display:none"></div></div><div class="menu-num">7</div><div class="menu-btn">音效</div></div>
+</div>
+<div class="exit-dialog-box" id="exitConfirmDialog">
+<div class="dialog-title"><span>離開確認</span><span style="font-size:12px;color:#555">[Y/X]</span></div>
+<div style="font-size:17px;font-weight:bold;text-align:center;padding:8px 0">確定要離開《快快快樂學倉頡》嗎？</div>
+<div style="display:flex;justify-content:center;gap:20px"><button class="key-button" id="btnExitYes" style="color:#800000;height:30px;font-size:15px;padding:0 18px">[Y] 離開</button><button class="key-button focused-choice" id="btnExitNo" style="color:#000080;height:30px;font-size:15px;padding:0 18px">[X] 返回</button></div>
+</div>
+<div class="dialog-box" id="examSetupDialog">
+<div class="dialog-title"><span>測驗設定</span><span style="font-size:12px;color:#555">[Esc] 取消</span></div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="font-size:15px;font-weight:bold;color:#000080">請選擇命題方式：</div>
+<div class="dialog-option-row" id="optComputer"><div class="dialog-radio active" id="radioComputer"></div><div class="dialog-label">1. 電腦命題</div></div>
+<div class="dialog-option-row" id="optCustom"><div class="dialog-radio" id="radioCustom"></div><div class="dialog-label">2. 自訂命題</div></div>
+</div>
+<div id="compPoolGroup" style="display:flex;flex-direction:column;gap:4px;background:#b0b0b0;padding:8px;border:1px inset #808080">
+<div style="font-size:13px;font-weight:bold;color:#000080">電腦命題題庫：</div>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+<button class="key-button" id="btnPoolFolder" style="height:26px;color:#000080">📂 選擇題庫資料夾</button>
+<span style="font-size:12px;color:#333">有 .atc 即每局隨機抽整篇；無則 .txt 詞庫</span>
+</div>
+<input type="file" id="poolFolderInput" webkitdirectory directory multiple style="display:none">
+<div style="font-size:12px;color:#333">本機另可放 words_dict.js 自動載入｜<span id="compPoolStatus" style="color:#004080">偵測中…</span></div>
+</div>
+<div id="customTextInputGroup" style="display:none;flex-direction:column;gap:6px;background:#b0b0b0;padding:8px;border:1px inset #808080">
+<input type="file" id="localTxtFileInput" accept=".txt,text/plain" style="font-size:16px;width:200px">
+<input type="text" id="customInputString" class="dialog-input" value="快快樂樂 快快快樂 學習 倉頡 輸入 電腦 示範題目 打完第一頁之後會重覆" maxlength="500">
+</div>
+<div style="border-top:1px solid #888;margin:4px 0;padding-top:6px">
+<div style="display:flex;align-items:center;gap:8px"><input type="file" id="cangjieTtFileInput" accept=".txt,.tt,text/plain,*/*" style="font-size:14px;width:190px"><span style="font-size:12px;color:#333">字庫：<span id="dictSizeDisplay">—</span> 字</span></div>
+<div style="font-size:11px;color:#666;margin-top:2px">💡 選檔後自動存入瀏覽器（IndexedDB），下次自動套用</div>
+</div>
+<div style="display:flex;align-items:center;gap:10px"><span class="dialog-label">時限：</span><input type="number" id="examTimeInput" class="dialog-input" value="5" min="1" max="30" style="width:70px;text-align:center"><span class="dialog-label" style="font-size:13px">分鐘</span></div>
+<div style="font-size:13px;color:#004080;font-weight:bold" id="examSetupMsg">💡 字庫已就緒，可立即開始測驗！</div>
+<div style="display:flex;justify-content:flex-end;gap:10px"><button class="key-button" id="btnCancelExamSetup">取消</button><button class="key-button" id="btnStartExam" style="color:#800000">開始 [Enter]</button></div>
+</div>
+<div class="exam-18-screen" id="exam18Screen">
+<div class="exam-line exam-line-status1"><span id="exam18Title">【實力測驗】電腦命題</span><span id="exam18Timer">剩餘時間：05:00（按首碼開始計時）</span></div>
+<div class="exam-line exam-line-status2"><span id="exam18Stats">已輸入：0（正確：0 錯誤：0）｜準確率：0%｜速度：0.0字/分</span><span>[Space]上字 [1-9]選字 [Z]萬用 [Esc]清除/退出</span></div>
+<div id="exam7GroupsContainer" style="display:flex;flex-direction:column;flex:14;min-height:0;width:100%"></div>
+<div class="exam-line exam-line-17"><span>重碼選字：</span><span id="candidateListText" style="color:#000080">（無重碼）</span></div>
+<div class="exam-line exam-line-18"><div class="compose-box"><span>倉頡字根：</span><span class="compose-radicals" id="line18Radicals">&nbsp;</span><span>即時預覽：</span><span class="compose-preview-char" id="line18PreviewChar">&nbsp;</span></div><span id="line18HintMsg" style="font-size:14px;color:#333">按「?」可反查字碼</span></div>
+</div>
+<div class="result-view" id="resultView">
+<div class="result-table-box"><div class="result-table-header" id="resTableHeader">您的成績</div><div class="result-row"><div class="result-label">輸入速度</div><div class="result-val">每分鐘 <span class="num" id="resSpeed">0</span> 字</div></div><div class="result-row"><div class="result-label">準確率</div><div class="result-val"><span class="num" id="resAccuracy">0</span> %</div></div></div>
+<div class="result-name-bar"><span>登錄姓名：</span><input type="text" id="resultNameInput" class="result-name-input" value="倉頡小高手" maxlength="12"><button class="key-button" id="btnSaveResult" style="height:22px;font-size:12px">保存 [Enter]</button></div>
+<div id="resultHintBar" style="color:#5ff;font-size:13px;margin-top:8px">[Enter 保存｜Esc 不保存返回]</div>
+</div>
+<div class="sub-window" id="practiceWindow">
+<div class="sub-win-title"><div><span id="winModeTitle">倉頡練習</span><span class="category-badge" id="charTypeBadge">黃金題池</span></div><span style="font-size:14px;color:#5ff" id="winProgress">進度：1/20</span></div>
+<div id="practiceScopeRow" style="display:flex;justify-content:center;align-items:center;gap:8px;margin:4px 0 0;font-size:13px;color:#5ff">
+<span>練習範圍：</span>
+<button type="button" class="key-button" id="scopeCommonBtn" style="height:24px;font-size:13px">常用字</button>
+<button type="button" class="key-button" id="scopeAllBtn" style="height:24px;font-size:13px">全字庫</button>
+</div>
+<div style="position:relative">
+<div class="practice-char-box" id="dispChar">港</div>
+<div class="practice-code-slots" id="codeSlotContainer"></div>
+<button type="button" class="key-button" id="btnToggleAuxMode" style="position:absolute;left:73%;top:50%;transform:translate(-50%,-50%);height:26px;font-size:12px;color:#000080;box-shadow:2px 2px 0 rgba(0,0,0,.4)">顯示字母/字根</button>
+<div style="display:flex;justify-content:center;gap:8px;margin-top:10px">
+<button class="key-button" id="practiceQueryBtn" style="height:26px;font-size:13px">🔍 查碼 [?]</button>
+<span id="practiceQueryResult" style="font-size:15px;color:#5ff;align-self:center;min-height:20px"></span>
+</div>
+<div style="text-align:center;margin-top:12px;font-size:16px;color:#ff5" id="dispPrompt">按 A-Z 輸入字碼，打滿後按 Space 確認</div>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:13px;color:#aaa;border-top:1px dashed #5ff;padding-top:6px"><span>主碼：<span id="dispStruct" style="color:#5f5">三代</span></span><span>速度：<span id="rtSpeed" style="color:#5f5">0.0</span>字/分｜準確率：<span id="rtAcc" style="color:#5f5">100%</span></span></div>
+</div>
+<div class="sub-window" id="queryWindow" style="max-width:620px">
+<div class="sub-win-title"><span>🔍 倉頡查碼</span><span style="font-size:13px;color:#aaa">[Enter] 查詢 [Esc] 返回</span></div>
+<div style="display:flex;flex-direction:column;gap:12px;margin:20px 0"><div style="font-size:15px;color:#fff">請輸入要查詢的字：</div><div style="display:flex;gap:8px"><input type="text" id="queryCharInput" maxlength="15" placeholder="例：靚,畀,劏" style="font-size:16px;width:170px;padding:4px 8px;text-align:center"><button class="key-button" id="queryBtnDo" style="flex:1">查 詢</button></div><div id="queryDetails" style="background:#00201d;border:1px solid #5ff;padding:12px;display:none;flex-direction:column;gap:6px"><div style="font-size:18px;color:#ff5;font-weight:bold" id="qResRadicals"></div><div style="font-size:14px;color:#5ff" id="qResStruct"></div></div></div>
+<div style="text-align:right"><button class="key-button" id="closeQueryBtn">返回 [Esc]</button></div>
+</div>
+<div class="sub-window" id="leaderboardWindow">
+<div class="sub-win-title"><span>🏆 最佳成績排行榜</span><span style="font-size:13px;color:#aaa" id="lbStatusHint">[Esc] 返回</span></div>
+<div style="max-height:260px;overflow-y:auto"><table class="retro-table"><thead><tr><th>名次</th><th>姓名</th><th>模式</th><th>時長</th><th>速度</th><th>準確率</th><th>日期</th></tr></thead><tbody id="lbTableBody"></tbody></table></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:6px"><div style="display:flex;gap:8px"><button class="key-button" id="clearLbBtn" style="color:#800000">重置</button><button class="key-button" id="exportDictBtn" style="color:#000080">匯出碼表 .tt</button><button class="key-button" id="exportDictJsBtn" style="color:#000080">匯出 .js</button><button class="key-button" id="exportSelfHtmlBtn" style="color:#004000">💾 下載本網頁 .html</button></div><button class="key-button" id="closeLbBtn">返回 [Esc]</button></div>
+<div style="font-size:11px;color:#888;margin-top:4px">💡 「匯出 .js」：下載 chinese_dict.js，與本程式 HTML 放同一資料夾，開啟即自動載入擴充字庫</div>
+</div>
+<div class="sub-window" id="aboutWindow" style="max-width:640px">
+<div class="sub-win-title"><span>軟體簡介</span><span style="font-size:13px;color:#aaa">[Esc] 返回</span></div>
+<div style="font-size:15px;color:#fff;line-height:1.8;margin:20px 0;max-height:330px;overflow-y:auto;padding-right:6px">
+本作「致敬」九十年代風行之 DOS 打字教學程式。內建字庫以標準三代倉頡為主碼，部份字附有容錯碼，並只含五代部分字碼；收錄部份成語及香港用語詞彙作為命題題材。如需更準確更完整或不同版本之字碼，可自行準備 chinese.tt 替代碼表上傳載入（每行「字 碼」，UTF-8 或 Big5 皆可，支援同行多碼「字 碼1 碼2 …」）。<br>
+<div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 手機／平板開啟方式</div>
+• iOS / iPadOS 從 WhatsApp／Mail／檔案 App 直接點開本檔時，系統預覽器會停用 JavaScript，只見靜態畫面而無法操作——此屬 iOS 安全限制，並非程式故障，且無法於預覽內解除。<br>• iOS 建議做法：<b>改用網頁版</b>——以 Safari 開啟本程式之部署網址，即可完整執行；或將本檔<b>下載／傳送至電腦</b>（Mac／PC），以瀏覽器開啟使用。<br>• Android 以 Chrome／內建瀏覽器開啟本檔即可完整執行。<br>• 進入練習或測驗時，螢幕底部會自動出現虛擬鍵盤，毋須外接實體鍵盤。
+<div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 中文字根鍵盤（虛擬鍵盤）</div>
+• 觸屏鍵盤支援<b>雙佈局</b>：ABC 字母鍵盤與「中文字根鍵盤」——字根鍵<b>完全依照英文 QWERTY 鍵位</b>排列（Q手 W田 E水 R口 T廿 Y卜 U山 I戈 O人 P心／A日 S尸 D木 F火 G土 H竹 J十 K大 L中／Z重 X難 C金 V女 B月 N弓 M一），與實體鍵盤一一對應。<br>• 於鍵盤上<b>橫掃</b>（向左或向右），或<b>點擊鍵盤右上角懸浮的「⇄」小藥丸</b>，即可切換佈局；左方「▣ 原大」按鈕可循環切換<b>原大／置左(40%寬)／置右(40%寬)</b>小鍵盤。<br>• 字根鍵輸出與字母鍵完全相同（日=A｜月=B｜…｜難=X｜重=Z），練習與測驗計分不受影響——新手可直接以字根拆字，毋須背誦「字根→字母」對照，同時不知不覺記熟實體鍵位。
+<div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 練習範圍（打字練習頁）</div>
+• 同目錄放 <code>limit.js</code>（<code>const charList=[...]</code> 格式，UTF-8），練習頁即出現「常用字／全字庫」切換——「常用字」只抽 limit.js 範圍內的字，適合初學者。<br>• limit.js 載入失敗或未提供時，「常用字」將自動採用內建之 1000 個高頻常用字作為基礎練習範圍。
+<div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 本機外掛字庫與擴展支援</div>
+• 方法一（零點擊）：把 chinese.tt 內容以 <b>window.EXTERNAL_CHINESE_TT</b> 包裝成 JS 變數，存成 chinese_dict.js 放在本檔同目錄，開啟即自動載入。<br>• 方法二（永久記憶）：於測驗設定選取 chinese.tt 一次，內容即存入瀏覽器（IndexedDB），之後每次開啟自動套用，毋須再選。<br>• 網上部署：同目錄放 chinese.tt 即自動讀取。<br>• 擴展支援：碼表可載入擴展區漢字（Ext-A／兼容區／Ext-B~H，如 𠮶、𨋢），查碼一併支援；文章卷作答時擴展字自動保留（須系統字體備有該字形方會正常顯示）。隨機練習則只抽基本區（BMP）常用字，確保拆字體驗一致。
+<div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 匯出 .js 的用途（排行榜頁）</div>
+• 排行榜頁「匯出 .js」會把<b>目前生效的字庫</b>（內建＋已載入之擴充碼）包裝成 chinese_dict.js 下載。<br>• 把此檔與本程式 HTML 放在<b>同一資料夾</b>，下次開啟 HTML 即自動載入，毋須再手動上傳——適合備份或分發給他人（連同 HTML 一起傳）。<br>• 「匯出碼表 .tt」則為純文字碼表，供上傳載入或編輯之用。
+<div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 電腦命題題庫</div>
+• 按<b>選擇題庫資料夾</b>一鍵匯入整個資料夾（選一次永久記住）。資料夾內有 <b>.atc</b> 時進入<b>文章卷模式</b>：每局隨機抽出一整篇，全文連續漢字作答（標點自動剝除、滿行不插空格）；無 .atc 則照舊 <b>.txt 詞池</b>。兩種模式互斥，重新選取即切換。<br>• .atc 檔之自訂標頭（#／@／--- 開首行）自動忽略，內文連標點皆可，程式只取字庫內漢字。<br>• 本機另可放 words_dict.js（window.EXTERNAL_WORDS="詞1 詞2 …"）自動載入。<br>• http:// 部署時自動依序偵測 pool.txt、words.txt、questions.txt、*.atc 等。
+<div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 公平計分</div>
+• 測驗中使用 <b>Z 萬用鍵</b>時，程式<b>不會</b>自動把目標字排到候選首位——須看清單以 <b>1-9</b> 手動選字（貼近真實輸入法行為，防止 Space 保送拿分）。不含 Z 的正常輸入仍自動首選，速度體驗不變。
+<div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 配套生成器</div>
+配套生成器能合併多來源 chinese.tt 倉頡碼表與 words.txt 詞庫，並自訂 limit.js 常用字範圍；一鍵輸出與本程式相容的 chinese_dict.js、words_dict.js，亦支援 .atc／.txt 目錄批量處理——詳見 /generator/index.html。
+<div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 關於排行榜資料的儲存</div>
+• 排行榜成績<b>只儲存在本機瀏覽器內（localStorage）</b>，不會上傳到任何伺服器，也不會同步到其他裝置或瀏覽器。<br>• 換裝置、換瀏覽器（或經不同方式開啟，如內建瀏覽器 vs Safari）所見的排行榜互不相通。<br>• 若清除瀏覽器的「網站資料／歷史記錄」，排行榜紀錄即會消失，請自行留意外。
+<div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 其他</div>
+• 畫面底部之 Enter／Esc／↑↓ 按鈕等同實體鍵盤；偵測到實體鍵盤輸入後，虛擬鍵盤自動隱藏，<b>再點觸螢幕即自動喚回</b>——實體／虛擬鍵盤可隨時交替使用，毋須重新整理。<br>• 主選單第 7 項「音效」之方格亮燈（青點）即代表音效開啟。
+<div style="margin-top:14px;text-align:right"><span style="color:#888;font-family:Consolas,monospace;margin-right:16px">v0.88</span><a href="https://github.com/ck-from-hk/-" target="_blank" rel="noopener" style="color:#5ff;font-weight:bold;text-decoration:none">🔗 專案主頁</a></div>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px">
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="key-button" id="btnDlSelfAbout" style="color:#004000">💾 下載本 HTML</button>
+<button class="key-button" id="btnDlRemoteAbout" style="color:#004080">🌐 從專案下載最新版</button>
+</div>
+<button class="key-button" id="closeAboutBtn">確定 [Enter]</button>
+</div>
+</div>
+<div class="sub-window" id="tutorialWindow" style="max-width:780px">
+<div class="sub-win-title"><span>📖 倉頡入門與拆字指南</span><span style="font-size:13px;color:#aaa">[Enter] 開始練習 [Esc] 返回</span></div>
+<div style="overflow-y:auto;max-height:360px;font-size:14px;color:#fff;line-height:1.75;margin:10px 0;padding-right:8px">
+<div class="tut-h y">一、倉頡字母（廿四基本字根）＋輔助字形</div>
+<div style="margin-top:4px;font-size:13px">哲理類：日月金木水火土（A-G）｜筆畫類：竹戈十大中一弓（H-N）｜人體類：人心手口（O-R）｜字形類：尸廿山女田卜（S-Y）。<br>每個字母除「基本形」外，另有一組<b>輔助字形</b>——形狀相近、取碼相同的變形字根（詳見下節速查）。規則：<br>• 字母<b>基本形獨立成字取一碼</b>：日=A｜月=B｜金=C｜木=D｜水=E｜火=F｜土=G<br>• <b>輔助字形獨立成字須正常拆碼</b>，不享一碼優惠：乙=NU（弓山）<br>• <b>同鍵多形任你用</b>：拆字時見到輔助形之一，即取該鍵——「溫」左旁氵=E｜「們」左旁亻=O｜「忙」左旁忄=P<br>• <b>判斷要訣</b>：形狀輪廓近於該字母（直曲、開口方向）即取該鍵，毋須死背清單。</div>
+<div class="tut-h y">一之二、輔助字形速查（同鍵異形）</div>
+<div style="margin-top:4px;font-size:13px">拆字時見到任一輔助形，即取該鍵；同鍵諸形共用一碼。<br><b>A 日</b>：日、曰（曹＝TWA）<br><b>B 月</b>：月、冂內有物之框（用＝BQ）、肉字旁（肌＝BHN 之 B、肚＝BG 之 B）<br><b>C 金</b>：金、儿（匹＝SC）、八字底（只＝RC 之 C、共＝TC 之 C）<br><b>D 木</b>：木、朩（休＝OD）、十字交叉短橫（東＝DW）<br><b>E 水</b>：水、氵（溫＝EABT）、氺（求＝IJE）<br><b>F 火</b>：火、灬、小／⺌（尚＝FBR）、小底（京＝YRF）<br><b>G 土</b>：土、士（志＝GP 之 G、寺＝GDI）<br><b>H 竹</b>：竹、⺮（等＝HGDI 之 H）、丿斜撇（千＝HJ）、彡（形＝MTHHH）<br><b>I 戈</b>：戈、丶（玉＝MGI）、广（店＝IYR）、厶（去＝GI）<br><b>J 十</b>：十、宀（安＝JV）、冖（冠＝BMUI 之 J）<br><b>K 大</b>：大、乂（交＝YCK 之 K）、疒病字頭（病＝KMOB 之 K、痛＝KNB）<br><b>L 中</b>：中、丨直筆（巾＝LB）<br><b>M 一</b>：一、厂（原＝MHAF）、長橫筆<br><b>N 弓</b>：弓、乙（乙＝NU）、亅（丁＝MN）、乛（書＝LGA 之鈎）<br><b>O 人</b>：人、亻（他＝OPD）、入（內＝OB）、𠆢（會＝OMWA）、⺈（負＝NBUC）<br><b>P 心</b>：心、忄（快＝PDK）、⺗（恭＝TCP）、勹（句＝PR）<br><b>Q 手</b>：手、扌（打＝QMN）、龶（青＝QMB 上部）<br><b>R 口</b>：口（無輔助形；囗內有物之外框歸「田」W）<br><b>S 尸</b>：尸、匚／匸（區＝SRR、巨＝SS）、乚右彎鈎<br><b>T 廿</b>：廿、艹（草＝TAJ）、卄（革＝TLJ 之 T）<br><b>U 山</b>：山、凵（凶＝UK）<br><b>V 女</b>：女、長曲交叉（收＝VLOK 之 V）、曲筆（及＝HE）<br><b>W 田</b>：田、囗（因＝WK、國＝WIRM）<br><b>Y 卜</b>：卜、辶（達＝YGQ，辶取卜於末碼）、⺊（卓＝YAJ）<br><div style="margin-top:4px;color:#fa5">⚠ 複合字首（勿逐筆拆）：衣＝YHV｜門＝AN｜鬼＝HI｜鬥＝LN｜行＝HOMN｜隹＝OG｜阝＝NL（左右同）｜虍＝YPH</div></div>
+<div class="tut-h g">二、取碼次序：由上至下、由左至右、由外至內</div>
+<div style="margin-top:4px;font-size:13px">憑<b>視覺</b>（非筆順、非字義）分割：字首＝最左／最上／最外部分，其餘為字身。<br>• 上下形：想=DUP(木山心)｜安=JV(十女)<br>• 左右形：明=AB(日月)｜林=DD(木木)<br>• 內外形：回=WR(田口)｜國=WIRM(田戈口一)<br>原則：先分「字首」與「字身」，各自獨立取碼後合併。</div>
+<div class="tut-h g">三、連體字與分體字（碼數規則）</div>
+<div style="margin-top:4px;font-size:13px">• <b>連體字</b>（不可分割）：最多四碼——取「首、二、三、尾」。例：鳥=HAYF｜馬=SQSF｜事=JLLN｜業=TCTD<br>• <b>分體字（2-3型）</b>：字首二碼＋字身三碼（首二尾）。例：鯉=NFWG｜港=ETCS<br>• <b>分體字（2-2-1型）</b>：字首二碼＋次字首二碼＋字身一碼。例：語=YRMMR｜謝=YRHHI<br>• <b>分體字（2-1-2型）</b>：字首二碼＋字身首尾各一碼。例：菇=TVJR｜樹=DGTI</div>
+<div class="tut-h y">四、取碼五原則（每字唯一正確碼）</div>
+<div style="margin-top:4px;font-size:13px">① <b>精簡</b>：王=MG(一土) 非 MMM｜共=TC(廿金)<br>② <b>完整（先繁後簡）</b>：丰=QJ(手十)｜夫=QO(手人)｜青=QMB(手一月)<br>③ <b>字型特徵</b>：轉角處不切斷——力=KS｜九=KN｜永=INE｜也=PD｜申=LWL(中田中)｜由=LW(中田)｜甲=WL(田中)<br>④ <b>省略</b>：字首最多2碼、字身最多3碼，中間省去——點=WFYR｜醒字首「酉」取MW(一田)<br>⑤ <b>複合字首</b>：慣用偏旁視為整體取首尾——鬼=HI｜門=AN｜鬥=LN｜行=HOMN｜衣=YHV｜虍=YPH｜隹=OG</div>
+<div class="tut-h o">五、特殊字（重疊字形）</div>
+<div style="margin-top:4px;font-size:13px">當<b>木、火、大、心、戈</b>被其他字形<b>橫貫重疊</b>時，<b>先取特殊字，再取重疊其上的字形</b>：<br>東=DW(木田)｜束=DL(木中)｜末=DJ(木十)｜來=DOO｜秉=HDL(竹木中)｜乘=HDP｜脊=FCB(火金月)｜拳=FQQ(火手手)｜夷=KN(大弓)｜屯=PU(心山)</div>
+<div class="tut-h o">六、難字（X 難字鍵）</div>
+<div style="margin-top:4px;font-size:13px">難取部分以 X 代替，分兩型：<br>• <b>首難尾型</b>：首尾好取、中間難——臼=HX｜兼=TXC｜慶=IXE｜淵=EXBT｜肅=LX｜齊=YX｜龜=NXU<br>• <b>首難型</b>：只有首碼好取——兒=HXU｜學=HBND｜興=HXTC｜濟=EYX｜齋=YXHF<br>⚠ 約 95% 字可依規則取碼，難字數量有限，記熟即可。</div>
+<div class="tut-h g">七、易錯字形辨析</div>
+<div style="margin-top:4px;font-size:13px">• <b>辶旁最後拆</b>：達=YGQ(卜土手)｜建=NKQ｜過=YBBR(卜月月口)｜述=YIJC(卜戈十金)<br>• <b>匚形</b>：巨=SS｜區=SRR｜臣=SLSL<br>• <b>門內外取</b>：闊=ANEHR｜聞=ANSJ｜問=ANR<br>• <b>疒旁歸 K(大)</b>：病=KMOB(大一人月)｜痛=KNB｜症=KMM(大人一)<br>• <b>口 vs 囗</b>：口內無物屬口（品=RRR）；囗內有物屬田（因=WK｜國=WIRM｜西=MCW）<br>• <b>書法字陷阱</b>：污=EMMS(水一一尸)｜冊=BT(月廿)｜啟=HROK(竹口人大)——勿用習慣筆順拆碼</div>
+<div class="tut-h y">八、Z 萬用鍵與重碼</div>
+<div style="margin-top:4px;font-size:13px">測驗模式忘記中間碼可用 Z 代替，支援任意長度匹配（如 EZS 列出所有「水...尸」字）。用 Z 時須按 1-9 手動選字（防 Space 保送）；練習模式 Z 僅作熟悉不計分。隨時按「?」反查當前字之標準碼與容錯碼。</div>
+<div class="tut-h o">九、三代 vs 五代速辨</div>
+<div style="margin-top:4px;font-size:13px">本程式以<b>三代為主碼</b>（微軟倉頡、iOS／Android 原生倉頡均支援三代）。三代五代少數字改碼，日常用字絕大多數兩代同碼，毋須擔心。</div>
+<div class="tut-h y">十、香港用語字速查（一）</div>
+<div style="margin-top:4px;font-size:13px">嘅RAIU｜喺ROHF｜睇BUCNH｜嘢RWGN｜咗RKM｜冇KB｜搵QABT｜諗YROIP<br>嗰ROWR｜啲RHAI｜靚QBBUU｜畀WML｜嬲WVSW｜仔OND｜唔RMMR｜佢OSS</div>
+<div class="tut-h y">十一、香港用語字速查（二）＋記憶貼士</div>
+<div style="margin-top:4px;font-size:13px">煲ODF｜劏FWLN｜叻RKS｜囡WV｜囝WND｜俾OHWJ｜瞓BULLL｜唞RQYJ<br>晏AJV｜掟QJMO｜嘥RHOO｜啱RUMR｜噏RORY｜戇YJKP｜嚡RTJG｜喼RNSP　曱甴：曱WML＋甴LWM<br>💡 <b>練習建議</b>：先熟記廿四字母與常用輔助字形 → 打字練習（範圍選「常用字」由易入手）→ 遇難字按「?」查碼 → 逐步挑戰「全字庫」同實力測驗。如已熟練所有繁體字，可嘗試挑戰Github專案網頁簡體倉頡特別版。</div>
+</div>
+<div style="display:flex;justify-content:space-between"><button class="key-button" id="closeTutorialBackBtn">返回主選單 [Esc]</button><button class="key-button" id="closeTutorialBtn" style="color:#800000">開始練習 [Enter]</button></div>
+</div>
+</div>
+<div class="dos-footer" id="bottomFooterBar">
+<div style="display:flex;gap:12px"><div class="key-button" id="btnEnter">Enter</div><div class="key-button" id="btnEsc">Esc</div></div>
+<div id="footerHint" style="font-size:12px;color:#333;flex:1;text-align:center">↑↓ 選擇，Enter 進入</div>
+<div style="display:flex;gap:6px"><div class="key-button" id="btnUp">↑</div><div class="key-button" id="btnDown">↓</div></div>
+</div>
+</div>
+<div id="touchKeypad">
+<div id="kpFloatBar">
+<span id="kpPosLabel" class="kp-pill" onclick="cycleKeypadPos()">▣ 原大</span>
+<span id="kpModeLabel" class="kp-pill" onclick="toggleKeypad()">⇄ 字根</span>
+</div>
+<div id="kpAbc"></div>
+<div id="kpRad" style="display:none"></div>
+</div>
+<script>
+"use strict";
+const $=id=>document.getElementById(id),
+esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]),
+shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a},
+safe=fn=>function(ev){try{return fn.call(this,ev)}catch(e){const b=$("errorBanner");if(b){b.style.display="block";b.textContent="處理器錯誤："+(e?.message||e)}console.error(e)}};
+window.onerror=(m,u,l)=>{if(/chinese_dict\.js|words_dict\.js|limit\.js|questions/i.test(String(u||"")))return true;const b=$("errorBanner");if(b){b.style.display="block";b.textContent=`系統警告 (L${l}):${m}`}return false};
+function sfxToast(msg,dark){const b=$("errorBanner");if(!b)return;const ob=b.style.backgroundColor;b.style.backgroundColor=dark?"#2a2a2a":"#a00";b.style.display="block";b.textContent=msg;clearTimeout(sfxToast._t);sfxToast._t=setTimeout(()=>{b.style.display="none";b.style.backgroundColor=ob||"#a00"},3500)}
+
+const sound={en:false,ctx:null,resuming:null,_t:[],
+_clear(){this._t.forEach(clearTimeout);this._t=[]},
+_ensure(){try{if(!this.ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return false;this.ctx=new C()}if(this.ctx.state!=="running"){try{const p=this.ctx.resume();this.resuming=p?.then?p.finally(()=>{this.resuming=null}):null}catch(e){this.resuming=null}}return!!this.ctx}catch(e){return this.ctx=null,false}},
+_tone(f,d,t="square",vol=.14,dl=0){const c=this.ctx;if(!c)return;const go=()=>{try{const o=c.createOscillator(),g=c.createGain(),t0=c.currentTime+dl;o.type=t;o.frequency.value=f;g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.001,t0+d);o.connect(g);g.connect(c.destination);o.onended=()=>{try{o.disconnect();g.disconnect()}catch(e){}};o.start(t0);o.stop(t0+d)}catch(e){}};c.state==="running"?go():this.resuming?this.resuming.then(go).catch(()=>{}):go()},
+beep(f=900,d=.04,t="square"){if(this.en&&this._ensure())this._tone(f,d,t)},
+unlock(){if(this._ensure())this._tone(1,.002,"sine",.001)},
+key(){this.beep(950,.05)},err(){this.beep(160,.16,"sawtooth")},nav(){this.beep(500,.04)},
+ok(){this._clear();this.beep(523,.08);this._t.push(setTimeout(()=>this.beep(659,.08),70))},
+alarm(){if(!this.en)return;this._clear();this.beep(880,.15);this._tone(880,.15,"square",.14,.18);this._tone(1174,.35,"square",.14,.36)}};
+
+const CJM={A:"日",B:"月",C:"金",D:"木",E:"水",F:"火",G:"土",H:"竹",I:"戈",J:"十",K:"大",L:"中",M:"一",N:"弓",O:"人",P:"心",Q:"手",R:"口",S:"尸",T:"廿",U:"山",V:"女",W:"田",X:"難",Y:"卜",Z:"重"};
+let KP_LAYOUT="ABC",KP_POS="FULL";
+function initKeypads(){
+  const sp=f=>`<div class="tk-sp" style="flex:${f}"></div>`,
+  kb=(k,rad)=>rad?`<button class="tk-btn col" data-k="${k}"><span class="kb-rad">${CJM[k]}</span><span class="kb-key">${k}</span></button>`:`<button class="tk-btn" data-k="${k}">${k}</button>`,
+  r1='<div class="tk-row">'+sp(.5)+[1,2,3,4,5,6,7,8,9].map(n=>`<button class="tk-btn" data-k="${n}">${n}</button>`).join("")+sp(.5)+'</div>',
+  r5='<div class="tk-row"><button class="tk-btn" data-k="ESC" style="flex:1.15;color:#800">Esc</button>'+sp(.35)+'<button class="tk-btn" data-k=" " style="flex:4;color:#008">[Space]</button><button class="tk-btn" data-k="PAGEUP" style="flex:.9;font-size:13px">PU</button><button class="tk-btn" data-k="PAGEDOWN" style="flex:.9;font-size:13px">PD</button><button class="tk-btn" data-k="?" style="flex:.9">?</button><button class="tk-btn" data-k="ENTER" style="flex:1.3;color:#008">Enter</button></div>',
+  mk=rad=>r1
+    +'<div class="tk-row">'+[..."QWERTYUIOP"].map(k=>kb(k,rad)).join("")+'</div>'
+    +'<div class="tk-row">'+sp(.5)+[..."ASDFGHJKL"].map(k=>kb(k,rad)).join("")+sp(.5)+'</div>'
+    +'<div class="tk-row">'+sp(1.5)+[..."ZXCVBNM"].map(k=>kb(k,rad)).join("")+'<button class="tk-btn" data-k="BACKSPACE" style="flex:1.5;color:#800">⌫</button></div>'
+    +r5;
+  $("kpAbc").innerHTML=mk(0);$("kpRad").innerHTML=mk(1);
+}
+function toggleKeypad(){KP_LAYOUT=KP_LAYOUT==="ABC"?"RAD":"ABC";const a=$("kpAbc"),r=$("kpRad"),l=$("kpModeLabel");if(a)a.style.display=KP_LAYOUT==="ABC"?"block":"none";if(r)r.style.display=KP_LAYOUT==="RAD"?"block":"none";if(l)l.textContent=KP_LAYOUT==="ABC"?"⇄ 字根":"⇄ ABC";schedScale()}
+function cycleKeypadPos(){
+  const order=["FULL","LEFT","RIGHT"],labels={FULL:"▣ 原大",LEFT:"◧ 置左",RIGHT:"◨ 置右"};
+  KP_POS=order[(order.indexOf(KP_POS)+1)%3];
+  const tk=$("touchKeypad"),lb=$("kpPosLabel");
+  if(tk){tk.classList.toggle("kp-left",KP_POS==="LEFT");tk.classList.toggle("kp-right",KP_POS==="RIGHT")}
+  if(lb)lb.textContent=labels[KP_POS];
+  sound.nav();schedScale();
+}
+
+/* ================= 虛擬鍵盤：正規化 + 統一入口 + 委派 ================= */
+function normalizeKpKey(raw){
+  if(raw==null)return"";
+  let k=String(raw).replace(/？/g,"?");
+  if(k==="\u3000"||k==="　")k=" ";
+  else if(k!==" ")k=k.trim();
+  const up=k.toUpperCase();
+  const ALIAS={
+    PU:"PAGEUP",PGUP:"PAGEUP",UP:"PAGEUP",
+    PD:"PAGEDOWN",PGDN:"PAGEDOWN",DN:"PAGEDOWN",
+    DEL:"BACKSPACE",BKSP:"BACKSPACE",
+    SPACE:" ",ESCAPE:"ESC",RETURN:"ENTER"
+  };
+  if(ALIAS[up])return ALIAS[up];
+  return k.length===1?up:up;
+}
+
+function practiceNext(){
+  const it=S.list[S.charIndex%20];
+  if(!it)return;
+  if(++S.charIndex>=20)return practiceDone();
+  renderPractice();updatePStats();
+}
+function practicePrev(){
+  if(S.charIndex<=0){sound.err();return}
+  S.charIndex--;
+  renderPractice();updatePStats();
+}
+
+function dispatchVirtualKey(k,ev){
+  if(!k)return;
+  const now=Date.now();
+  const win=(k===" "||k==="ENTER"||k==="BACKSPACE")?50:80;
+  const st=dispatchVirtualKey;
+  if(st._k===k&&now-(st._t||0)<win)return;
+  st._k=k;st._t=now;
+
+  if(S.view==="EXAM"){
+    if(k==="ESC")return exitExam();
+    return examKey(k);
+  }
+  if(S.view==="TUTORIAL"){
+    if(k==="PAGEUP"){sound.nav();return tutNav(-1)}
+    if(k==="PAGEDOWN"){sound.nav();return tutNav(1)}
+    return;
+  }
+  if(S.view==="PRACTICE"){
+    if(k==="ESC")return S.buf?clearSlots():setView("MENU");
+    if(k==="ENTER")return practiceKey("ENTER");
+    if(k==="PAGEUP"){sound.nav();return practicePrev()}
+    if(k==="PAGEDOWN"){sound.nav();return practiceNext()}
+    if(k==="?"){sound.key();return doPQuery()}
+    return practiceKey(k);
+  }
+}
+
+function bindVirtualKeypad(){
+  const tkEl=$("touchKeypad");
+  if(!tkEl||tkEl._vkBound)return;
+  tkEl._vkBound=true;
+  const onPad=safe(ev=>{
+    const b=ev.target.closest&&ev.target.closest(".tk-btn");
+    if(!b||!tkEl.contains(b))return;
+    if(ev.cancelable)ev.preventDefault();
+    const raw=b.dataset.k;
+    const k=normalizeKpKey(raw);
+    if(k&&k!==raw)b.dataset.k=k;
+    dispatchVirtualKey(k,ev);
+  });
+  tkEl.addEventListener("pointerdown",onPad);
+  tkEl.addEventListener("touchstart",onPad,{passive:false});
+}
+
+const unpack=s=>{const o={};for(const p of s.split(" "))if(p)o[p[0]]=p.slice(1).includes("/")?p.slice(1).split("/"):p.slice(1);return o};
+const T1000=unpack("快PDK 樂VID 學HBND 習SMHA 倉OIAR/OZR 頡GRMBC 輸JJOMN/JJOMV 入OH/OZH 法EGI 電MBLWU/MBLWV/MBWU 腦BVVW 科HDYJ 技QJE/QZE 網VFBTV 絡VFHER 資IOBUC/MOBUC 訊YRNJ/YRNK 時ADI/AGDI/AI 代OIP 發NONHE 展STV 社IFG/IZG/MFG 會OMWA 進YOG 步YLMH 文YK 化OP/OZP 育YIB 知OKR 識YRYIA/YZA 智ORA 慧QJSMP/QZP 創ORLN 新NEW/YDHML 思WP/WZP 維VFOG 理MGWG 想DUP 目BU/WLL 標DMWF 努VEKS 力KS/KZS 奮KOGW/KZW 鬥ANYJ/LN/LNMTI/LNRML 成IHS/IZS 功MKS 勝BFQS/BZS 利HDLN 光FMU/FZU 明AB/AZB 前TBLN 途YOMD 希KKLB 望YBHG/YBMG/YZG 未JD/JZD 來DOO 世PT/PZT 界WCLL/WOLL 和HDR 平MFJ 友KE 誼YRJBM 合OMR 作OHS/OOS 團WJII 結VFGR 互MVNM 助BMKS 關ANVIT 懷PYWV/PZV 愛BBPE 護YRTOE 環MGWLV 境GYTU 保ORD 生HQM 態IPP 自HBU 然BKF 風HNHLI/HNMLI/HZI 景AYRF/AZF 優OMBE 美TGK 健ONKQ 康ILE 運YBJJ 動HGKS 體BBTWT 魄HAHI/HAHUI 精FDQMB 神IFLWL/MFLWL 滿ETLB 熱GIF/GKF 誠YRIHS 服BSLE 務NHHES/NHOKS 認YRSHP/YRSIP/YRSKP 真JBMC/JUMC 負HSBUC/NBUC/SHBUC 責QMBUC 度ITE 禮IFTWT/MFTWT 貌BHHAU/BHHXU 師HRMLB 長SMV/SZV 孝JKND 父CK/CZK 母WYI/WZI 家JMSO 庭INKG 溫EABT/EWOT 幸GTJ 安JV 定JMYO/JZO 繁OKVIF 榮FFBD/FZD 經VFMVM 濟EYX/EZX 貿HHBUC 易APHH/AZH 融MBLMI 商YCBR 業TCTD 管HJRR 交YCK 通YNIB 建NKLQ 設YRHNE 規QOBUU 劃LMLN 醫SEMCW/SZW 療KKCF 衛HODBN/HODQN 藝TGII/TGKI 術HOICN/HOIDN 音YTA 書LGA 畫LGWM/MUW 閱ANCRU 讀YRGWC 寫JHXF 練VFDW/VFDWF 測EBCN 試YRIPM 績VFQMC 良IAV 高YRBR 率YIOJ 準EGJ 確MRJOG/MROBG 速YDL 清EQMB 楚DDNYO/DZO 白HA 簡HANA 單RRWJ 容JCOR 包PRU/PSU 忍SHP/SIP/SKP 耐MBDI 堅SEG 持QGDI 毅YOHNE 勇NBKS/NWKS/NZS 敢MJOK/NJOK 果TWD/WD 斷VIHML 策HDB 雙OGE 全OMG 春QKA 夏MUHE/MZE 秋HDF 冬HEIM/HEY 四WC/WHU/WZC 季HDND 氣ONFD 候OLNK/OZK 變VFOK 陽NLAMH 燦FYED 爛FANW 微HOUNK/HOUUK 笑HHK 喜GRTR/GZR 悅PCRU 歡TGNO 欣HLNO 鼓GTJE 舞OTNIQ/OZQ 讚YRHUC 賞FBRBC 肯YMB 川LLL/LZL 河EMNR/EZR 流EYIU/EYIV 海EOWJ/EOWY 洋ETQ/EZQ 廣ITLC/ITMC 闊ANEHR/EANR 天MK 空JCM 蔚TSFI 藍TSIT/TSMT/TZT 飛HWNOO/NOHTO 翔TQSMM 旅YSOHV 遊YYSD 探QBCD 索JBVIF 現MGBUU 奇KMNR 蹟RMQMC 歷MDYLM/MHDM 史LK/LZK 傳OJII 統VFYIU 論YROMB 實JWJC 踐RMII 驗SFOMO 豐UJMRT 富JMRW 品RRR 質HJBC/HLBUC 卓YAJ 越GOIV/GZV 領OIMBC/OLMBC 先HGHU 告HGR 骨BBB 直JBMM/JBUV 昍AA 占YR 計YRJ 效YKKS/YKOK 雲MBMMI 彩BDHHH 順LLLC 尊CMWI/TWDI/TZI 教JDOK 敬TROK 落TEHR 石MR 出UU/UZU 水E/EZ 心P/PZ 港ETCU 灣EVFN 香HDA 情PQMB 感IRP 緒VFJKA 物HQPHH 事JLLN 歲YMIHH/YZH 年OQ 慶IXE 朋BB/BZB 親YDBUU 暖ABME 意YTAP 義TGHQI 深EBCD 遠YGRV 星AHQM 辰MMMV/MZV 亮YRBN/YRBU 柔NHD 細VFW 雨MEB/MLBY/MZY 島HAYU 嶼UHXC/UZC 森DDD 林DD 樹DGTI/DZI 花TOP/TZP 草TAJ 魚NWF 鳥HAYF/HZF 蟲LILII/LZI 獸RRIK 雪MBSM 菇TVJR 鯉NFWG 為BHNF/IF/IKNF/IZF 語YRMMR 回WR/WZR 王MG 求IJE 一M/MZ 乙NU 二MM 十J/JZ 丁MN/MZN 廠IFBK 七JU/JV 乃NHS 人O/OZ 八HO/HZO 九KN/KZN 几HN 刀SH/SZH 匕UH/UM/UZH 又NK/NZK 三MMM 下MY 土G/GZ 士JM 夕NI 大K/KZ 女V/VZ 子ND/NZD 寸DI 小NC/NZC 工MLM 己SU/SZU 已SU 巳RU/RZU 巾LB 干MJ/MZJ 弓N/NZ 戈I/IZ 支JE/JZE 斤HML 方YHS 日A 曰A 月B/BZ 木D/DZ 欠NO 止YLM 歹MNI 比PP/PZP 毛HQU 氏HVP 火F/FZ 爪HLO 牛HQ/HZQ 犬IK 玉MGI 瓜HVIO 瓦MVNI 甘TM/TZM 用BQ/BZQ 田W/WZ 皮DHE/DZE 皿BT 矛NINH/NZH 矢OK 示MMF 禾HD 穴JC 立YT/YZT 竹H/HZ 米FD/FDSO 糸VIF 羊TQ/TZQ 羽SMSIM/SZM 老JKP 而MBLL/MZL 耳SJ/SZJ 肉OBO 臣SLSL 至MIG 臼HX/HZX 舌HJR/MJR 舟HBYI/HBYL 艮AV/AZV 色NAU 血HBT 行HOMMN 衣YHV 見BUHU 角NBG/NBQ 言YMMR 谷COR/CZR 豆MRT 貝BUC 赤GLNC/GZC 走GYO 足RYO 身HXH/HZH 車JWJ 辛YTJ 里WG/WZG 金C/CZ 門AN/AZN 頁MBUC/MZC 食OIAV 首THBU 馬SQSF 鬼HI/HUI 鹿IXP/IZP 麥DOHE/DONI/JOHE/JONI 麻IDD/IJCC/IZC/TIDD/TIJC 黃TLWC/TMLC/TMWC 黑WGF 鼠HXVYV 鼎BUVML/BUVMN 鼻HUWML/HUWT 齊YX/YZX 齒YMUOO 辵HHRYO/HHHO/YHO 靑QMB 決EDK/IMDK 嘅RAIU 喺ROHF 睇BUCNH 嘢RWGN 咗RKM 哋RGPD 咁RTMM/RTM 點WFYR 邊YHUS 搵QABT 諗YROIP 冇KB 拗QVIS 氹NE 邨PUNL 埗GYLH 㗎RKRD/RKRU 喎RBBR 嘞RTJS 咪RFD 糉FDJCE 鰂NFBCN 嗰ROWR 啲RHAI 靚QBBUU 畀WML 嬲WVSW 嫲VIDD 爺CKSJL 仔OND 囡WV 囝WND 叻RKS 呃RMSU 唔RMMR 佢OSS 俾OHHJ/OHWJ 攰JEKS 瞓BULLL 唞RQYJ 晏AJV 忟PYK 憎PCWA 煲ODF 涌ENIB 劏FWLN 埞GJMO 掟QJMO 揼QMRE 撳QCNO 嚡RTJG 啫RJKA 嘥RHOO 啱RUMR 唓RJWJ 噏RORY/ROMR 戇YJKP 嘩RTMJ 吖RMH 呀RMVH/RZH 吓RMY 嚟RHHE 掂QIYR 偈OAPV 喼RNSP 嘭RGTH 曱WMLL 甴LWLM 仝OM 同BMR/BZR 亡YV/YZV 死MNP 存KLND/KZD 龍YBYSP 龜HXU/NXU 針CJ 燕TLPF 虎YPHN/YPHU 兩MLBO 睛BUQMB 蟬LIRRJ 鵲TAHAF 雀FOG 百MA 千HJ 上YM 地GPD/GZD 也PD/PZD 久NO 字JND 才DH/DZH 吉GR 相DBU 公CI/CZI 正MYLM 私HDI 五MDM 西MCW/MZW 東DW/DZW 京YRF 涼EYRF/IMYRF 冰IE/IME 湖EJRB 投QHNE 苦TJR 共TC/TZC 若TKR 市YLB 味RJD 分CSH 秒HDFH 必PH 之INO/IZO 多NINI 少FH/FZH 在KLG/KZG 受BBE/BZE 及NHE/NZE 從HOOOO/OO 往HOYG 等HGDI 命OMRL 守JDI 眼BUAV 似OVIO 厚MAND 淺EII 更MLWK 紅VFM 原MHAF 源EMHF 飲OINO 積HDQMC 累WVIF/WZF 異WTC 志GP/GZP 城GIHS 磊MRMRR 君SKR 歌MRNO 泣EYT/EZT 面MWSL/MWYL 藥TVID 葉TPTD 說YRCRU 息HUP 由LW/LZW 萬TWLB/WAN 驚TKSQF 鳴RHAF 外NIY/NZY 哄RTC 堂FBRG 孔NDU 恆PMBM 眾HTHHO/OOO/WLOOO/WLPOO 所HSHML/MSHML 周BGR/BQR 其TMMC 名NIR 造YHGR/YHQR 近YHML 阻NLBM 無OTF 奈KMMF 放YSOK 妙VFH/VZH 筆HLQ 章YTAJ 油ELW/EZW 加KSR/KZR 得HOAMI 財BCDH 太KI 國WIRM/WZM 民RVP 有KB 恙TGP/TQP 聞ANSJ 如VR/VZR 故JROK 鹹YWIHR 戩MAI 雜YDOG 是AMYO/IS 可MNR 開ANMJJ/ANMKJ/ANMT 強NILI/NRLI 謙YRCMC/YRHHC/YRTXC 虛YPTM 常FBRLB 信OYMR 好VND/VZD 華TMTJ 麗MBBP/MMBBP/MZP 離YBOG 假ORSE/ORYE 返YHE/YME 晒ADU 戲YTI 茶TOD 街HOGGN 裏YWGV 錦CHAB 矚BUSEI/BUSYI 撓QGGU 顢TLMBC 道YTHU 曹TWA 匹SC/SHU/SZC 只RC 休OD 尚FBR/FZR 寺GDI 形MJMJH/MKMJH/MTHHH 店IYR 去GI 冠BMUI/BZI 肌BHN 肚BG/BZG 恭TCP 句PR/PZR 打QMN/QZN 青QMB 區SRRR 巨SS/SZS 革TLJ 凶UK/UZK 收VLOK 內OB 謝YRHHI 丰QJ/QZJ 夫QO 申LWL 甲WL/WZL 束DL/DZL 末DJ/DZJ 秉HDL 乘HDLP 脊FCB 拳FQQ 夷KN 屯PU/PZU 兼CMXC/HHTC/TXC 淵ELXL 肅LX/LZX 兒HXHU 興HXBC/HZC 齋YXF 達YGTQ 過YBBR 述YID/YIJC 問ANR 病KMOB/KZB 痛KNIB 症KMYM/KZM 污EMMS 冊BBM/BT/BZT 啟HROK/IROK"),
+T5000=unpack("丈JK/JZK 不MF/MZF 丐MYVS/MZS 丑NG/NZG 且BM 丕MFM 丘OM 丙MOB 丞NEM 丟HGI/MGI 両MUB 並TTC/TTM 丫CL/CZL 串LL 丸KNI/KNK/KZI 丹BY/BZY 主YG 么HI 乍HS/OS 乎HFD 乏HINO 乒OMH 乓OMI 乖HJLP 乞ON 乩YRU 乳BDU 乾JJON 亂BBU 了NN/NZN 予NINN 于MD 云MMI/MZI 井TT 亙MAM/MBM 些YPMM 亞MLLM/MZM 亟MEM/NEM 亢YHN/YZN 亥YVHO 亦YLNC 亨YRNN 享YRND 亭YRBN 仃OMN 仄MO 仆OY/OZY 今OIN 仰OHVL 仲OL 仳OPP 件OHQ 任OHG/OMG 份OCSH 仿OYHS 企OYLM 伉OYHN 伊OSK 伍OMDM 伏OIK 伐OI 伕OQO 伴OFQ 伺OSMR 伽OKSR 佃OW/OZW 但OAM 佇OJMN/YTJMN 佈OKLB 位OYT/OZT 低OHPM/OHVI 住OYG 佐OKM 佑OKR 佔OYR 何OMNR 佗OJP 余OMD 佛OLLN 佝OPR 佞OMMV 你ONF 佩OHNB 佬OJKP 佯OTQ 佰OMA 佳OGG 併OTT 佻OLMO 使OJLK 侃ORHU/ORHV 侈ONIN 例OMNN 侍OGDI 侏OHJD 侖OMBT 供OTC 依OYHV 侮OOWJ/OOWY 侯ONMK 侵OSME/OZE 侶ORHR 便OMLK 係OHVF/OMVF 促ORYO 俄OHQI 俊OICE 俎OOBM 俏OFB 俐OHDN 俑ONIB 俗OCOR 俘OBND 俚OWG 俞OMBN 俟OIOK 俠OKOO 修OLHH/OLOH 俯OIOI 俱OBMC 俳OLMY 俸OQKQ 俺OKLU/OKLV 倀OSMV 倆OMLB 個OWJR 倌OJRR 倍OYTR 倏OLHK/OLOK 們OAN 倒OMGN 倔OSUU 倖OGTJ 倘OFBR 倚OKMR 借OTA 倡OAA 倣OYSK 倥OJCM 倦OFQU 倨OSJR 倩OQMB 倪OHXU 倫OOMB 倭OHDV 值OJBM 偃OSAV 偉ODMQ 偌OTKR 偎OWMV 偏OHSB/OISB/OMSB 偕OPPA 做OJRK 停OYRN 側OBCN 偵OYBC 偶OWLB 偷OOMN/OZN 偽OBHF/OIKF/OZF 傀OHI/OHUI 傅OIBI/OILI 傍OYBS 傑ONQD/OZD 傖OOIR 傘OOOJ 備OTHB/OTMB 傢OJMO 催OUOG 傭OILB 傲OGSK/OQSK 債OQMC 傷OOAH 傻OHCE/OUCE 傾OPMC 僅OTAM/OTLM 僇OSMH 像ONAO 僑OHKB 僕OTCO 僖OGRR 僚OKCF 僥OGGU 僧OCWA 僭OKUA/OMUA 僮OYTG 僱OHSG/OISG 僵OMWM 價OMWC 僻OSRJ 儀OTGI 儂OTWV 億OYTP 儈OOMA 儉OOMO 儐OJMC 儒OMBB 儔OGNI 儘OLMT 償OFBC 儡OWWW 儲OYRA 儷OMMP 儼ORRK 儿LU/LZU 兀MU/MZU 允IHU/IZU 元MMU 兄RHU 充YIHU 兆LMUO/LZO 兇UKHU 克JRHU 免NAHU/SHAHU 兑CRHU 兔NAHI/NUI/SHAHI/SHAUI 兕SSUU/SUHU 兗YCRHU/YCRU 兜HSHU/HVHU 兢JUJRU 六YC 兮CMVS/CZS 兵OMC/OZC 具BMMC/BUMC 典TBC 冀LPWTC 冉GB 再MGB 冑LWB/LWBMM 冒ABU 冕ANAU/ASHU 冗BHN/BHU/BZN/JHN 冢BMMO/BMSO 冤BNAI/BNUI/BSHI/JCNAI/JNAI/JSHI 冥BAYC 冶IMIR 冷IMOII/IMOML 冽IMMNN 准IMOG 凋IMBGR/IMBQR 凌IMGCE 凍IMDW/IZW 凜EYWD/IMYWD 凝IMPKO 凡HNI 凰HNHAG 凱UTHN 凳DNTN/NOMRN/NTHN 凸BSS 凹SSU 函MUNE/NUE/UNE 刁SM 刃SHH/SHI/SK 切PSH/PZH 刈KLN 刊MJLN 刎PHLN/PZN 刑MJMJN/MTLN 划ILN/IZN 列MNLN 初LSH/LZH 判FQLN/FZN 別RSLN 刨PULN 刪BMLN/BTLN 刮HRLN/MRLN 到MGLN/TO 制HBLN 刷SBLN/SZN 券FQSH 刺DBLN/DZN 刻YOLN 剁HDLN 剃CHLN/CZN 則BCLN 削FBLN 剋JUDI/JULN 剌DLLN 剎KCLN/KDLN 剔AHLN 剖YRLN 剛BULN 剜JULN 剝VELN 剩HPLN/HZN 剪TBNH/TZH 副MWLN 割JRLN 剴UTLN 剷IILN/YMLN 剽MFLN 剿VDLN 劇YOLN 劈SJSH 劉HCLN 劍OOLN 劑YXLN 劣FHKS/FZS 劫GIKS/GILN 劬PRKS/PZS 効YKKS 劾YOKS 势QIKS/QKKS 勁MMKS 勃JDKS 勉NUKS/SUKS 勒TJKS 勗ABMS 勘TVKS/TZS 勛RCKS 勞FFBKS 募TAKS 勢GIKS/GKKS/GZS 勤TMKS 勵MBKS 勸TGKS 勺PI/PM 勻PIM/PMM/PZM 勾PI 勿PHH 匆HWP/PKK/PKP/PZK 匈PUK 匍PIJB 匏KSPRU/KSPSU 匐PMRW 北LMP/LZP 匙AOP 匝SLB 匠SHML 匡SMG/SZG 匣SWL 匪SLMY/SZY 匯ESOG/SEOG 匱SLMC 匾SHSB/SISB 匿STKR 卅TJ/TZJ 升HT/HZT 午OJ 卉JT/JZT 半FQ/FZQ 卑HHJ/HWHJ 卒YOOJ 協JKSS/JZS/PKSS 南JBTJ 博JIBI/JIWI 卞YY/YZY 卡YMY 卦GGY 卧SLY 卮HMSU 卯HHSL 印HPSL 危NMSU/NZU 即AISL/AZL 卵HHSLI 卷FQSU 卸OMSL/OVSL/OZL 卹HTSL 卻CRSL/GISL 卿HHAIL/HHHPL/HHHSL/HHHYL/HZL 厄MSU 厘MWG 厥MTUO 厭MABK 厲MTWB/MZB 叁IKMMM 參IIIH/IKHHH 叉EI 反HE/ME 发IVKE 叔YFE 取SJE 叛FQHE/FQME 叟HXE/HXLE 叢TCTE 古JR 另RKS/RZS 叨RSH 叩RSL 叫RVL 召SHR/SZR 叭RC 叮RMN/RZN 台IR 叱RP/RZP 右KR 叵SR 司SMR 叼RSM/RZM 吁RMD 吃RON 各HER 吆RHI/RVI 吊RLB/RZB 吋RDI 后HMR 吏JLK 吐RG/RZG 向HBR 吒RHP/RJHP 吝YKR 吞HKR/MKR 吟ROIN 吠RIK 否MFR 吧BA/RAU 吩RCSH 含OINR 吭RYHN 吮RIHU 吱RJE 吳RVNK/RZK 吵RFH 吶ROB 吸RNHE/RZE 吹RNO 吻BPHR/RPHH 吼RNDU 吾MMR 呂RHR/RZR 呆RD 呈RHG/RMG 呎RSO 呢NE/RSP 呱RHVO 呵RMNR 呶RVE 呷RWL 呸RMFM 呻RLWL 呼RHFD/RZD 咀RBM 咄RUU 咆RPRU/RPSU 咋RHS/ROS 咎HOR/HYR 咐RODI 咒RRHN/RRHU 咕RJR 咖RKSR 咚RHEM/RHEY/RZY 咦RKN 咧RMNN 咨IOR/MOR 咩RTQ/RZQ 咫SORC 咬RYCK 咯RHER 咱RHBU 咳RYVO 咸IHMR 咻ROD 咽RWK 哀YRHV 哂RMCW/RZW 哇RGG 哈ROMR 哉JIR 哎RTK 員RBUC 哥MRMNR/MRNR 哦RHQI 哨RFB 哩RWG 哪RSQL 哭RRIK 哮RJKD 哲QLR 哺RIJB 哼RYRN 唁RYMR 唆RICE 唉RIOK 唐ILR 唧RAIL 唬RYPN/RYPU 售OGR 唯ROG 唱RAA 唳RHSK/RISK/RMSK 唷RYIB 唸ROIP 唾RHJM 啁RBGR/RBQR 啃RYMB 啄RMSO 啊RNLR 啕RPOU 啖RFF/RZF 啜REEE 啞RMLM 啡RLMY 啣ROML/ROVL 啤RHHJ/RHWJ/RZJ 啥ROMR 啦RQYT/RZT 啪RQHA 啻YBLBR/YBR 啼RYBB 啾RHDF 喀RJHR 喂RWMV 喃RJBJ 善TGTR/TTR 喇RDLN 喉RONK 喊RIHR 喋RPTD 喔RSMG 喘RUMB 喚RNBK 喝RAPP/RAPV/RZV 喟RWB 喧RJMM 喪GRRV 喬HKRBR 喱RMWG 喲RVFI/RVFM 喳RDAM/RDBM 喻ROMN/ROMV 嗅RHUK 嗆ROIR 嗇GOWR 嗎RSQF 嗑RGIT 嗓REED 嗚RHRF 嗜RJPA 嗟RTHM/RTQM 嗡RCIM 嗣RBSMR 嗤RUMI 嗥RHAJ 嗦RJBF 嗨REOY 嗯RWKP 嗷RGSK/RQSK 嗽RDLO 嗾RYSK 嘀RYCB 嘈RTWA 嘉GRTR 嘍RLAV/RLLV/RLWV 嘔RSRR 嘖RQMC 嘗FBRPA/FZA 嘛RIDD/RIJC/RZC 嘟RJAL/RZL 嘮RFFS 嘯RLX 嘰RVII/RVIK/RZI 嘲RJJB 嘴RYPB 嘶RTCL 嘹RKCF 嘻RGRR 嘿RWGF 噎RGBT 噓RYPM 噗RTCO/RZO 噙ROYB 噢RHBK 噤RDDF 噥RTWV 器RRIKR/RRKRR 噩MGRR 噪RRRD 噫RYTP 噬RHMO 噯RBBE 噱RYPO 噴RJTC 噸RPUC 噹RFBW 嚀RJPN 嚅RMBB 嚇RGCC 嚎RYRO 嚏RJBO 嚐RFBA/RZA 嚕RNWA 嚥RTLF 嚨RYBP 嚮VLHBR 嚴RRMMK/RRMNK 嚶RBCV 嚷RYRV 嚼RBWI 囀RJJI 囁RSJJ 囂RRMCR 囈RTGI 囉RWLG 囊JBRRV 囌RTND 囑RSEI/RSYI 囚WO/WZO 因WK/WZK 囤WPU/WZU 困WD 囱HWHE/HWNI 固WJR 圃WIJB 圈WFQU 圍WDMQ 園WGRV 圓WRBC 圖WRJW/WRYW/WZW 圬GMMS 圭GG 圯GRU 圳GLLL/GZL 圾GNHE/GZE 址GYLM 均GPIM/GPMM 坊GYHS 坍GBY/GZY 坎GNO/GZO 坏GMF/GZF 坐OOG 坑GYHN/GZN 坡GDHE 坤GLWL 坦GAM 坩GTM 坪GMFJ 坷GMNR 坼GHMY 垂HJTM 垃GYT/GZT 型MNG 垠GAV 垢GHMR 垣GMAM 垤GMIG 垮GKMS 埃GIOK 埋GWG 埔GIJB 域GIRM 埠GHRJ/GZJ 執GJKNI/GJKNK 培GYTR 基TCG 堆GOG 堡ODG 堤GAMO 堪GTMV 堯GGGU 堰GSAV 報GJSLE 場GAMH/GOAH/GZH 堵GJKA/GZA 塊GHI/GHUI 塌GASM 塑TBG 塔GTOR 塗EDG 塘GILR 塚GBMO 塞JTCG 塢GHRF 填GJBC/GJUC 塵IPG 塹JLG 塾YIG/YKG 塿GLAV/GLLV/GLWV 墀GSEQ/GSYQ/GZQ 墅WNG 墊GIG/GKG/GZG 墓TAKG 墜NOG 增GCWA 墟GYPC/GYPM 墨WGFG 墮NBG 墳GJTC 墾BVG 壁SJG 壅YVGG 壇GYWM/GZM 壑YEG 壓MKG 壕GYRO 壘WWWG 壙GITC 壞GYWV 壟YPG 壤GYRV 壩GMBB/GMWB 壬HG/HZG/MG 壯VMG 壹GBMT 壺GBLM 壽GNMI/GZI 夙HNMNI 夜YONK 夠NNPR/PRNIN 夢TWLN 夤NIJMC 夥WDNIN 夭HK/HZK 央LBK 失HQO 夸KMMS 夾KOO/KZO 奄KLWU/KLWV 奉QKQ 奎KGG 奏QKHK/QKMK 奐NBK 契QHK 奔KJT/KZT 奕YCK 套KSMI 奘VGK 奚BVIK/BZK 奠CMWK/TWK 奢KJKA 奧HBK 奩KSRR 奪KOGI 奴VE 奶VNHS 奸VMJ 她VPD 妃VSU 妄YVV 妊VHG/VMG/VOHG 妍VMJJ/VMT/VZT 妒VHS/VIS/VMR 妓VJE 妖VHK 妝VMV/VZV 妞VNG 妣VPP/VZP 妤VNIN 妥BV/BZV 妨VYHS 妮VSP 妯VLW 妳VNF 妹VJD 妻JLV 妾YTV 姆VWYI 姊VLXH 始VIR 姍VBBM/VBT 姐VBM/VZM 姑VJR 姒VVIO 姓VHQM 委HDV/HZV 姘VTT/VYJJ 姚VLMO 姜TGV 姣VYCK 姥VJKP 姦VVV 姨VKN/VZN 姪VMIG 姬VSLL 姻VWK 姿IOV/MOV 威IHMV/IZV 娃VGG 娌VWG 娑EHV 娓VSHU 娘VIAV 娛VRVK 娜VSQL 娟VRB 娠VMMV 娣VCNH 娥VHQI 娩VNAU/VSHU 娶SEV 娼VAA/VZA 婀VNLR 婁LAV/LLV/LWLV 婆EEV 婉VJNU 婊VQMV 婚VHPA 婢VHHJ/VHWJ 婦VSMB 婪DDV 婷VYRN 婿GNOB/VNOB 媒VTMD 媚VAHU 媛VBME 媲VHWP 媳VHUP 媼VABT/VWOT 媽VSQF 媾VTTB 嫁VJMO 嫂VHXE 嫉VKOK 嫌VCMC/VHHC/VTXC/VZC 嫖VMWF 嫗VSRR 嫘VWVF 嫡VYCB 嫣VMYF 嫦VFBB 嫩VDLK 嫵VOTF 嫻VAND 嬉VGRR 嬋VRRJ 嬌VHKB 嬝VHAV 嬤VICI/VIDI 嬪VJMC 嬰BCV 嬴YKV/YNV/YRBVK/YRBVN 嬸VJHW 孀VMBU 孑NNM 孓NNO 孕NSND 孚BND/BZD 孜NDOK 孟NDBT 孤NDHVO 孩NDYVO 孫NDHVF 孰YDKNI/YDKNK 孱SNDD 孳TVID 孵HHSLD 孺NDMBB 孽THJD/TJND/UJND 孿VFND 宂JHN/JHU 它JP 宅JHP 宇JMD 宋JD 完JMMU 宏JKI 宗JMMF 官JRLR 宙JLW/JZW 宛JNIU 宜JBM 客JHER 宣JMAM 室JMIG 宥JKB 宦JSLL/JZL 宮JRHR 宰JYTJ/JZJ 害JQJR/JQMR/JZR 宴JAV 宵JFB 宿JOMA 寂JYFE 寄JKMR 寅JMLC 密JPHU 寇JMUE 寐JVMD 寒JTCM/JTCY/JZY 寓JWLB 寞JTAK 察JBOF 寡JMCH 寢JVME 寤JVMR 寥JSMH 寧JPBN/JPWN 寨JTCD 審JHDW 寬JTBI/JZI 寮JKCF 寵JYBP/JZP 寶JMUC 封GGDI 射HHDI 將VMBDI 專JIDI 尉SFDI 尋SMMRI/SZI 對TGDI 導YUDI/YZI 尖FK/FZK 尢KU/KZU 尤IKU 尬KUOLL/KZL 就YFIKU 尷KUSIT/KUSMT 尹SK 尺SO 尼SP/SZP 尾SHQU 尿SE 局SSR 屁SPP 居SJR 屆SUG 屈SUU 屋SMIG 屍SMNP 屎SFD/SZD 屏STT/SYJJ/SZT 屐SHOE 屑SFB 屜SHOT 屠SJKA/SZA 屢SLAV/SLLV/SLWV 層SCWA 履SHOE 屬SEWI/SYYI 屹UON/UZN 岈UMVH 岌UNHE 岐UJE 岑UOIN 岔CSHU 岡BTU 岩UMR/UZR 岫ULW/UZW 岱OPU 岳OMU 岷URVP/UZP 岸UMMJ/UZJ 峙UGDI/UZI 峨UHQI 峪UCOR 峭UFB/UZB 峯UHEJ 峰UHEJ 峻UICE/UZE 峽UKOO 崆UJCM/UZM 崇UJMF 崎UKMR 崑UAPP 崔UOG 崖UMGG/UZG 崗UBTU 崙UOMB 崛USUU 崢UBSD/UZD 崩UBB 嵌UTMO/UZO 嵐UHNI 嵩UYRB 嶄UJJL 嶇USRR 嶝UNOT 嶺UOIC/UOLC 嶽UKHK 巍UHVI 巒VFU/YCU 巔UJCC 巖URRK 州HLIL/ILIL/IZL/MLML 巡YVVV 巢VVWD 左KM 巧MMVS 巫MOO 差THM/TQM 巴AU 巷TCRU/TCSU 巽RUTC/RVTC/SUTC 布KLB 帆LBHNI 帑VELB/VZB 帕LBHA/LZA 帖LBYR/LZR 帘JCLB/JZB 帚HSMB/SMBLB 帛HALB 帝YBLB 帥HRLB 席ITLB/IZB 帳LBSMV 帶KPBLB 帷LBOG 帽LBABU 幀LBYBC/LZC 幅LBMRW 幌LBAFU 幔LBAWE 幕TAKB 幗LBWIM 幛LBYTJ 幟LBYIA 幢LBYTG 幣FKLB/FZB 幫GIHAB 并TT/YJYJ 幹JJOMJ 幺VI 幻VIS/VZS 幼VIKS 幽UVII 幾VIHI/VIK 庇IPP 床ID/IZD/VMD 序ININ 底IHPM/IHVI 庖IPRU/IPSU 庚ILO 府IODI 庠ITQ 座IOOG 庫IJWJ 庵IKLU/IKLV 庶ITF 庸ILB 庾IHXO 廁IBCN/MBCN 廂IDBU 廈IMUE/IZE/MMUE 廉ICMC/IHHC/ITXC/YHXC 廊IIIL/IIVL 廓IYDL 廖ISMH/IZH 廚IGTI/MMTI 廝ITCL/MTCL 廟IJJB 廢INOE 廬IYPT 廳ISGP 延NKHYM/NKHYV/NZM 廷NKHG 廾JJ/KJ 弁IT 弄MGT/MZT 弈YCT 弊FKT 弋IP 式IPM/IZM 弒KCIPM/KDIPM 弔NL/NZL 引NL 弗LLN/LZN 弘NI 弛NPD 弟CNLH/CZH 弦NYVI 弧NHVO 弩VEN 弭NSJ 弱NHNHH/NMNIM 張NSMV 弼NMAN 彆FKN 彈NRRJ 彌NMFB/NZB 彎VFN 彗QJSM 彙VMBWD 彝VMFFT 彤BYHHH/BZH 彥YHHHH/YKMHH 彪YNHHH/YUHHH 彫BRHHH 彬DDHH 彭GTHHH 彰YJHHH 影AFHHH 彷HOYHS 役HOHNE 彼HODHE 彿HOLLN/SHLLN 征HOMYM 待HOGDI 徇HOPA 很HOAV 徊HOWR 律HOLQ 後HOVIE/HOX 徐HOOMD 徑HOMVM 徒HOGYO 徘HOLMY 徙HOYLO 御HOOML/HOOVL 徨HOHAG 復HOOAE 循HOHJU 徬HOYBS 徵HOUGK 德HOJWP 徹HOYBK 徽HOUFK 忌SUP/VSUP 忖PDI 忘YVP 忙PYV 忝HKP/MKP 忠LP 忱PLBU 念OINP 忽PHP 忿CSHP/CZP 怎HSP/OSP 怏PLBK 怒VEP 怔PMYM 怕PHA 怖PKLB/PZB 怠IRP 怡PIR 急NMP/NSP 性PHQM 怨NUP 怪PEG 怯PGI 怵PID/PIJC 恃PGDI 恍PFMU 恐MKP/MNP 恕VRP 恢PKF/PMF/PZF 恣IOP/MOP 恤PHBT 恥SJP/SJYLM 恨PAV 恩WKP 恪PHER 恫PBMR 恬PHJR/PMJR 恰POMR 恿NBP 悄PFB 悉HDP 悌PCNH 悍PAMJ/PZJ 悔POWJ/POWY/PZY 悖PJBD 悚PDL/PZL 悟PMMR 悠OKP 患LLP 悦PCRU 您OFP 悲LYP 悴PYOJ 悵PSMV 悶ANP 悸PHDD 悻PGTJ 悼PYAJ 悽PJLV 惆PBGR/PBQR 惋PJNU 惑IMP 惕PAPH 惘PBTV 惚PPHP 惜PTA 惟POG 惠JIP 惡MMP 惦PIYR 惰PKMB 惱PVVW 惴PUMB 惶PHAG 惹TKRP 惺PAHM 惻PBCN 愀PHDF 愁HFP 愈OMBP 愉POMN/POMV 愎POAE/PZE 愕PRRS 愚WBP 愜PSKO 愠PABT 愣PWLS 愧PHI/PHUI/PZI 愴POIR 愾POND 愿MFP 慄PMWD 慇HEP 慈TVIP 慌PTYU/PTYV 慎PJBC/PJUC 慕TAKP 慘PIIH 慚PJJL 慝SRP 慟PHGS 慢PAWE 慣PWJC 慨PAIU/PHPU/PHSU/PHYU 慫HOP 慮YPWP/YZP 慰SIP 慳PSEG 慷PILE 慼IFP 慾COP 憂MBPHE 憊OBP 憋FKP 憐PFDQ 憑IFP 憔POGF 憚PRRJ 憤PJTC 憧PYTG 憩HTP/HUP/MUP 憫PANK 憬PAYF 憲JQJP/JQMP 憶PYTP 憾PIRP 懂PTHG 懇BVP 懈PNBQ 應IGP/IOGP 懊PHBK 懍PYWD 懣EBP 懦PMBB 懲HKP 懵PTWU 懶PDLC 懸BFP 懺POIM 懼PBUG 懿GTIOP/GTMOP 戀VFP 戊IH 戌IHM 戍IHI 戎IJ/IK/IZJ 我HQI/ME 戒IT/IZT 戕VMI 或IRM 戚IHYMF 戛MBI/MUI 戟JJI 戡TVI 戢RISJ/RJI 截JIOG 戮SHI 戰RJI 戳SGI 戴JIWTC/JZC 戶HS 户IS 戾HSIK/ISIK 房HSYHS/ISYHS/MSYS 扁HSBT/ISBT/MSBT 扇HSSMM/ISSMM/MSSM 扈HSRAU/ISRAU/MSRU 扉HSLMY/ISLMY/MSLY 扎QU 扑QY/QZY 扒QC/QZC 扔QNHS/QZS 托QHP 扛QM/QZM 扣QR/QZR 扭QNG/QZG 扮QCSH 扯QYLM 扳QHE/QME 扶QQO 批QPP 扼QMSU 找QI 承NNQO 抄QFH/QZH 抉QDK/QZK 把QAU 抑QHVL 抒QNIN 抓QHLO/QZO 抖QYJ 抗QYHN 折QHML 抨QMFJ 披QDHE 抬QGRG/QIR 抱QPRU/QPSU 抵QHPM/QHVI 抹QDJ 押QWL 抽QLW/QZW 抿QRVP 拂QLLN 拄QQM/QYG 拆QHMY 拇QWYI 拈QYR 拉QYT/QZT 拋QKNS/QKUS 拌QFQ 拍QHA 拎QOII/QOML 拐QRKS/QRSH 拒QSS 拓QMR 拔QIKE/QIKK 拖QOPD 拘QPR 拙QUU 拚QIT 招QSHR 拜HQMQJ 括QHJR/QMJR 拭QIPM 拮QGR 拯QNEM 拱QTC 拴QOMG 拷QJKS 拼QTT/QYJJ 拽QLWP 拾QOMR 拿OMRQ/ORQ 指QPA 挈QHQ 按QJV 挑QLMO 挖QJCN 挨QIOK 挪QSQL 挫QOOG 振QMMV 挺QNKG 挽QNAU/QSHU 挾QKOO 捂QMMR 捆QWD 捉QRYO 捌QRSN 捍QAMJ 捎QFB 捏QAG/QHXG/QHXM 捐QRB 捕QIJB 捧QQKQ/QZQ 捨QOGR/QOMR 捩QHSK/QISK/QMSK 捫QAN 捱QMGG 捲QFQU 捶QHJM 捷QJLO 捻QOIP 掀QHLO 掃QSMB 掄QOMB 授QBBE 掉QYAJ 掌FBRQ 掏QPOU 排QLMY 掖QYOK 掘QSUU 掙QBSD 掛QGGY 掠QYRF 採QBD 掣HNQ 接QYTV 控QJCM 推QOG 掩QKLU/QKLV 措QTA 掬QPFD 揀QDWF 揆QNOK 揉QNHD 揍QQKK 描QTW 提QAMO 插QHJX/QMJX 揖QRSJ 揚QAMH 換QNBK 握QSMG 揣QUMB 揩QPPA 揪QHDF 揭QAPV 揮QBJJ 援QBME 揹QLPB 損QRBC 搏QIBI/QILI 搓QTHM/QTQM 搔QEII 搖QBOU 搗QHAU 搜QHXE 搞QYRB 搪QILR 搬QHYE 搭QTOR 搶QOIR 搽QTOD 搾QJCS 摑QWIM 摒QSTT/QSYJ 摔QYIJ 摘QYCB 摟QLAV/QLLV/QLWV 摧QUOG 摩ICQ/IDQ 摯GIQ/GKQ 摸QTAK 摹TAKQ 摺QSMA/QZA 撇QFBK 撈QFFS 撐QFBH/QFBQ 撒QTBK 撕QTCL 撚QBKF 撞QYTG 撤QYBK 撥QNOE 撩QKCF 撫QOTF 撬QHUU 播QHDW 撮QASE 撰QRUC/QRVC 撲QTCO 撻QYGQ 撼QIRP 撿QOMO 擁QYVG 擂QMBW 擄QYPS 擅QYWM 擇QWLJ 擊GEQ/JEQ 擋QFBW 操QRRD 擎TKQ 擒QOYB 擔HHLBU/QAM/QNCR 擘SJQ 據QYPO 擠QYX 擦QJBF 擬QPKO 擰QJPN 擱QANR 擲QCKL/QTKL 擴QITC 擺QWLP 擻QLVK 擾QMBE 攀DDKQ 攆QQOJ 攏QYBP 攔QANW 攘QYRV 攙QNRI 攜QUOB/QZB 攝QSJJ 攢QHUC 攣VFQ 攤QTOG 攪QHBU 攫QBUE 攬QSWU 攸OLOK 改SUOK 攻MOK 政MMOK 敍ODYE 敏OJOK/OYOK 救IEOK 敖GSOK/QSOK 敗BCOK 敘ODE/ODOK 敝FBOK 敞FBOK 散TBOK 敦YDOK 敲YBYE 整DKMYM 敵YBOK 敷ISOK 數LVOK 斂OOOK 斃FKMNP 斄JKMDO 斐LYYK 斑MGYKG 斕YKANW 斗YJ/YZJ 料FDYJ/FZJ 斜ODYJ 斟TVYJ 斡JJOYJ 斥HMY 斧CKHML 斫MRHML 斬JJHML 斯TCHML 於YSOIM/YSOY 施YSOPD 旁YBYHS 旋YSONO 旌YSOHM 旎YSOSP 族YSOOK/YZK 旖YSOKR 旗YSOTC 既AIMLU/AIMVU 旦AM/AZM 旨PA/PZA 早AJ/AZJ 旬PA 旭KNA/KZA 旱AMJ 旺AMG/AZG 昂AHVL 昆APP/AZP 昇AHT/AZT 昌AA/AZA 昏HPA 昔TA/TZA 映ALBK 昧AJD 昨AHS/AOS/AZS 昭ASHR 晃AFMU 晉MIIA 晌AHBR 晚ANAU/ASHU 晝LGAM 晤AMMR 晦AOWJ/AOWY/AZY 晨AMMV 普TCA/TMA 晰ADHL 晴AQMB 晶AAA 暇ARSE/ARYE 暈ABJJ 暉ABJJ 暑AJKA 暗AYTA 暝ABAC/AZC 暢LLAMH 暨AUAM 暫JLA 暮TAKA 暴ATCE/AZE 暹YAOG 曆MDA/MHDA/MZA 曉AGGU/AZU 曖ABBE/BUBBE 曙AWLA 曝AATE 曠AITC 曦ATGS 曬AMMP 曲TW/TZW 曳LWP 曷APVO 曼AWLE 曾CWA/CWFA/CZA 替QOA 最ASJE 朔TUB 朕BCMK/BTK 朗IIB/IVB 朝JJB 期TCB 朦BTBO 朧BYBP 本DM 札DU/DZU 朮IJC 朱HJD 朴DY/DZY 朵HND 朽DMVS 杆DMJ 杉DHHH 李DND/DZD 杏DR/DZR 材DDH 村DDI 杖DJK/DZK 杜DG/DZG 杞DSU 杧DYV 杭DYHN 杯DMF 杰DF 杳DA/DZA 杵DOJ 杷DAU 松DCI 板DHE/DME 枇DPP/DZP 枉DMG 析DHML 枕DLBU 枚DOK 枝DJE 枯DJR 枱DIR 枴DRKS/DRSH 架KRD 枸DPR 柄DMOB 柏DHA 某TMD 柑DTM 柒EPD 染END 柚DLW 查DAM 柩DSNO 柬DWF 柯DMNR 柱DYG 柳DHHL 柴YPD 柵DBBM/DBT/DZT 柿DYLB 栓DOMG 栗MWD 校DYCK 栩DSMM 株DHJD 核DYVO 根DAV/DZV 格DHER 栽JID 桀NQD 桂DGG 桃DLMO 桅DNMU 框DSMG 案JVD 桌YAD 桐DBMR 桑EEED 桓DMAM 桔DGR 桶DNIB 桿DAMJ 梁ECD/EID 梃DNKG 梅DOWJ/DOWY 梆DHQL/DQJL 梓DYTJ 梗DMLK 梘DBUU 條OLHD/OLOD 梟HAYD/HZD 梢DFB 梧DMMR 梨HND 梭DICE 梯DCNH 械DIT 梳DYIU/DYIV 梵DDHNI 棄YITD/YZD 棉DHAB 棋DTMC 棍DAPP 棒DQKQ/DZQ 棕DJMF 棗DBDB 棘DBDB 棚DBB 棟DDW 棠FBRD 棣DLE 棧DII 棲DJLV 棵DWD 棹DYAJ 棺DJRR 椅DKMR 植DJBM/DJBV 椎DOG 椒DYFE 椰DSJL 楊DAMH 楓DHNI 楔DQHK 楞DWLS 楠DJBJ 楨DYBC 楫DRSJ 極DMEM/DNEM/DZM 楷DPPA 楹DNST 概DAIU 榆DOMN/DOMV 榔DIIL/DIVL 榕DJCR 榛DQKD 榜DYBS/DZS 榦JJOD 榨DJCS 榴DHHW 榷DOBG 榻DASM 槁DYRB 構DTTB 槌DYHR 槍DOIR 槐DHI/DHUI 槓DMBC 槤DYJJ 槨DYDL 槳VID 樁DQKX/DZX 樊DDK 樑DECD/DEID 樓DLAV/DLLV/DLWV 樗DMBS 樞DSRR 樟DYTJ 模DTAK 樣DTGE 樵DOGF 樸DTCO 樺DTMJ 樽CMI/DTWI 橄DMJK/DNJK 橇DHUU 橋DHKB 橘DNHB/DZB 橙DNOT 機DVII/DVIK 橡DNAO 橢DKMB/DNLB 橫DTLC/DTMC/DZC 檀DYWM 檄DHSK 檔DFBW 檜DOMA 檢DOMO 檣DGOW 檬DTBO 檳DJMC 檸DJPN 檻DSIT/DSMT 櫂DSMG 櫃DSLC 櫓DNWA 櫚DANR 櫛DHAL/DHHL 櫝DGWC 櫥DIGI 櫻DBCV 欄DANW 權DTRG 欖DSWU 次IMNO/MMNO 欲CRNO/CZO 欺TCNO 欽CNO 款GFNO 歇AVNO 歉CCNO/HCNO/TCNO/TZO 歎TONO 歐SRNO 歟HCNO 此YMP 武MPYLM 歧YMJE 歪MFMYM 歸HMSMB 歿MNHNE/MNHSE/MNNE 殃MNLBK 殆MNIR 殉MNPA 殊MNHJD 殖MNJBM/MNJBV 殘MNII 殤MNOAH 殮MNOMO 殯MNJMC 殲MNOIM 段HJHNE 殷HSHNE 殺KCHNE/KDHNE 殼GNHNE 殿SCHNE 毀AGHNE/HGHNE/HMHNE 毆SRHNE 毋WJ/WJH/WZJ 每OWYI 毒QMWJ/QMWJH/QMWYI/QZI 毓OYYIU/OYYIV 毗WPP 毫YRBU 毯HUFF 毽HUNKQ 氈HUYR/YMHQU 氐HPM/HVPI 氓YVRVP 氖ONNHS/OZS 氛ONCSH 氟ONLLN 氤ONWK 氦ONYVO 氧ONTQ 氨ONJV 氫ONMVM 氮ONFF 氯ONNME/ONVNE 氲ONABT 氾ESU 汀EMN/EZN 汁EJ/EZJ 汐ENI 汕EU 汗EMJ 汝EV/EZV 汞ME 江EM 池EPD 汨EA/EZA 汪EMG 汰EKI 汲ENHE 汽EOMN 汾ECSH 沁EP 沃EHK 沅EMMU 沈ELBU 沉EBHN/EBHU 沌EPU 沐ED 沒EHNE/EHSE/ENE 沖EL/EZL/IML 沙EFH 沛EJB/EYLB/EZB 沫EDJ 沮EBM 沱EJP 沸ELLN 治EIR 沼ESHR 沽EJR 沾EYR 沿ECR/EHNR 況ERHU/IMRHU 泄EPT 泅EWO/EZO 泉HAE 泊EHA 泌EPH 泓ENI 泗EWC 泛EHIO 泡EPRU/EPSU 波EDHE 泥ESP 注EYG 泰QKE 泱ELBK 泳EINE 洗EHGU 洛EHER 洞EBMR 津ELQ 洩ELWP 洪ETC 洱ESJ 洲EHLL/EILL/EMLL 洴ETT/EYJJ 洵EPA 洶EPUK/EUK 活EHJR/EMJR 洽EOMR 派EHHV 浙EQHL 浚EICE 浣EJMU 浦EIJB 浩EHGR/EHQR 浪EIAV 浬EWG 浮EBND 浴ECOR 浸ESME 涇EMVM 消EFB 涉EYLH/EZH 涎ENKM/ENKV 涓ERB 涕ECNH 涮ESBN 涯EMGG 液EYOK 涵EMUE/ENUE/EUNE 涸EWJR 淄EVVW 淅EDHL 淆EKKB 淇ETMC 淋EDD 淌EFBR 淑EYFE/EZE 淒EJLV 淘EPOU/EZU 淙EJMF 淚EBU/EHSK/EISK 淞EDCI 淡EFF 淤EYSY 淨EBSD 淪EOMB 淫EBHG/EZG 淮EOG 淳EYRD 混EAPP 淹EKLU/EKLV 添EHKP/EMKP 渙ENBK 渚EJKA 減EIHR 渝EOMN/EOMV 渠ESD 渡EITE 渣EDAM/EDBM 渤EJDS 渥ESMG 渦EBBR 温EABT 渭EWB 渲EJMM 渴EAPV 游EYSD 渺EBUH 渾EBJJ 湃EHQJ 湊EQKK/IMQKK 湍EUMB 湔ETBN 湘EDBU 湛ETMV 湧ENBS/ENWS 湮EMWG 湯EAMH 溉EAIU 溘EGIT 溜EHHW 溝ETTB 溢ECMT/ETCT 溥EIBI/EILI/EZI 溪EBVK 溯ETUB/YTUB 溶EJCR/EJOR 溺ENHH/ENMM 滂EYBS/EZS 滄EOIR 滅EIHF 滇EJBC/EPBC 滋ETVI 滌EOLD 滑EBBB 滓EJYJ 滔EBHX 滕BFQE 滬EHSU/EISU/EMSU 滯EKPB 滲EIIH 滴EYCB 滾EYCV 漁ENWF 漂EMWF 漆EDOE 漏ESMB 漓EYUB 演EJMC 漕ETWA 漠ETAK 漢ETAO/ETLO 漣EYJJ 漩EYSO 漪EKHR 漫EAWE 漬EQMC 漱EDLK/EDLO 漲ENSV 漳EYTJ 漸EJJL 漾ETGE 漿VIE 潑ENOE 潔EQHF/EZF 潘EHDW 潛EKUA/EMUA 潢ETLC/ETMC 潤EANG 潦EKCF 潭EMWJ 潮EJJB 潰ELMC 潸EDDB/EJCB 潺ESND 潼EYTG 澀ESHM/ESIM/EZM 澄ENOT 澆EGGU 澈EYBK 澎EGTH 澗EANA/EANB 澠ERXU 澡ERRD 澤EWLJ 澧ETWT 澱ESCE 澳EHBK 澹ENCR 澼ESRJ 激EHSK/EZK 濁EWLI 濂EICC/EIHC/EITC 濃ETWV 濕EAVF 濘EJPN 濛ETBO 濠EYRO 濡EMBB 濤EGNI 濫ESIT/ESMT 濬EYBU 濯ESMG 濱EJMC 濺EBCI 濾EYPP/EZP 瀆EGWC 瀉EJHF 瀋EJHW 瀏EHCN 瀑EATE 瀕EYHC 瀚EJJM 瀛EYKV/EYNC/EYNV/EYRK/EYRN 瀝EMDM/EMHM 瀟ETLX 瀨EDLC 瀰ENMB 瀾EANW 灌ETRG 灑EMMP 灘ETOG 灰KF/KZF/MF 灶FG/FZG/JCGRU 灸NOF/NZF 灼FPI/FPM/FZI 災VVF 炊FNO/FZO 炎FF/FZF 炒FFH 炕FYHN 炙BF 炫FYVI 炬FSS 炭UKF/UMF/UZF 炮FPRU/FPSU 炯FBCR/FBR 炳FMOB 炸FHS/FOS 烈MNF 烊FTQ 烏HRYF 烘FTC/FZC 烙FHER 烤FJKS 烹YRNF 烽FHEJ 焉MYLF 焊FAMJ 焗FSSR 焙FYTR 焚DDF 焦OGF 焰FHSX/FNHX/FSHX/FZX 煉FDWF 煌FHAG 煎TBNF 煙FMWG/FWK 煜FAYT 煞NKF 煤FTMD 煥FNBK 煦ARF 照ARF 煨FWMV/FZV 煩FMBC 煬FAMH 煮JAF 煽FHSM/FISM/FMSM 熄FHUP 熊IPF 熏HGF 熒FFBF 熔FJCR 熙SUF 熟YIF/YKF 熨SIF 熬GKF/QKF 熹FGRR/GRTF 熾FYIA 燃FBKF 燄HXFF/NXFF/SXFF 燈FMN/FNOT 燉FYDK 燎FKCF 燐FFDQ 燒FGGU 燙EHF 燜FANP 營FFBRR 燥FRRD 燧FYCO/FYTO 燬FHGE/FHME 燭FSEI/FWLI 燮FFE 燴FOMA 燻FHGF 燼FLMT 爆FATE/FZE 爍FVID 爐FHS/FYPT 爨HBDDF 爬HOAU 爭BSD/NSD 爰BMKE 爵BWLI 爸CKAU 爹CKNIN 爻KK/KZK 爽KKKK 爾MFBK/MZK/NF 牀VMD 牆VMGOW/VZW 片LLML/LLMN 版LLHE/LLME/LNHE/LNME 牌LLHHJ/LLHWJ/LNHHJ/LNHWJ/LZJ 牒LLPTD/LNPTD 牖LLHSB/LLISB/LNHSB/LNISB 牘LLGWC/LNGWC 牙MVDH/MZH 牝HQP 牟IHQ/IZQ 牠HQPD 牡HQG 牢JHQ 牧HQOK 牯HQJR 牲HQHQM 牴HQHPM/HQHVI 特HQGDI 牽YVBQ 犀SEHQ/SYYQ/SZQ 犁HHHQ/HNHQ 犄HQKMR 犒HQYRB 犖FFBHQ 犛JKMHQ 犢HQGWC 犧HQTGS 犯KHSU 狀VMIK/VZK 狂KHMG 狄KHF 狌KHHQM 狎KHWL 狐KHHVO 狗KHPR 狙KHBM 狠KHAV 狡KHYCK 狩KHJDI 狷KHRB 狸KHWG 狹KHKOO 狼KHIAV 狽KHBUC/KZC 猖KHAA 猙KHBSD 猛KHNDT 猜KHQMB 猥KHWMV 猩KHAHM 猴KHONK 猶KHCMW/KHTCW 猷CWIK/TWIK 猾KHBBB 猿KHGRV 獄KHYRK 獅KHHRB 獎VIIK/VIK 獐KHYTJ 獗KHMTO 獨KHWLI 獰KHJPN 獲KHTOE 獵KHVVV 獷KHITC 獺KHDLC 獻JBIK/YBIK 玀KHWLG 玄YVI 玖MGNO 玟MGYK 玩MGMMU 玫MGOK 玲MGOII/MGOML 玳MGOIP 玷MGYR 玻MGDHE 珀MGHA 珊MGBBM/MGBT 珍MGOHH 珠MGHJD 班MGHLG/MGILG 珮MGHNB 球MGIJE 琅MGIAV 琉MGHHW/MGYIU/MGYIV 琊MGMHL 琢MGMSO 琥MGYPN/MGYPU 琦MGKMR 琪MGTMC 琳MGDD 琴MGOIN 琵MGPP 琶MGAU 琺MGEGI 琿MGBJJ 瑁MGABU 瑕MGRSE/MGRYE 瑙MGVVW 瑚MGJRB 瑛MGTLK 瑜MGOMN/MGOMV 瑞MGUMB 瑟MGPH 瑣MGFBC 瑤MGBOU 瑩FFBMG/FFBMI 瑪MGSQF 瑯MGIIL/MGIVL 瑰MGHI/MGHUI/MGYWV 瑾MGTLM 璀MGUOG 璃MGYUB 璋MGYTJ 璜MGTLC/MGTMC 璣MGVII/MGVIK 璦MGBBE 璧SJMGI 璨MGYED 璽MBMGI 瓊MGNBE/MGNBK 瓏MGYBP 瓠KSHVO 瓢MFHVO 瓣YJHOJ 瓶TTMVN/YJYJN 瓷IOMVN/MOMVN 甄MGMVN 甌SRMVN 甕YVGN 甚TMMV 甜HRTM/MRTM 產YHHQM/YKMHM/YZM 甥HMWKS 甦MKHQM 甩BQU/BZU 甫IJB 甬NIBQ 甭MFBQ/MZQ 男WKS/WZS 甸PW/PZW 畏WMV/WZV 畔WFQ/WZQ 留HHW/HZW 畚IKW 畜YVIW 畝YWNO 畢WTJ 略WHER 畦WGG 番HDW 當FBRW/FZW 畸WKMR 疆NGMWM 疇WGNI 疊EEEM/WWWM 疋NYO 疏NMDL/NMYIU/NMYIV 疑PKNIO/PZO 疙KON 疚KNO 疝KU 疤KAU 疥KOLL 疫KHNE/KZE 疲KDHE 疳KTM 疵KYMP/KZP 疹KOHH/KZH 疼KHEM/KHEY/KZY 疽KBM 疾KOK 痊KOMG 痔KGDI 痕KAV 痘KMRT 痙KMVM 痞KMFR 痢KHDN 痣KGP 痰KFF 痱KLMY 痳KDD 痴KOKR 痺KHHJ/KHWJ 痿KHDV 瘀KYSM/KYSY 瘁KYOJ/KZJ 瘋KHNI 瘍KAMH 瘓KNBK 瘟KABT/KWOT 瘠KFCB 瘡KOIR 瘤KHHW 瘦KHXE 瘧KYPM 瘩KTOR 瘴KYTJ 瘸KKRB 癆KFFS 癌KRRU 癒KOMP 癖KSRJ 癘KTWB 癢KTCV/KTOV/KTQ/KZV 癥KHOK 癩KDLC 癬KNFQ/KZQ 癮KNLP 癱KTOG 癲KJCC/KPCC 癸NOMK 登NOMRT 皂HAP 的DE/HAPI/HAPM 皆PPHA 皇HAMG 皈HAHE/HAME 皎HAYCK 皓HAHGR/HAHQR 皖HAJMU 皚HAUMT 皰DEPRU/DEPSU 皴IEDHE 皺PUDHE 盂MDBT 盃MFBT 盅LBT 盆CSHT/CZT 盈NSBT/NZT 益CMCT/TCBT 盍GIBT 盎LKBT 盒OMRT/ORBT 盔KFBT 盛ISBT 盜EOBT/IOBT 盞IIBT 盟ABBT 盡LMFBT/LZT 監SIBT/SMBT 盤HEBT 盥HXBT 盧YPWBT 盪EHBT 盯BUMN 盲YVBU 盹BUPU 盼BUCSH 盾HJBU 省FHBU 眉AHBU 看HQBU 眠BURVP/BZP 眨BUHIO 眩BUYVI 眶BUSMG 眷FQBU 眸BUIHQ 眺BULMO 着THBU/TQBU 睏BUWD 睜BUBSD 睞BUDOO 睡BUHJM 督YEBU 睥BUHHJ/BUHWJ 睦BUGCG 睨BUHXU 睪WLGTJ 睫BUJLO/BZO 睬BUBD 睹BUJKA/JABUU 睽BUNOK 睿YBMCU 瞄BUTW 瞇BUYFD 瞌BUGIT 瞎BUJQR 瞑BUBAC 瞞BUTLB 瞟BUMWF 瞠BUFBG 瞥FKBU 瞧BUOGF 瞪BUNOT 瞬BUBBQ 瞭BUKCF 瞰BUMJK/BUNJK 瞳BUYTG 瞻BUNCR 瞽GEBU 瞿BUOG 矇BUTBO 矓BUYBP 矗JMJMM/JVJVV 矜NHOIN 矣IOK/IZK 矩OKSS 短OKMRT 矮OKHDV/OZV 矯OKHKB 矽MRNI 砂MRFH 砌MRPSH 砍MRNO 研MRMJJ/MRMT 砝MRGI 砥MRHPM/MRHVI 砧MRYR 砭MRHIO 砰MRMFJ 砲MRPRU/MRPSU/MRSFK 破MRDHE 砸MRSLB 硃MRHJD 硝MRFB 硫MRYIU/MRYIV 硬MRMLK 硯MRBUU 硼MRBB 碉MRBGR/MRBQR 碌MRNME/MRVNE 碎MRYOJ 碑MRHHJ/MRHWJ 碗MRJNU 碘MRTBC 碟MRPTD 碧MAMR/MZR 碩MRMBC 碰MRTTC/MRTTM 碳MRUKF/MRUMF 碼MRSQF 碾MRSTV 磁MRTVI 磅MRYBS 磋MRTHM/MRTQM 磐HEMR 磕MRGIT 磚JIMVN/MRJII 磨ICMR/IDMR/IZR 磬GEMR 磯MRVII/MRVIK 磴MRNOT 磷MRFDQ 磺MRTLC/MRTMC 礁MROGF 礎MRDDO 礙MRAMI/MRPKO 礦CITC/MRITC 礪MRMTB 礫MRVID 礬DDKMR 礴MRTEI 祀IFRU/IFSU/MFRU 祁IFNL/MFNL 祆IFMK/MFMK 祇IFHVP/MFHVP 祈IFHML/MFHML 祉IFYLM/MFYLM 祐IFKR/MFKR 祕IFPH/MFPH 祖IFBM/MFBM 祗IFHPM/IFHVI/MFHPM 祚IFHS/IFOS/MFHS/MFOS 祝IFRHU/MFRHU 祟UUMMF 祠IFSMR/MFSMR 祥IFTQ/MFTQ 票MWMMF 祭BOMMF 祺IFTMC/MFTMC 祿IFVNE/MFVNE 禁DDMMF/DZF 禍IFBBR/MFBBR 禎IFYBC/MFYBC 福IFMRW/MFMRW 禕IFDMQ/MFDMQ 禦HLMMF 禧IFGRR/MFGRR 禪IFRRJ/MFRRJ 禱IFGNI/MFGNI 禹HLBI 禽OYUB 禿HDHU 秀HDNHS 秘HDPH 租HDBM 秣HDDJ 秤HDMFJ 秦QKHD 秧HDLBK 秩HDHQO 移HDNIN 稀HDKKB 稈HDAMJ 程HDRHG/HDRMG 稍HDFB 税HDCRU 稔HDOIP 稚HDOG 稜HDGCE 稟YWRD/YWRF 稠HDBGR/HDBQR 種HDHJG 稱HDBGB 稷HDWCE 稻HDBHX 稼HDJMO 稽HDIUA 稿HDYRB 穀GDHNE 穆HDHAH 穌NFHD 穎PDMBC/PFMBC 穗HDJIP 穡HDGOW 穢HDYMH 穩HDBMP/HZP 穫HDTOE 究JCKN 穹JCN 穿JCMVH/JZH 突JCIK/JCK 窄JCHS/JCOS 窈JCVIS 窒JCMIG 窕JCLMO 窖JCHGR/JCHQR 窗JCHWE/JCHWK/JCHWN 窘JCSKR 窟JCSUU 窠JCWD 窩JCBBR 窪JCEGG 窮JCHHN 窯JCBOU/JCOJU/JCTGF 窺JCQOU/JZU 窿JCNLM 竄JCHXV 竅JCHSK 竇JCGWC 竊JCHDB/JCPSH 站YTYR 竟YTAHU 竣YTICE/YZE 童YTWG 竭YTAPV 端YTUMB 競YUYTU 竺HMM 竽HMD 竿HMJ 笆HAU 笙HHQM 笛HLW 笞HIR 笠HYT 符HODI 笨HDM 第HNLH 筋HBKS 筍HPA/HSK 筏HOI 筐HSMG 筒HBMR 答HOMR 筠HGPM 筵HNKM/HNKV 筷HPDK 箋HII 箏HBSD 箔HEHA 箕HTMC 算HBUT 箝HQTM 箭HTBN 箱HDBU 箴HIHR 節HAIL/HHPL/HHSL/HHYL 篁HHAG 範HJJU 篆HVNO 篇HHSB/HISB 築HMKD/HMND/HMRD 篙HYRB 篡HBUI 篤HSQF 篩HHRB/HZB 篷HYHJ 篾HWLI 簇HYSK 簍HLAV/HLLV/HLWV 簞HRRJ 簣HLMC 簧HTLC/HTMC 簪HKUA/HMUA 簫HLX 簷HNCR 簸HTCE 簽HOMO 簾HICC/HIHC/HITC 簿HEII 籃HSIT/HSMT 籌HGNI 籍HQDA/HZA 籟HDLC 籠HYBP 籤HOIM 籬HYBG 籮HWLG 籲HBMBC/HOBC 籽FDND 粉FDCSH 粒FDYT/FZT 粕FDHA 粗FDBM/FZM 粟MWFD 粥NFDN 粧FDIG 粱ECFD/EIFD 粳FDMLK 粵HBMMS/HWMVS/HZS 粹FDYOJ 粽FDJMF 糊FDJRB 糕FDTGF 糖FDILR 糙FDYHR 糜ICFD/IDFD 糞FDWTC 糟FDTWA 糠FDILE 糢FDTAK 糧FDAMG 糯FDMBB 系HVIF/MVIF 糾VFVL 紀VFRU/VFSU 紂VFDI 約VFPI/VFPM 紇VFON 紉VFSHH/VFSHI/VFSK 紊YKVIF 紋VFYK 納VFOB 紐VFNG 純VFPU/VZU 紕VFPP 紗VFFH 紙VFHVP 級VFNHE 紛VFCSH 紜VFMMI 素QMVIF/QZF 紡VFYHS 紫YPVIF 紮DUVIF/QUVIF 紳VFLWL 紹VFSHR 紼VFLLN 絀VFUU 終VFHEM/VFHEY/VZY 絃VFYVI 組VFBM 絆VFFQ 絕VFNAU/VFSHU 絖VFFMU 絞VFYCK 絢VFPA 給VFOMR 絨VFIJ/VFIK/VZJ 絮VRVIF 絲VFVIF/VZF 絹VFRB 綁VFHQL/VFQJL 綏VFBV 綑VFWD 綜VFJMF 綞VFHJM 綠VFVNE/VZE 綢VFBGR/VFBQR 綰VFJRR 綱VFBTU 綴VFEEE 綵VFBD 綸VFOMB 綺VFKMR 綻VFJMO 綽VFYAJ 綾VFGCE 綿HBHVF/VFHAB 緇VFVVW 緊SEVIF 緋VFLMY 緘VFIHR 線VFHAE/VFII 緝VFRSJ 緞VFHJE/VFHYE 締VFYBB 緣VFVNO 編VFHSB/VFISB/VFMSB 緩VFBME 緬VFMWL 緯VFDMQ 緻VFMGE/VFMGK 縈FFBVF 縊VFCMT/VFTCT 縑VFCMC/VFHHC/VFTXC 縛VFIBI/VFILI/VFIWI 縣BFHVF/BFMVF 縫VFYHJ 縮VFJOA 縱VFHOO 縲VFWVF 縷VFLAV/VFLLV/VFLWV 總VFHWP 繃VFBB/VFUBB 繅VFVVD 繆VFSMH 織VFYIA 繕VFTGR/VFTTR 繚VFKCF 繞VFGGU 繡VFHDS/VFLX/VZX 繩VFRXU 繪VFOMA 繫JEVIF/JZF 繭TBLI 繳VFHSK 繹VFWLJ 繼VFVVI 繽VFJMC 纂HBUF 續VFGWC 纏VFIWG/VZG 纓VFBCV 纖VFOIM 纜VFSWU 缶OJU 缸OUM 缺OUDK 缻OUMVN 缽CDM/OUDM 罄GEOJU 罈GAMI/OUAMI/OUMBJ/OUMWJ 罐OUTRG 罔BTYV 罕BCMJ/BZJ 罟WLJR 罩WLYAJ 罪HUYTJ/WLLMY/WZY 置WLJBM/WLJBV 罰WLYRI/WLYRN 署WLJKA/WZA 罵WLSQF 罷WLIBP 罹WLPOG 羅WLVFG 羈MWTJF/WLTJF 羌TGHU/TQU/TZU 羔TGF 羚TQOII/TQOML 羞THNG/TQNG 羣SRTQ 群SRTQ 羨TGENO/TGIMO 羯TQAPV 羲TGHDS 羶TQYWM 羸YKTQ/YNTQ/YRBTK/YRBTN 羹TGFTK 羿SMT 翁CISM/CZM 翅JESMM 翌SMYT 翎OISMM/OLSMM 翕OMRM/ORSMM 翟SMOG 翠SMYOJ 翡LYSMM 翩HBSMM/IBSMM/MBSMM 翰JJOSM/JZM 翱HJSMM 翳SESMM 翹GUSMM 翻HWSMM/HZM 翼SMWTC 耀FUSMG 考JKMVS/JKYS 者JKA/JKIA/JZA 耆JPA 耍MBV 耒QD 耕QDTT 耗QDHQU/QZU 耘QDMMI 耙QDAU 耜QDRLR 耶SJNL 耽SJLBU 耿SJF/SZF 聃SJGB 聆SJOII/SJOML 聊SJHHL/SZL 聖SRHG/SRMG 聘SJLWS 聚SEHHO/SEOHO/SEOOO/SEPHO/SZO 聯SJVIT 聰SJHWP 聱GKSJ/QKSJ 聲GESJ 聳HOSJ 聶SJSJJ 職SJYIA 聽SGJWP 聾YPSJ 聿LQ/LZQ 肄PKLQ/PZQ 肆SILQ 肇HKLQ/IKLQ/MKLQ 肋BKS 肓YVB 肖FB 肘BDI 肛BM 肝BMJ 股BHNE 肢BJE 肥BAU 肩HSB/ISB/MSB 肪BYHS 肫BPU 肱BKI 肴KKB 肺BJB/BYLB 胃WB 背LPB 胎BIR 胖BFQ 胚BMFM 胛BWL/BZL 胞BPRU/BPSU 胡JRB 胤LVBU 胥NOB 胭BWK 胰BKN 胱BFMU 胳BHER 胴BBMR 胸BPUK 能IBPP 脂BPA/BZA 脅BKSS/KSKSB 脆BNAU/BNMU 脈BHHV/BINE 脖BJBD 脣MVB 脩OLHB/OLOB 脫BCRU 脯BIJB 脱BCRU 脹BSMV 脾BHHJ/BHWJ 腆BTBC/TCBUU 腋BYOK 腎SEB 腐IIOBO/IOIB 腑BIOI 腔BJCM 腕BJNU 腥BAHM 腫BHJG 腮BWP/WPMBC 腰BMWV 腱BNKQ 腳BCRL/BGIL 腸BAMH 腹BOAE 腺BHAE 腿BYAV 膀BYBS 膈BMRB 膊BIBI/BILI 膏YRBB/YZB 膚YPWB 膛BFBG 膜BTAK 膝BDOE 膠BSMH 膨BGTH 膩BIPC 膳BTGR/BTTR 膺IGB/IOGB 膽BAM/BNCR 膾BOMA 膿BTWV 臀SEB 臂SJB 臃BYVG 臆BYTP 臉BOMO 臍BYX 臏BJMC 臘BVVV 臚BYPT 臟BTIS 臥SLO/SLY 臧IMSLL 臨SLORR 臭HUIK/HUK 致MGHE/MGOK 臻MGQKD 臾HXO 舀BHX/BZX 舂QKHX/QZX 舅HXWKS 與HXYC 舉HCQ 舊OLD/TOGX 舍OHJR/OMJR 舐HRHPM/HRHVP/MRHVP 舒ORNIN 舔HRHKP/HRMKP/MRHKP/MRMKP 舖ORIJB 舛NIQ/NZQ 舜BBNQ 舢HYU 舨HYHE/HYME 航HYYHN 舫HYYHS 般HYHNE 舵HYJP 舶HYHA 舷HYYVI 船HYCR/HYHNR 艇HYNKG 艘HYHXE/HZE 艙HYOIR 艦HYSIT/HYSMT 艱TOAV 艷UTNAU 艾TK/TZK 芋TMD/TZD 芍TPI/TPM 芒TYV 芙TQO 芝TINO 芟THNE/TZE 芥TOLL 芬TCSH 芭TAU 芳TYHS 芹THML/TZL 芻PUPU 芽TMVH 苑TNIU 苒TGB 苓TOII/TOML 苔TIR 苗TW 苛TMNR/TZR 苞TPRU/TPSU 苟TPR 苣TSS 苧TJMN 英TLBK 茁TUU 茂TIH 范TESU 茄TKSR 茅TNIH 茉TDJ 茗TNIR 茫TEYV 茱THJD 茲TVII 茴TWR 茵TWK 茷TOI 茸TSJ 茹TVR 荀TPA 荃TOMG 荊TMJN/TMTN/TTLN 荏TOHG/TOMG 荒TYVU/TYVV 荔TKSS 荷TOMR 荸TJBD 荻TKHF 荼TOMD 莉THDN/TZN 莊TVMG/TZG 莎TEFH 莒TRHR/TRR 莓TOWY/TZY 莖TMVM 莘TYTJ 莞TJMU 莠THDS 莢TKOO 莫TAK 莽TIKT/TKT 菁TQMB 菅TJRR 菊TPFD 菌TWHD 菜TBD 菠TEDE 菩TYTR 菰TNDO 菱TGCE 菲TLMY 菸TYSM/TYSY 菽TYFE 萃TYOJ 萄TPOU 萇TSMV 萊TDOO 萋TJLV 萌TAB 萍TEMJ 萎THDV 萱TJMM 萵TBBR 萸THXO 萼TRRS 著TJKA/TQBU 葛TAPV 葡TPIB 董THJG 葦TDMQ 葩THAU 葫TJRB 葬TMPT 葱TPKP 葵TNOK 葷TBJJ 蒂TYBB 蒐THI/THUI 蒙TBMO 蒜TMFF 蒞TEOT/TEYT/TOYT 蒲TEIB 蒸TNEF 蒼TOIR 蒿TYRB 蓀TNDF 蓄TYVW 蓆TITB 蓉TJCR 蓋TGBT/TGIT 蓑TYWV 蓓TOYR 蓬TYHJ 蓮TYJJ 蔑TWLI/TWLM 蔓TAWE 蔔TPMW 蔗TITF 蔡TBOF 蔣TVMI 蔬TNMU/TNMV 蔭TNLI 蔽TFBK 蕃THDW 蕉TOGF 蕊TPPP 蕙TJIP 蕨TMTO 蕩TEAH 蕪TOTF 蕭TLX/TZX 蕾TMBW 薄TEII 薇THOK 薈TOMA 薑TMWM 薔TGOW 薛THRJ 薦TIXF/TZF 薩TNLM 薪TYDL 薯TWLA 薰THGF 藉TQDA 藏TIMS 藐TBHU 藕TQDB 藤TBFE 藩TEHW 藪TLVK 藴TVFT 藹TYRV 藺TANG 藻TERD 蘆TYPT 蘇TNFD 蘋TYHC 蘑TICR/TIDR 蘚TNFQ 蘭TANW 蘸TMGF/TMWF 蘿TWLG 虐YPSM 虔YPOK/YPYK 處YPHEN 虜YPWJS/YPWKS 虞YPRMK/YPRVC/YPRVK 號RSYPN/RSYPU 虧YGMMS/YZS 虫LMI 虯LIU/LIVL 虱NHLI/NMLI 虹LIM/LZM 蚊LIYK 蚌LIQJ 蚓LINL 蚣LICI 蚤EILMI 蚩UMLI 蚪LIYJ 蚯LIOM 蚱LIHS/LIOS/LZS 蚶LITM 蛀LIQM/LIYG 蛆LIBM 蛇LIJP 蛋NOLMI 蛔LIWR 蛙LIGG 蛛LIHJD 蛟LIYCK 蛤LIOMR 蛭LIMIG 蛹LINIB 蛾LIHQI 蜀WLPLI 蜂LIHEJ 蜃MVLMI 蜇QLLMI 蜈LIRMK/LIRVK 蜒LINKM/LINKV 蜓LINKG 蜕LICRU 蜘LIOKR 蜚LYLMI 蜜JPHI 蜢LINDT 蜥LIDHL 蜴LIAPH 蜻LIQMB 蜿LIJNU 蝌LIHDJ 蝕OILMI/OSLMI/OYLMI 蝗LIHAG 蝙LIHSB/LIISB/LIMSB 蝠LIMRW 蝦LIRSE/LIRYE/LZE 蝨NJLII/NKLII 蝴LIJRB 蝶LIPTD/LZD 蝸LIBBR 螂LIIIL/LIIVL 螃LIYBS 螞LISQF 螟LIBAC 螢FFBLI 螫GKLM/GKLMI 螯GKLMI/QKLMI 螳LIFBG 螺LIWVF 螻LILAV/LILLV/LILWV 蟀LIYIJ 蟆LITAK 蟈LIWIM 蟋LIHDP 蟑LIYTJ 蟒LITIT 蟯LIGGU 蟹NQLMI 蟺LIYWM 蟻LITGI 蠅LIRXU 蠍LIAVO 蠔LIYRO 蠕LIMBB 蠟LIVVV 蠡VOLII 蠢QALII/QKALI 蠣LIMTB 蠱LILIT 蠶KUALI/MUALI 蠹JBMRI 蠻VFLMI 衍HOEMN 衙HOMRN 衝HOHGN 衞HODBN 衡HONKN 衢HOBGN 表QMV/QZV 衫LHHH 衰YWMV 衷JLHV/YLHV 衽LHG/LMG/LZG 袁GRHV 袂LDK 袈KRYHV 袋OPYHV 袍LPRU/LPSU 袒LAM 袖LLW 袞YCRHV 被LDHE 袱LOIK 裁JIYHV/JZV 裂MNYHV 裊HAYV 裔YVBCR 裕LCOR 裘IEYHV 裙LSKR 補LIJB 裝VGYHV 裟EHYHV 裨LHHJ/LHWJ 裳FBRYV 裴LYYHV 裸LWD 裹YWDV 製HNYHV 褂LGGY 複LOAE 褐LAPP/LAPV 褒YODV 褓LORD 褚LJKA 褥LMVI 褪LYAV 褫LHYN/LHYU 褲LIJJ/LKMS 褶LSMA 褸LLAV/LLLV/LLWV 褻YGIV/YGKV 襄YRRV 襖LHBK 襟LDDF 襠LFBW 襤LSIT/LSMT 襪LTWI/LTWM 襯LYDU 襲YPYHV 要MWV 覃MBAJ/MWAJ 覆MWHOE 覓BBUU 視IFBUU/MFBUU 覦ONBUU/OVBUU 覬UTBUU 覲TMBUU 覺HBBUU/HZU 覽SWBUU 觀TGBUU 解NBSHQ/NBTQ 觴NBOAH 觸NBWLI/NZI 訂YRMN 訃YRY 訌YRM 討YRDI 訐YRMJ 訓YRLLL 訕YRU 訖YRON 託YRHP 記YRSU 訛YROP 訝YRMVH 訟YRCI 訣YRDK 訥YROB 訪YRYHS 許YROJ 訴YRHMY 診YROHH 註YRYG 詁YRJR 詆YRHPM/YRHVI 詐YRHS/YROS 詔YRSHR 評YRMFJ 詛YRBM 詞YRSMR 詠RINE/YRINE 詢YRPA 詣YRPA 詩YRGDI 詫YRJHP 詬YRHMR 詭YRNMU 詮YROMG 詰YRGR 話YRHJR 該YRYVO 詳YRTQ 詹NCYMR/NZR 詼YRKF 誅YRHJD 誇YRKMS 誌YRGP 誑YRKHG 誓QLYMR 誕YRNKM/YRNKV 誘YRHDS 誡YRIT 誣YRMOO 誤YRRMK/YRRVC/YRRVK 誥YRHGR/YRHQR 誦YRNIB 誨YROWY 説YRCRU 誰YROG 課YRWD 調YRBGR/YRBQR 諂YRBHX/YRHSX/YRNHX/YRSHX 諄YRYRD 談YRFF 諉YRHDV 請YRQMB 諍YRBSD/YRNSD 諏YRSJE 諒YRYRF 諛YRHXO 諜YRPTD 諦YRYBB 諧YRPPA 諫YRDWF 諭YROMN/YROMV 諮YRIOR/YRMOR 諱YRDMQ 諷YRHNI 諸YRJKA 諺YRYHH/YRYKH 諾YRTKR 謀YRTMD 謁YRAPP/YRAPV 謂YRWB 謄BFQR 謊YRTYU/YRTYV 謎YRYFD 謗YRYBS 講YRTTB 謠YRBOU 謨YRTAK 謫YRYCB/YRYYB 謬YRSMH 謹YRTAM/YRTLM 譁YRTMJ 證YRNOT 譎YRNHB 譏YRVII/YRVIK 譚YRMBJ/YRMWJ 譜YRTCA/YRTMA 警TKYMR 譬SJYMR 譯YRWLJ 議YRTGI 譴YRYLR 譽HCYMR 讒YRNRI 讓LET/YRYRV 讖YROIM 谿BKCOR 豁JRCOR 豈UMRT/UZT 豉MTJE 豌MTJNU 豎SEMRT 豔TTNAU/UTGIT 豕MSHO 豚BMSO 象NAPO/NZO 豢FQMSO 豪YRBO/YZO 豫NNNAO 豬KHJKA/MOJKA 豹BHPI/BHPM 豺BHDH 貂BHSHR 貉BHHER 貓BHTW/BZW/KHTW 貞YBUC 貢MBUC 貧CSHC 貨OPBUC 販BCHE/BCME 貪OINC 貫WJBUC 貯BCJMN 貲YPBUC 貳IPMMC 貴LMBUC 貶BCHIO 買WLBUC 貸OPBUC 費LNBUC 貼BCYR 貽BCIR/YRIR 賀KRBUC 賁JTBC 賂BCHER 賃OGBUC 賄BCKB 賅BCYVO 賈MWBUC 賊BCIJ/BCIK 賑BCMMV 賒BCOMF 賓JMHC 賜BCAPH 賠BCYTR 賢SEBUC 賣GWLC 賤BCII 賦BCMPM/BZM 賬BCSMV 賭BCJKA 賴DLNBC/DLSHC 賺BCCMC/BCHHC/BCTXC/BTXC/BZC 購BCTTB 賽JTCC 贅GKBUC/QKBUC 贈BCCWA 贊HUBUC 贋MGBUC/MOGC 贍BCNCR 贏YKBUC/YNBUC/YRBBK/YRBBN 贓BCIG/BCIMS 贖BCGWC 贛YJHEC 赦GCOK 赧GCSLE 赫GCGLC 赭GCJKA 赳GOVL 赴GOY 起GORU/GOSU 趁GOOHH 超GONR/GOSHR 趕GOAMJ 趙GOFB 趟GOFBR 趣GOSJE 趨GOPUU/GZU 趴RMC 趾RMYLM 跂RMJE 跆RMIR 跋RMIKE/RMIKK 跌RMHQO 跎RMJP 跑RMPRU/RMPSU 跚RMBBM/RMBT 跛RMDHE 距RMSS 跟RMAV 跡RMYLC/YYLC 跤RMYCK 跨RMKMS 跪RMNMU 跬RMGG 路RMHER 跳RMLMO 跺RMHND/RMNSD 跼RMSSR 踏RMEA 踝RMWD 踟RMOKR 踢RMAPH 踩RMBD 踫RMTTC/RMTTM 踱RMITE 踴RMNBS 踵RMHJG 踹RMUMB 蹂RMNHD 蹄RMYBB 蹈RMBHX 蹉RMTHM/RMTQM 蹊RMBVK 蹋RMASM 蹙IFRYO 蹣RMTLB 蹤RMHOO/RMJMF 蹦RMUBB 蹬RMNOT 蹲RMCMI/RMTWI 蹴RMYFU 蹶RMMTO 蹺RMGGU 蹼RMTCO 躁RMRRD 躂RMYGQ 躅RMWLI 躇RMTJA 躉TWBO 躊RMGNI 躍RMSMG 躑RMCKL/RMTKL 躡RMSJJ 躪RMTAG 躬HHN 躭HHLBU 躲HHHND/HHNSD 躺HHFBR 軀HHSRR 軋JJU 軌JJKN 軍BJWJ 軒JJMJ 軔JJSHH/JJSHI/JJSK 軛JJMSU 軟JJMBK/JJNO 軸JJLW 軻JJMNR 軼JJHQO 軾JJIPM 較JJYCK 載JIJWJ 輊JJMIG 輒JJSJU 輓JJNAU/JJSHU 輔JJIJB 輕JJMVM 輛JJMLB 輜JJVVW 輝FUBJJ 輟JJEEE 輦QOJWJ 輩LYJWJ 輪JJOMB 輮JJNHD 輯JJRSJ 輻JJMRW 輾JJSTV 輿HXJC 轂GJHNE 轄JJJQR 轅JJGRV 轉JJJII/JJMMI 轍JJYBK 轎JJHKB 轔JJFDQ 轟JJJJJ 轡VFR 辜JRYTJ 辟SRYTJ 辣YJDL 辦YJKSJ 辨YJHLJ/YJILJ 辭BBYTJ 辮YJVFJ 辯YJYRJ 辱MVDI 農DDMMV/TWMMV 迂YMD 迄YON 迅YNJ/YNK 迎YHVL/YZL 迢YSHR 迤YOPD 迥YBR 迦YKSR 迪YLW/YZW 迫NKHA/YHA 迭YHQO 迴NKWR/YWR 迷YFD 迸YTT 迺YMCW 追YHRR 退YAV 送YCMK/YTK 逃YLMO 逅YHMR 逆YTU 逍YFB 透YHDS 逐YMSO 逕YMVM 逖YKHF 逗YMRT 這YYMR 逛YKHG 逝YQHL 逞YRHG/YRMG 逢YHEJ 連YJWJ 逮YLE 週YBGR/YBQR 逵YGCG 逸YNAI/YNAU/YNUI/YSHI 逼YMRW 逾YOMN/YOMV 遁YHJU 遂YCMO/YTPO 遇YWLB 遍HOHSB/YHSB/YISB/YMSB 遏YAPV 遐YRSE/YRYE 遑YHAG 違YDMQ 遘YTTB 遙YBOU 遜YNDF 遞YHYN/YHYU/YZU 遣YLMR/YZR 遨YGSK/YQSK 適YYCB 遭YTWA 遮YITF/YZF 遲YSEQ/YSYQ/YZQ 遴YFDQ 遵YCMI/YTWI 遷YMWU 選YRUC/YRVC/YSUC 遺YLMC 遼YKCF 遽YYPO 避YSRJ 邀YHSK 邁YTWB 邂YNBQ 還YWLV 邇YMFB 邈YBHU 邏YWLG 邐YMMP 邑RAU 邕VVRAU 邢MJMJL/MTNL 那SQNL 邦HQNL/QJNL/QZL 邪MHNL 邱OMNL 邵SRNL 邸HINL/HMNL 郁KBNL 郊YKNL 郎IINL 郡SRNL 部YRNL 郭YDNL 郯FFNL 郵HMNL 都JANL 鄂RSNL 鄉VHIIL/VHSJL/VZL 鄒PUNL 鄙RWNL 鄧NTNL 鄭CKNL/TKNL 鄰FQNL/FZL/NLFDQ 鄱HWNL 酉MCWM 酊MWMN 酋CMCW/TCWM 酌MWPI/MWPM 配MWSU 酒EMCW 酗MWUK 酣MWTM 酥MWHD 酩MWNIR 酪MWHER 酬MWHLL/MWILL/MWMLL 酵MWJKD 酷MWHGR/MWHQR 酸MWICE 酹MWBDI 醃MWKLU/MWKLV 醇MWYRD 醉MWYOJ 醋MWTA 醒MWAHM 醖MWABT 醜MWHI/MWHUI 醣MWILR 醬VIMCW 醺MWHGF 釀MWYRV 釁HBMCH/HCMCH 采BD 釉BDLW/HDLW 釋HDWLJ/HZJ 野WGNIN/WZN 量AMWG 釐JKMWG/JZG 釗CLN 釘CMN 釜CKMGC/CZC 釣CPI/CPM 釦CR 釧CLLL 釵CEI 鈉COB 鈍CPU 鈎CPI 鈐COIN 鈔CFH 鈕CNG 鈞CPIM/CPMM 鈣CMYS 鈴COII/COML 鈷CJR 鈸CIKE/CIKK 鈾CLW/CZW 鉀CWL 鉋CPRU/CPSU 鉑CHA 鉗CTM 鉛CCR/CHNR 銀CAV/CZV 銅CBMR 銓COMG 銖CHJD/CZD 銘CNIR 銜HOCMN 銬CJKS 銷CFB 銻CCNH 銼COOG 鋁CRHR/CRR 鋅CYTJ 鋒CHEJ/CZJ 鋤CBMS 鋪CIJB 鋭CCRU 鋸CSJR 鋼CBTU 錄CVNE 錐COG 錘CHJM 錚CBSD/CNSD 錠CJMO 錢CII 錨CTW 錫CAPH 錯CTA 錳CNDT 錶CQMV 鍊CDWF/CZF 鍋CBBR 鍍CITE 鍛CHJE 鍥CQHK 鍬CHDF 鍵CNKQ/CZQ 鍾CHJG 鎂CTGK 鎅CWCL/CWOL 鎊CYBS 鎔CJCR 鎖CFBC 鎢CHRF 鎮CJBC/CJUC 鎳CHUD 鏃CYSK 鏈CYJJ 鏑CYCB 鏖IPC 鏗CSEG 鏘CVMI 鏜CFBG 鏟CYHM/CYKM 鏡CYTU 鏢CMWF 鏤CLAV/CLLV/CLWV 鏽CLX/CZX 鐃CGGU 鐐CKCF 鐘CYTG 鐮CICC/CIHC/CITC 鐲CWLI 鐳CMBW 鐵CHQO/CJIG/CZG 鐸CWLJ 鐺CFBW 鑄CGNI 鑑CSIT/CSMT 鑒SWC 鑠CVID 鑣CIPF 鑰COMB/CZB 鑲CYRV 鑼CWLG 鑽CHUC 鑾VFC 鑿TEC 閂ANM 閃ANO 閉ANDH 閏ANHG/ANMG 閑AND 閒ANB 間ANA 閔ANYK 閘ANWL 閡ANYVO 閣ANHER 閤ANOMR 閥ANOI 閨ANGG 閩ANLMI 閭ANRHR/ANRR 閲ANCRU 閻ANBHX/ANHSX/ANNHX/ANSHX/AZX 闆ANRRR 闈ANDMQ/AZQ 闋ANNOK 闌ANDWF 闐ANJBC/ANPBC 闔ANGIT 闖ANSQF 闡ANRRJ 闢ANSRJ 阜HRJ 阡NLHJ/NZJ 阪GHE/NLHE/NLME 阮NLMMU 阱JCTT/NLTT 防NLYHS 阿NLMNR 陀NLJP 附NLODI 陋NLMBV 陌NLMA/NZA 降NLHEQ 限NLAV/NZV 陛NLPPG 陝NLKOO 陟NLYLH 陡NLGYO 院NLJMU 陣NLJWJ 除NLOMD 陪NLYTR 陰NLOII 陲NLHJM 陳NLDW/NZW 陵NLGCE 陶NLPOU 陷NLHSX/NLNHX/NLSHX/NZX 陸NLGCG 隅NLWLB 隆NLHEM/NLOKM 隊NLCMO/NLTPO 隋NLKMB 隍NLHAG 階GPPA/NLPPA 隔NLMRB 隕MRRBC/NLRBC 隘NLCMT/NLTCT 隙NLFAF/NLFHF 際NLBOF 障NLYTJ 隧NLYCO/NLYTO 隨NLYKB 險NLOMO 隱NLBMP/NZP 隴NLYBP 隸DFLE 隻OGE 雁MOOG 雄KIOG 雅MHOG/MZG 集OGD 雇HSOG/ISOG/MSOG 雉OKOG 雋OGLMS 雌YMPOG 雍YVHG 雕BROG 雖RIOG 雛PUOG/PZG 雞BKHAF/BKOG 雯MBYK 零MBOII/MBOML 雷MBW 雹MBPRU/MBPSU 需MBMBL 霄MBFB 霆MBNKG 震MBMMV 霉MBOWY 霍MBOG 霎MBYTV 霏MBLMY 霑MBEYR 霓MBHXU 霖MBDD/MZD 霜MBDBU 霞MBRSE/MBRYE 霧MBNHS 霪MBEBG 露MBRMR 霸MBTJB/MWTJB 霹MBSRJ 霽MBYX/MZX 霾MBBHG 靂MBMDM/MBMHM 靄MBYRV 靈MBRRM/MBRRO 靖YTQMB 靛QBJMO 靜QBBSD/QZD 非LMSY/LMYYY/LZY 靠HGRLY/HQRLY/HZY 靡ICLMY/IDLMY/IZY 靦BMWL/MWBUU 靨MKMWL 靴TJOP 靶TJAU 靼TJAM 鞅TJLBK 鞋TJGG 鞍TJJV 鞏MKTLJ/MNTLJ 鞘TJFB 鞠TJPFD 鞣TJNHD 鞦TJHDF 鞭TJOMK 韁TJMWM/VFMWM 韃TJYGQ 韆TJYMU 韋DMRQ 韌DQSHH/DQSHI/DQSK/TJSHI 韓JJDMQ/JZQ 韜DQBHX 韭LMMM/LSMM/TLSM 韶YASHR 韻YARBC 響RHBR/VLYTA 頂MNMBC 頃PMBC 項MMBC 須HHMBC 頌CIMBC 預NNMBC 頑MUMBC 頒CHMBC 頓PUMBC/PZC 頗DEMBC 頤SLMBC 頭MTMBC 頰KOMBC 頷ORMBC 頸MMMBC 頹HUMBC 頻YHMBC 顆WDMBC 題AOMBC 額JRMBC 顎RSMBC 顏YHMBC/YZC 願MFMBC 顛JCMBC 類FKMBC 顥AFMBC 顧HGMBC/IGMBC/MGMBC 顫YMMBC 顯AFMBC 顰YCHHJ/YCHWJ 顱YTMBC 顺LLLO 颯YTHNI 颱HNIR 颳HNHJR/HNMJR 颶HNBMC 颺HNAMH 颼HNHXE 飄MFHNI 飢OIHN/OSHN/OYHN 飧NIOIV 飩OIPU/OSPU/OYPU 飪OIHG/OIMG/OSHG/OSMG/OYHG/OYMG 飭OIOKS/OSOKS/OYOKS 飯OIHE/OIME/OSHE/OSME/OYHE/OYME 飴OIIR/OSIR/OYIR 飼OISMR/OSSMR/OYSMR 飽OIPRU/OIPSU/OSPRU/OSPSU/OYPRU/OYPSU 飾OIOLB/OSOLB/OYOLB/OZB 餃OIYCK/OSYCK/OYYCK 餅OITT/OSTT/OYTT 餉OIHBR/OSHBR/OYHBR 養TCIAV/TCMAV/TOIAV/TOMAV/TZV 餌OISJ/OSSJ/OYSJ 餐YEOIV 餒OIBV/OSBV/OYBV 餓OIHQI/OSHQI/OYHQI 餘OIOMD/OSOMD/OYOMD 餚OIKKB/OSKKB/OYKKB 餛OIAPP/OSAPP/OYAPP 餞OIII/OSII/OYII 餡OIHSX/OINHX/OISHX/OSHSX/OSNHX/OSSHX/OYHSX/OYNHX/OYSHX 館OIJRR/ORJRR/OSJRR/OYJRR 餵OIWMV/OSWMV/OYWMV 餸OIYTK/OSYTK/OYYTK 餽OIHI/OIHUI/OSHUI/OYHI 餾OIHHW/OSHHW/OYHHW 餿OIHXE/OSHXE/OYHXE 饅OIAWE/OSAWE/OYAWE 饋OILMC/OSLMC/OYLMC 饑OIVII/OIVIK/OSVII/OSVIK/OYVII/OYVIK 饒OIGGU/OSGGU/OYGGU/OZU 饜MKOIV 饞OINRI/OSNRI/OYNRI 馥HAOAE 馨GEHDA 馭SFE 馮IMSQF 馱SFK 馳SFPD 馴SFLLL 駁SFKK 駐SFYG 駑VESQF 駒SFPR 駕KRSQF 駙SFODI 駛SFLK 駝SFJP 駟SFWC 駢SFTT 駭SFYVO 駱SFHER 駿SFICE/SZE 騁SFLWS 騎SFKMR 騏SFTMC 騖NKSQF 騙SFHSB/SFISB 騫JTCF 騮SFHHW 騰BFQF/BZF 騷SFEII 騾SFWVF 驀TAKF 驃SFMWF 驅SFSRR 驕SFHKB 驛SFWLJ 驟SFSEO 驢SFYPT 驥SFLPC 驪SFMMP 骯BBYHN 骰BBHNE 骷BBJR 骸BBYVO 骼BBHER 髏BBLAV/BBLLV/BBLWV 髒BBTMT 髓BBYKB 髖BBJTI 髦SHHQU 髭SHYMP 髮SHIKE/SHIKK/SHKE/SZK 髯SHGB 髻SHGR 鬃SHJMF 鬆SHDCI 鬍SHJRB/SZB 鬚SHHHC 鬢SHJMC 鬧ANYLB/LNYLB/LZB 鬨ANTC/LNTC 鬱DDBUH 魁HIYJ 魂MIHI/MIHUI 魅HIJD 魏HVHI/HVHUI 魔ICHI/ICHUI/IDHI/IDHUI 魘MKHI/MKHUI 魯NWFA 魷NFIKU 鮑NFPRU/NFPSU 鮫NFYCK 鮮NFTQ 鯊EHNWF 鯨NFYRF 鯽NFAIL/NFHPL/NFHSL/NFHYL 鰍NFHDF 鰓NFWP 鰥NFWLE/NFWLF/NFWLO 鰭NFJPA 鰱NFYJJ 鰻NFAWE 鰾NFMWF 鱔NFTGR/NFTTR 鱖NFMTO 鱗NFFDQ 鱷NFMGR 鱸NFYPT 鳩KNHAF 鳳HNMAF 鳶IPHAF 鴆LUHAF/LZF 鴉MHHAF 鴕HFJP 鴛NUHAF 鴣JRHAF 鴦LKHAF 鴨WLHAF 鴻EMHF 鴿ORHAF 鵑RBHAF 鵝HIHAF 鵠HRHAF 鵡MMHAF 鵪KUHAF/KVHAF 鵬BBHF 鵰BRHAF 鶉YDHAF 鶯FFBHF 鶴JGHAF/OGHAF 鷂BUHAF 鷓IFHAF 鷗SRHAF 鷥VFHAF 鷹IGF/IGHAF/IOGF 鷺RRHAF 鸚BVHAF 鸞VFHAF 鹵YWII 鹼MRIHR/YWOMO 鹽SWBT 麋IPFD 麒IPTMC 麓DDIXP 麝IPHHI 麟IPFDQ 麩DEQO/JEQO/JNQO 麪DEMLS/JEMLS/JNMLS 麴DEPFD/JEPFD/JETW/JNPFD 麵DEMWL/JEMLS/JEMWL/JEMYS/JNMWL 麼ICHI/ICVI/IDHI/IDVI/IZI 麾ICHQU/IDHQU 黍HDOE 黎HHOE 黏HEYR/HZR 黔WFOIN 默WFIK 黛OPWGF 黜WFUU 黝WFVIS 黠WFGR 黨FBRWF 黯WFYTA 黴HOUFK 黷WFGWC 鼇GKRXU/QKRXU 鼈FKRXU 鼕GEHEM/GEHEY 鼙GEHHJ/GEHWJ 鼬HVLW 鼴HVSAV 鼾HLMJ 齟YUBM 齡YUOII/YUOML 齣YUPR 齦YUAV 齪YURYO 齬YUMMR 齲YUHLB 齷YUSMG 龐IYBP/MYBP 龔YPTC"),
+SIMP=unpack("国WMGI/WGI 东KD 学FBND 爱BBME 门ILS/LS 问ILSR/LSR 这YIK/YYK 头YK 车JQ 马NVSM 鸟HVSM 鱼NWM 话IVHJ 铁OVHQO/OPHQO/CHQO 红VMM 给VOMR 写BYSM/BMYSM 风HNK/HNIK 见BLU 龙IKP 邓WL 韦QS/FJQ 开MJ 长LHMO 书LGA/IDS 买NUK/NYK 实JYK 与YSM/LSM 专QII/QNI 丛SSW/OOM 丝VVM 丢HGI 两MOOB/MBOO 严MFMH 丧GCSV 个OL/O 丰QJ/QZJ 临LLOS 为IKSI/IKNF 丽MMBB 举FCHQ/FCQ 义IK/IKI 乐HVD/HVF 欢ENO 么HI 产YTMH/YTHM 亲YTD 仅ONE 伟OQS 传OQMI/OQNI 伤OOKS 伦OOMB 伪OIKF 价OOLL 众OOO 优OIKU 伙OF 会OMMI 伯OHA/OZA 估OJR 伴OFQ 伶OOII/OOML 伸OLWL 伺OSMR 位OYT/OZT 低OHPM/OHVI 住OYG 佐OKM 体ODM 何OMNR 佛OLLN 作OHS/OOS 佣OBQ 佩OHNB 佳OGG 使OJLK 侄OMIG 侦OYBC 侧OBCLN 侨OHKLL 侮OOWJ/OOWY 侯ONMK 侵OSME/OZE 便OMLK 促ORYO 俊OICE 俗OCOR 保ORD 信OYMR 俩OMBOO 俭OOMC 修OLHH/OLOH 俯OIODI 俱OBMC 俸OQKQ 俺OKLU/OKLV 倍OYTR 倒OMGN 倔OSUU 倘OFBR 候OLNK/OZK 倚OKMR 借OTA 倡OAA 倦OFQU 倩OQMB 倪OHXU 债OQMBC 值OJBM 倾OPMBC 假ORSE/ORYE 偎OWMV 偏OHSB/OISB/OMSB 做OJRK 停OYRN 健ONKQ 偶OWLB 偷OOMN/OZN 偿OFBMI 傀OHI/OHUI 傅OIBI/OILI 傍OYBS 储OIVKA 催OUOG 傲OGSK/OQSK 傻OHCE/OUCE 像ONAO 僚OKCF 僧OCWA 僵OMWM 僻OSRJ 仪OIK/OYI 亿ON 仁OMM/OZM 什OJ/OZJ 仇OKN 今OIN 介OLL 仍ONHS 从OO 仑OMP 仓OSU 仕OG/OZG 他OPD 仗OJK 付ODI/OZI 仙OU 代OIP 令OINI/OMSL 以VIO/VZO"),
+WORDS="快快樂樂 一心一意 水落石出 海闊天空 風和日麗 春暖花開 萬眾一心 自強不息 實事求是 勇往直前 光明磊落 全心全意 成千上萬 日新月異 百花齊放 全力以赴 高瞻遠矚 大公無私 見義勇為 推陳出新 精益求精 溫故知新 舉一反三 學無止境 集思廣益 持之以恆 腳踏實地 身體健康 萬事大吉 心想事成 笑容滿面 和氣生財 古往今來 四海為家 天長地久 白雲藍天 青山綠水 鳥語花香 風調雨順 國泰民安 山明水秀 五湖四海 千變萬化 有口皆碑 名副其實 出類拔萃 力爭上游 一日千里 前程似錦 蒸蒸日上 欣欣向榮 百折不撓 同心協力 守望相助 相親相愛 飲水思源 知足常樂 平易近人 謙虛謹慎 光明正大 堂堂正正 言行一致 一視同仁 開門見山 倉頡輸入 電腦科技 資訊網絡 智慧時代 社會發展 文化教育 知識創新 思維理想 目標努力 奮鬥成功 勝利光明 前途希望 未來世界 和平友誼 合作團結 互助關懷 愛護環境 保護自然 風景優美 運動精神 熱誠服務 認真負責 態度謙虛 禮貌師長 孝順父母 家庭溫馨 幸福安定 繁榮經濟 貿易商業 管理交通 建設規劃 醫療衛生 藝術音樂 書畫閱讀 寫作練習 測試成績 優良效率 準確速度 清楚簡單 勇敢堅持 微笑喜悅 蔚藍旅遊 探索發現 歷史傳統 品質卓越 香港九龍 新界離島 茶餐廳裏 唔該晒你 真係好靚 今日放假 邊度搵食 傾偈飲茶 行街睇戲 準時返學 車水馬龍 畫龍點睛 一石二鳥 百聞不如一見 一見如故 無中生有 無可奈何 妙筆生花 下筆成章 妙手回春 出口成章 一鳴驚人 花容月貌 喜出望外 哄堂大笑 分甘同味 可歌可泣 樂在其中 樂不可支 助人為樂 自由自在 自言自語 自高自大 自作自受 自食其力 安然無恙 天下無雙 天下太平 天造地設 日久天長 月白風清 月下老人 平安無事 平心而論 蟬不知雪 語重心長 同甘共苦 同舟共濟 和風細雨 春風化雨 風花雪月 風雨無阻 春花秋月 冬暖夏涼 冰天雪地 水深火熱 山高水長 江山如畫 名山大川 高山流水 源遠流長 川流不息 力所能及 力不從心 一字千金 一言九鼎 言而有信 一孔之見 一技之長 一無所有 一無所有 一分一秒 一生一世 九牛一毛 九死一生 生死存亡 一路平安 一路順風 上行下效 上下其手 上下一心 目中無人 一目十行 耳目一新 眼高手低 低三下四 情同手足 深情厚誼 深入淺出 深入人心 眾志成城 眾所周知 公正無私 公私分明 正人君子 一身正氣 身體力行 心滿意足 心平氣和 心安理得 心直口快 好自為之 自告奮勇 奮發向上 高人一等 相安無事 望子成龍 吉人天相 萬事如意 大吉大利 多才多藝 見多識廣 五花八門 五體投地 五光十色 四面八方 四海一家 千辛萬苦 千方百計 萬水千山 千秋萬代 百發百中 一五一十 十全十美 十年樹木 百年樹人 春華秋實 秋風落葉 一葉知秋 日落西山 日積月累 誠心誠意".split(" "),
+POOL_CANDIDATES=["words.txt","questions.txt","vocab.txt","idioms.txt","words.atc","questions.atc","vocab.atc","idioms.atc"],
+HINT="按「?」可反查字碼",COLS=32,GROUPS=7,
+MENU_ITEMS=["軟體簡介","倉頡入門","打字練習","實力測驗","倉頡查碼","最佳成績排行榜","音效"],
+isHanX=c=>{const cp=c.codePointAt(0);return(cp>=0x3400&&cp<=0x9FFF)||(cp>=0xF900&&cp<=0xFAFF)||(cp>=0x20000&&cp<=0x323AF)};
+
+let DICT={},REV={},PREF=new Set();
+function buildDict(ext){
+  const extMap={},d={};
+  if(ext)for(const l of ext.split(/\r?\n/)){
+    const p=l.replace(/[#;].*$/,"").replace(/[=,;\t]+/g," ").trim().split(/\s+/);
+    if(p.length<2)continue;
+    let ch="",codes=[];
+    if(/^[A-Za-z]{1,5}$/.test(p[0])){ch=p[1];codes=[p[0]]}else if(isHanX(p[0])){ch=p[0];codes=p.slice(1).filter(x=>/^[A-Za-z]{1,5}$/.test(x))}else continue;
+    if(isHanX(ch))for(const c of codes){const u=c.toUpperCase();(extMap[ch]||(extMap[ch]=[])).includes(u)||extMap[ch].push(u)}
+  }
+  const add=(ch,c)=>{if(ch)(Array.isArray(c)?c:[c]).forEach(r=>{const s=String(r||"").toUpperCase();if(/^[A-Z]{1,5}$/.test(s))(d[ch]||(d[ch]=[])).includes(s)||d[ch].push(s)})},
+  base=unpack("日A 月B 金C 木D 水E 火F 土G 竹H 戈I 十J 大K 中L 一M 弓N 人O 心P 手Q 口R 尸S 廿T 山U 女V 田W 難TOOG/TOG 卜Y 重HJWG");
+  [T1000,T5000,SIMP,base].forEach(src=>Object.keys(src).forEach(c=>{if(!extMap[c])add(c,src[c])}));
+  Object.assign(d,extMap);
+  return{dict:d,extCount:Object.keys(extMap).length};
+}
+function rebuild(){REV={};PREF=new Set();Object.keys(DICT).forEach(ch=>DICT[ch].forEach(code=>{(REV[code]||(REV[code]=[])).push(ch);for(let l=1;l<code.length;l++)PREF.add(code.slice(0,l))}))}
+DICT=buildDict().dict;rebuild();
+
+const filterCJK=s=>[...String(s||"")].filter(c=>DICT[c]).join(""),
+filterWords=s=>String(s||"").split(/[\s,.;:!?、，。；：！？「」『』（）()\[\]·—\-…\r\n\t]+/).map(filterCJK).filter(Boolean),
+isTypeable=c=>!!DICT[c],
+matchBuf=(code,buf)=>!buf.includes("Z")?code===buf:new RegExp("^"+buf.split("Z").join(".*")+"$").test(code),
+hasZMatch=buf=>buf.includes("Z")&&Object.keys(REV).some(c=>new RegExp("^"+buf.split("Z").join(".*")).test(c));
+function candidates(buf,tc){if(!buf.length)return[];let out=buf.includes("Z")?Object.keys(REV).filter(c=>matchBuf(c,buf)).flatMap(c=>REV[c]):REV[buf]?.slice()||[];const u=[...new Set(out)];if(tc&&u.indexOf(tc)>0&&!buf.includes("Z")){u.splice(u.indexOf(tc),1);u.unshift(tc)}return u.slice(0,90)}
+const decodeBuf=buf=>{let t;try{t=new TextDecoder("utf-8",{fatal:true}).decode(buf)}catch(e){t=new TextDecoder("big5").decode(buf)}return t.replace(/^\uFEFF/,"").trim()},
+decodeFile=ev=>decodeBuf(ev.target.result);
+
+const IDB={DB:"cangjie_kv",STORE:"kv",db:null,
+open(){return new Promise((res,rej)=>{if(IDB.db)return res(IDB.db);try{const r=indexedDB.open(IDB.DB,1);r.onupgradeneeded=()=>{try{r.result.createObjectStore(IDB.STORE)}catch(e){}};r.onsuccess=()=>res(IDB.db=r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}})},
+get(k){return IDB.open().then(db=>new Promise((res,rej)=>{const r=db.transaction(IDB.STORE,"readonly").objectStore(IDB.STORE).get(k);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}))},
+set(k,v){return IDB.open().then(db=>new Promise((res,rej)=>{const r=db.transaction(IDB.STORE,"readwrite").objectStore(IDB.STORE).put(v,k);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)}))}};
+
+let POOL_DONE=false;
+const stripATC=t=>String(t).replace(/^\uFEFF/,"").split(/\r?\n/).filter(l=>!/^\s*(#|@|---)/.test(l)).join(""),
+parsePool=t=>String(t).split(/[\r\n,;、，；\t ]+/).filter(w=>[...w].every(c=>c.codePointAt(0)<0x20000)).map(filterCJK).filter(w=>w.length>=2);
+function poolFinish(ws,src){if(POOL_DONE)return;POOL_DONE=true;const st=$("compPoolStatus");if(!st)return;st.style.color="#004080";if(ws?.length){S.compPool=ws;if(sound.en&&sound.ctx?.state==="running")sound.ok();st.textContent=`✅ 題庫：${src}（${ws.length} 詞）`}else st.textContent="未找到題庫檔（使用內建題庫）"}
+async function tryLoadPool(){
+  try{if(typeof window.EXTERNAL_WORDS==="string"&&window.EXTERNAL_WORDS.trim()){const ws=parsePool(window.EXTERNAL_WORDS);if(ws.length)return poolFinish(ws,"words_dict.js")}}catch(e){}
+  try{const v=await IDB.get("atc_pool");if(typeof v==="string"&&v.trim()){const arts=JSON.parse(v).filter(Boolean);if(arts.length){S.atcPool=arts;POOL_DONE=true;const st=$("compPoolStatus");if(st){st.style.color="#004080";st.textContent=`✅ 文章題庫：${arts.length} 篇 .atc（瀏覽器記憶）`}return}}}catch(e){}
+  try{const v=await IDB.get("words_pool");if(typeof v==="string"&&v.trim()){const ws=parsePool(v);if(ws.length)return poolFinish(ws,"瀏覽器記憶")}}catch(e){}
+  if(location.protocol!=="file:"){
+    try{const r=await fetch("pool.txt");if(r.ok){const ws=parsePool(decodeBuf(await r.arrayBuffer()));if(ws.length)return poolFinish(ws,"pool.txt")}}catch(e){}
+    for(const f of shuffle(POOL_CANDIDATES)){const st=$("compPoolStatus");if(st){st.style.color="#004080";st.textContent=`偵測中…（${f}）`}
+    try{const r=await fetch(f);if(!r.ok)continue;const txt=decodeBuf(await r.arrayBuffer());
+    if(/\.atc$/i.test(f)){const a=stripATC(txt).trim();if(a){S.atcPool=[a];POOL_DONE=true;if(st){st.style.color="#004080";st.textContent=`✅ 文章題庫：${f}（自動偵測）`}return}}
+    const ws=parsePool(stripATC(txt));if(ws.length)return poolFinish(ws,f)}catch(e){}}
+  }
+  poolFinish(null);
+}
+
+const S={view:"MENU",sel:1,charIndex:0,buf:"",start:null,done:0,keys:0,errs:0,list:[],advTimer:null,zTimer:null,type:"COMPUTER",dur:5,rem:300,end:0,tStart:0,tRun:false,fin:false,tInt:null,txtContent:null,txtName:"",compPool:null,atcPool:null,atcArticle:null,articleMode:false,pages:[],typed:[],p:0,g:0,c:0,cbuf:"",cand:[],cpage:0,ok:0,bad:0,result:null,saved:false,scoreId:null,escSt:0,escTimer:null,hintTimer:null,lbSt:0,lbTimer:null,escConfirm:false,pendingDict:null,hasPhys:false,examTitle:"【實力測驗】電腦命題",examSrc:[],srcIdx:0,practiceScope:"ALL"},
+LB_KEY="hcr_scores_v20";
+let LB=null;
+const sortLB=l=>l.slice().sort((a,b)=>(+b.speed||0)-(+a.speed||0)||(+b.acc||0)-(+a.acc||0)||String(b.date||"").localeCompare(a.date||""));
+function getLB(){try{const r=localStorage.getItem(LB_KEY);if(r){const p=JSON.parse(r);if(Array.isArray(p))return LB=sortLB(p)}}catch(e){}return LB?sortLB(LB):LB=sortLB([{id:"d1",name:"香港小學霸",mode:"測驗(電腦)",duration:"5分鐘",speed:68,acc:99,date:"2026-11-01"},{id:"d2",name:"倉頡快打手",mode:"測驗(自訂)",duration:"5分鐘",speed:58,acc:95,date:"2026-11-02"}])}
+function saveScore(it){if(S.saved)return;S.saved=true;const id="s"+Date.now();S.scoreId=id;LB=sortLB(getLB().concat([{...it,id}])).slice(0,30);try{localStorage.setItem(LB_KEY,JSON.stringify(LB))}catch(e){}}
+
+const mqT=q=>window.matchMedia(q).matches;
+let _hadTouch=false,rafId=null;
+window.addEventListener("touchstart",()=>_hadTouch=true,{passive:true});
+const isTouch=()=>_hadTouch||mqT("(pointer:coarse)")||mqT("(any-pointer:coarse)"),
+schedScale=()=>{if(rafId)cancelAnimationFrame(rafId);rafId=requestAnimationFrame(scaleScreen)};
+function scaleScreen(){
+  const el=$("dosScreen");if(!el)return;
+  try{
+    const vv=window.visualViewport,W=vv?.width>0?vv.width:innerWidth,H=vv?.height>0?vv.height:innerHeight,
+    handLand=isTouch()&&W>H;
+    document.body.classList.toggle("handheld-land",handLand);
+    if(handLand){
+      const sc=Math.min((W*.8)/960,(H*.8)/540);
+      el.style.transform=`scale(${Math.max(.25,sc).toFixed(4)})`;
+    }else{
+      const kpH=$("touchKeypad")?.style.display==="flex"?240:0,sc=Math.min((W-16)/960,(H-kpH-16)/540);
+      el.style.transform=`scale(${Math.max(.25,sc).toFixed(4)})`;
+    }
+  }catch(e){el.style.transform="scale(.5)"}
+}
+addEventListener("resize",schedScale);
+addEventListener("orientationchange",()=>setTimeout(schedScale,300));
+window.visualViewport?.addEventListener("resize",schedScale);
+
+const normKey=k=>k.length===1?k.toUpperCase():({Backspace:"BACKSPACE",PageUp:"PAGEUP",PageDown:"PAGEDOWN",Escape:"ESC",Enter:"ENTER",Tab:"TAB"})[k]||k;
+function resolveKey(e,isIn){
+  if(!isIn&&e.code){if(/^Key[A-Z]$/.test(e.code))return e.code.slice(3);if(/^Digit[1-9]$/.test(e.code)&&!e.shiftKey)return e.code.slice(5);if(e.code==="Slash"&&e.shiftKey)return"?";if(e.code==="BracketLeft")return"[";if(e.code==="BracketRight")return"]";if(e.code==="Space")return" "}
+  const k=normKey(e.key);
+  return k==="？"?"?":k;
+}
+
+const VIEWS={MENU:"mainMenuPanel",EXIT_CONFIRM:"exitConfirmDialog",DOS_EXIT:"dosExitScreen",EXAM_SETUP:"examSetupDialog",EXAM:"exam18Screen",RESULT:"resultView",PRACTICE:"practiceWindow",QUERY:"queryWindow",LEADERBOARD:"leaderboardWindow",ABOUT:"aboutWindow",TUTORIAL:"tutorialWindow"};
+function syncSetup(){const c=S.type==="COMPUTER";$("radioComputer").classList.toggle("active",c);$("radioCustom").classList.toggle("active",!c);$("customTextInputGroup").style.display=c?"none":"flex";$("compPoolGroup").style.display=c?"flex":"none"}
+function setView(v,opt={}){
+  if(v!=="EXAM"){clearInterval(S.tInt);S.tInt=null}
+  S.escSt=0;S.escConfirm=false;S.lbSt=0;
+  const clb=$("clearLbBtn");if(clb)clb.textContent="重置";
+  sound._clear();
+  ["escTimer","advTimer","hintTimer","lbTimer","zTimer"].forEach(t=>{if(S[t]){clearTimeout(S[t]);S[t]=null}});
+  try{document.activeElement?.blur();window.scrollTo(0,0)}catch(e){}
+  setTimeout(schedScale,120);
+  if((S.view==="EXAM"||S.view==="PRACTICE")&&v!=="EXAM"&&v!=="PRACTICE"&&S.pendingDict){applyDict(S.pendingDict);S.pendingDict=null}
+  S.view=v;
+  const exit=v==="DOS_EXIT";
+  $("topHeaderBar").style.display=v==="EXAM"||exit?"none":"flex";
+  $("bottomFooterBar").style.display=exit?"none":"flex";
+  Object.keys(VIEWS).forEach(k=>$(VIEWS[k]).style.display=k===v||(k==="MENU"&&v==="EXIT_CONFIRM")?"flex":"none");
+  $("touchKeypad").style.display=(v==="EXAM"||v==="PRACTICE")&&!(S.hasPhys||(!_hadTouch&&!mqT("(any-pointer:coarse)")&&mqT("(pointer:fine)")&&mqT("(hover:hover)")))?"flex":"none";
+  if(v==="EXAM_SETUP")syncSetup();
+  if(v==="PRACTICE"){updatePracticeScopeUI();if(!opt.keep)startPractice()}
+  if(v==="LEADERBOARD")renderLB();
+  if(v==="QUERY")setTimeout(()=>$("queryCharInput")?.focus(),50);
+  if(v==="RESULT")setTimeout(()=>$("resultNameInput")?.focus(),50);
+  $("footerHint").textContent=v==="MENU"?(isTouch()?"💡 螢幕鍵盤橫掃切換字根｜":"")+"↑↓ 選擇，Enter 進入｜或按 1-7 直接進入":v==="EXAM_SETUP"?"按 1/2 切換｜Enter 開始":v==="PRACTICE"?"A-Z 輸入字碼，Space 確認":"按 Esc 返回主選單";
+  schedScale();
+}
+function menuAction(i){
+  if(i!==7)sound.key();
+  const m=["","ABOUT","TUTORIAL","PRACTICE","EXAM_SETUP","QUERY","LEADERBOARD"];
+  if(i>=1&&i<=6)setView(m[i]);
+  else if(i===7){
+    sound.en=!sound.en;const d=$("soundDot");if(d)d.style.display=sound.en?"block":"none";
+    if(sound.en){sound.unlock();setTimeout(()=>{if(sound.ctx?.state==="running")sound.ok();else{sound.en=false;if(d)d.style.display="none";sfxToast("⚠️ 音效被此環境封鎖（預覽／iframe 限制）——請下載本檔以獨立瀏覽器分頁開啟")}},400)}else sound._clear();
+  }
+}
+let __menuLast=0;
+window.__menuGo=i=>{try{const now=Date.now();if(now-__menuLast<250||S.view!=="MENU")return;__menuLast=now;S.sel=i;updateMenu();menuAction(i)}catch(e){}};
+function buildMenu(){$("mainMenuPanel").innerHTML=MENU_ITEMS.map((t,i)=>`<div class="menu-item-row${i+1===S.sel?" selected":""}" data-i="${i+1}" onclick="__menuGo(${i+1})"><div class="menu-check-box">${i===6?`<div class="sound-indicator" id="soundDot" style="display:${sound.en?"block":"none"}"></div>`:""}</div><div class="menu-num">${i+1}</div><div class="menu-btn">${t}</div></div>`).join("")}
+function updateMenu(){document.querySelectorAll("#mainMenuPanel .menu-item-row").forEach(r=>r.classList.toggle("selected",+r.dataset.i===S.sel))}
+
+function getCommonChars(){
+  try{
+    let l=window.charList||(typeof charList!=="undefined"?charList:null);
+    if(!Array.isArray(l)||!l.length){
+      l=Object.keys(T1000).filter(c=>c.length===1);
+    }
+    return Array.isArray(l)?l.filter(c=>DICT[c]):null;
+  }catch(e){return Object.keys(T1000).filter(c=>c.length===1&&DICT[c])}
+}
+function updatePracticeScopeUI(){
+  const cBtn=$("scopeCommonBtn"),aBtn=$("scopeAllBtn");if(!cBtn||!aBtn)return;
+  const cc=getCommonChars(),can=!!(cc&&cc.length);
+  cBtn.disabled=!can;cBtn.style.opacity=can?"":"0.45";cBtn.style.cursor=can?"pointer":"not-allowed";
+  if(!can&&S.practiceScope==="COMMON")S.practiceScope="ALL";
+  const isC=S.practiceScope==="COMMON"&&can;
+  cBtn.style.background=isC?"#ffe600":"";cBtn.style.color=isC?"#000":"";
+  aBtn.style.background=!isC?"#ffe600":"";aBtn.style.color=!isC?"#000":"";
+}
+function setPracticeScope(scope){if(scope==="COMMON"&&!(getCommonChars()?.length))return sound.err();S.practiceScope=scope;updatePracticeScopeUI();if(S.view==="PRACTICE")startPractice()}
+const mkItem=c=>({char:c,code:DICT[c][0],codes:DICT[c],maxLen:Math.max(...DICT[c].map(x=>x.length))});
+const isSingleHan=c=>typeof c==="string"&&[...c].length===1&&!!DICT[c];
+function pool(){
+  if(S.practiceScope==="COMMON"){
+    const cs=(getCommonChars()||[]).filter(isSingleHan);
+    if(cs.length){const src=shuffle(cs);return Array.from({length:20},(_,i)=>mkItem(src[i%src.length]))}
+    S.practiceScope="ALL";updatePracticeScopeUI();
+  }
+  return shuffle(Object.keys(DICT).filter(c=>isSingleHan(c)&&!SIMP[c]&&c!=="難"&&c!=="重"&&c.codePointAt(0)<0x20000&&DICT[c][0].length>=2)).slice(0,20).map(mkItem);
+}
+let AUX_MODE=0; // 0: 字母+字根, 1: 僅字母, 2: 僅字根(放大), 3: 關
+function cycleAuxMode(){
+  AUX_MODE=(AUX_MODE+1)%4;
+  sound.nav();
+  const it=S.list[S.charIndex%20];
+  if(it)syncSlots(it);
+}
+function startPractice(){Object.assign(S,{charIndex:0,buf:"",start:null,done:0,keys:0,errs:0,list:pool()});clearTimeout(S.advTimer);S.advTimer=null;renderPractice();$("dispPrompt").textContent="按 A-Z 輸入字碼，打滿後按 Space 確認";$("rtSpeed").textContent="0.0";$("rtAcc").textContent="100%"}
+const slots=n=>$("codeSlotContainer").innerHTML=Array.from({length:n},(_,i)=>`<div class="p-slot" id="ps${i}"><span class="slot-let">_</span><span class="slot-rad" style="display:none"></span></div>`).join("");
+function renderPractice(){if(!S.list.length)S.list=pool();const it=S.list[S.charIndex%20];if(!it)return;$("dispChar").textContent=it.char;$("charTypeBadge").textContent=it.code.length+"碼";$("dispStruct").textContent="三代"+it.code.length+"碼";$("winProgress").textContent="進度："+(S.charIndex+1)+"/20";slots(it.maxLen);S.buf="";const r=$("practiceQueryResult");if(r)r.textContent="";syncSlots(it)}
+function syncSlots(it){
+  const showL=(AUX_MODE===0||AUX_MODE===1);
+  const showR=(AUX_MODE===0||AUX_MODE===2);
+  const bigR=(AUX_MODE===2);
+  for(let i=0;i<it.maxLen;i++){
+    const s=$("ps"+i);if(!s)continue;
+    const lEl=s.querySelector(".slot-let"),rEl=s.querySelector(".slot-rad");
+    const k=i<S.buf.length?S.buf[i]:"";
+    if(lEl){
+      lEl.textContent=k||"_";
+      lEl.style.display=showL?"inline":"none";
+    }
+    if(rEl){
+      const rad=k?CJM[k]||"":"";
+      rEl.textContent=rad;
+      rEl.style.display=showR&&rad?"block":"none";
+      rEl.style.fontSize=bigR?"22px":"10px";
+      rEl.style.color=bigR?"#ff5":"#5f5";
+    }
+    s.className="p-slot"+(k?(it.codes.some(c=>c.startsWith(S.buf.slice(0,i+1)))?" ok":" err"):"");
+  }
+}
+function clearSlots(){clearTimeout(S.advTimer);S.advTimer=null;const it=S.list[S.charIndex%20];S.buf="";if(it){slots(it.maxLen);syncSlots(it)}}
+const doPQuery=()=>{const out=$("practiceQueryResult"),it=S.list[S.charIndex%20];if(!out||!it)return;const c=it.codes,rad=[...c[0]].map(k=>CJM[k]||k).join("");out.style.color="#5ff";out.textContent=`「${it.char}」= ${rad}(${c[0]})${c.length>1?"（容錯："+c.slice(1).join("/")+"）":""}`};
+function practiceKey(k){
+  clearTimeout(S.advTimer);S.advTimer=null;const it=S.list[S.charIndex%20];if(!it)return;const vc=it.codes;
+  if(k==="Z"&&!vc.join("").includes("Z")){sound.err();$("dispPrompt").textContent="⚠️ Z 萬用鍵僅限測驗模式";clearTimeout(S.zTimer);S.zTimer=setTimeout(()=>{if(S.view==="PRACTICE"&&S.charIndex<20)$("dispPrompt").textContent="按 A-Z 輸入字碼，打滿後按 Space 確認"},2500);return}
+  if(k==="TAB"&&S.charIndex<20){sound.nav();return++S.charIndex>=20?practiceDone():(renderPractice(),updatePStats())}
+  if(k==="ENTER"||k===" "){if(S.charIndex>=20){sound.key();return startPractice()}if(S.buf&&vc.includes(S.buf)){sound.ok();S.done++;if(++S.charIndex>=20)return practiceDone();renderPractice()}else if(S.buf){sound.err();S.keys++;S.errs++;clearSlots()}else sound.err();return updatePStats()}
+  if(k==="BACKSPACE"){if(S.buf){sound.key();const wasOk=vc.some(c=>c.startsWith(S.buf));S.buf=S.buf.slice(0,-1);if(S.keys>0)S.keys--;if(!wasOk&&S.errs>0)S.errs--;syncSlots(it)}return}
+  if(k==="?"){sound.key();return doPQuery()}
+  if(/^[A-Z]$/.test(k)){if(S.charIndex>=20){sound.nav();$("dispPrompt").textContent="已完成 — 按 Enter 再練一輪";return}if(!S.start)S.start=Date.now();S.keys++;if(S.buf.length<it.maxLen){const nb=S.buf+k,ok=vc.some(c=>c.startsWith(nb));S.buf=nb;syncSlots(it);ok?sound.key():(sound.err(),S.errs++)}else{sound.err();S.errs++}}
+  updatePStats();
+}
+function practiceDone(){const min=Math.max((Date.now()-S.start)/6e4,.008),sp=(S.done/min).toFixed(1),ac=S.keys>0?Math.round((S.keys-S.errs)/S.keys*100):100;$("rtSpeed").textContent=sp;$("rtAcc").textContent=ac+"%";$("dispPrompt").textContent=`🎉 完成！速度${sp}字/分，準確率${ac}% — 按 Enter 再練`}
+function updatePStats(){if(!S.start)return;const min=Math.max((Date.now()-S.start)/6e4,.008);$("rtSpeed").textContent=(S.done/min).toFixed(1);$("rtAcc").textContent=(S.keys>0?Math.max(0,Math.round((S.keys-S.errs)/S.keys*100)):100)+"%"}
+
+function examWords(mins){let p=S.compPool?.length?S.compPool.slice():WORDS.filter(w=>[...w].every(c=>DICT[c])).concat(shuffle(Object.keys(T1000).filter(c=>DICT[c]?.[0].length>=2)).slice(0,80));if(!p.length)p=WORDS.slice();const target=Math.max(448,(mins||5)*120),ws=[];let tot=0,g=0;while(tot<target&&g++<20000)for(const w of shuffle(p)){if(tot>=target)break;ws.push(w);tot+=[...w].length}return ws}
+function wordsToLines(ws){const chunks=[],lines=[];for(const w of ws){const cs=[...w];for(let i=0;i<cs.length;i+=COLS)chunks.push(cs.slice(i,i+COLS))}let cur=[];for(const cs of chunks)if(cur.length+cs.length>COLS){while(cur.length<COLS)cur.push(" ");lines.push(cur);cur=cs.slice()}else cur=cur.concat(cs);if(cur.length){while(cur.length<COLS)cur.push(" ");lines.push(cur)}return lines}
+function pushPages(lines){for(let i=0;i<lines.length;i+=GROUPS){const pg=lines.slice(i,i+GROUPS);while(pg.length<GROUPS)pg.push(new Array(COLS).fill(" "));S.pages.push(pg.flat());S.typed.push(new Array(COLS*GROUPS).fill(""))}}
+function appendPages(n){for(let k=0;k<n;k++){const tgt=COLS*GROUPS,ws=[];let tot=0,g=0;while(tot<tgt&&g++<500&&S.examSrc.length){const w=S.examSrc[S.srcIdx++%S.examSrc.length];ws.push(w);tot+=[...w].length}if(!ws.length)break;pushPages(wordsToLines(ws))}}
+
+function prepExam(mins){
+  let ws;
+  if(S.articleMode){
+    ws=[String(S.atcArticle||"").replace(/^\uFEFF/,"").replace(/[\r\n]+/g,"")];
+  }else if(S.type==="CUSTOM"){
+    ws=String(S.txtContent||$("customInputString").value).split(/\s+/).filter(Boolean);
+  }else{
+    ws=examWords(mins);
+  }
+  if(!ws.some(w=>[...w].some(isTypeable)))ws=["倉頡輸入法"];
+  S.examSrc=ws;S.srcIdx=0;S.pages=[];S.typed=[];
+  pushPages(wordsToLines(ws));
+  Object.assign(S,{p:0,g:0,c:0,cbuf:"",cand:[],cpage:0,ok:0,bad:0,fin:false});
+  if(S.pages.length)nextNonSpace();
+}
+
+function startExam(){
+  if(S.type==="CUSTOM"&&filterCJK(S.txtContent||$("customInputString").value).length<5){$("examSetupMsg").textContent="⚠️ 自訂文字可用漢字不足五個（部分字不在字庫）";return sound.err()}
+  S.articleMode=false;S.atcArticle=null;
+  if(S.type==="COMPUTER"&&S.atcPool?.length){S.atcArticle=S.atcPool[Math.random()*S.atcPool.length|0];if(filterCJK(S.atcArticle).length>=5)S.articleMode=true;else S.atcArticle=null}
+  const m=Math.min(30,Math.max(1,+$("examTimeInput").value||5));
+  Object.assign(S,{dur:m,rem:m*60,tRun:false,tStart:0,fin:false,saved:false,scoreId:null,escSt:0,examTitle:S.articleMode?"【實力測驗】電腦命題（文章卷）":S.type==="COMPUTER"?(S.compPool?.length?"【實力測驗】電腦命題（題庫）":"【實力測驗】電腦命題"):"【實力測驗】自訂命題"});
+  $("exam18Title").textContent=S.examTitle;clearTimeout(S.escTimer);S.escTimer=null;prepExam(m);clearInterval(S.tInt);updateTimer();setView("EXAM");renderExam();$("line18HintMsg").textContent=HINT;
+}
+function startTimer(){if(S.tRun)return;S.tRun=true;S.tStart=Date.now();S.end=S.tStart+S.rem*1e3;updateTimer();S.tInt=setInterval(()=>{S.rem=Math.max(0,Math.round((S.end-Date.now())/1e3));updateTimer();if(S.rem<=0){clearInterval(S.tInt);S.tInt=null;sound.alarm();endExam()}},1e3)}
+const elapsed=()=>S.tRun&&S.tStart?Math.max(1e3,Date.now()-S.tStart)/6e4:1/60;
+function updateTimer(){$("exam18Timer").textContent=`剩餘時間：${String(S.rem/60|0).padStart(2,"0")}:${String(S.rem%60).padStart(2,"0")}${S.tRun?"":"（按首碼開始計時）"}`;updateStats()}
+function updateStats(){const t=S.ok+S.bad;$("exam18Stats").innerHTML=`已輸入：${t}（正確：${S.ok} 錯誤：${S.bad}）｜準確率：${t>0?Math.round(S.ok/t*100):0}%｜速度：${S.tRun?(S.ok/elapsed()).toFixed(1):"0.0"}字/分`}
+const target=()=>(S.pages[S.p]||[])[S.g*COLS+S.c]||"";
+
+function renderExam(){
+  const ct=$("exam7GroupsContainer"),pa=S.pages[S.p]||[],ta=S.typed[S.p]||[];
+  let h="";
+  for(let g=0;g<GROUPS;g++){
+    let tr="",pr="";
+    for(let c=0;c<COLS;c++){
+      const i=g*COLS+c;
+      const p=pa[i]||"";
+      const deco = p && p!==" " && !isTypeable(p);
+      let t = deco ? p : (ta[i]||"");
+      let cls = "char-cell";
+      if(deco) cls += " skipped";
+      else if(t) cls += (t===p ? " correct" : " wrong");
+      if(g===S.g && c===S.c && i<pa.length && isTypeable(p)) cls += " active-cursor";
+      tr += `<div class="${cls}">${esc(t)}</div>`;
+      pr += `<div class="char-cell${deco?" skipped":""}">${esc(p)}</div>`;
+    }
+    h+=`<div style="display:flex;flex-direction:column;flex:2;min-height:0"><div class="char-grid-row typed-row">${tr}</div><div class="char-grid-row prompt-row">${pr}</div></div>`;
+  }
+  ct.innerHTML=h;
+  const cand=$("candidateListText"),tot=S.cand.length,pages=Math.max(1,Math.ceil(tot/9));
+  if(S.cpage>=pages)S.cpage=0;
+  const disp=S.cand.slice(S.cpage*9,S.cpage*9+9),hasPre=(S.cbuf.includes("Z")&&hasZMatch(S.cbuf))||PREF.has(S.cbuf);
+  if(tot>1||(S.cbuf.includes("Z")&&tot===1)){
+    cand.innerHTML=disp.map((ch,i)=>`<span class="cand-item" data-i="${i}" style="background:#000080;color:#ff5;padding:2px 8px;margin-right:6px;border:1px solid #ff0;cursor:pointer;display:inline-block">[${i+1}]${ch}</span>`).join("")+(pages>1?`<span style="color:#004080;font-size:14px">（第${S.cpage+1}/${pages}頁）</span>`:"");
+    cand.querySelectorAll(".cand-item").forEach(sp=>sp.addEventListener("pointerdown",ev=>{ev.preventDefault();const i=+sp.dataset.i;if(i<disp.length&&target()){startTimer();sound.key();commit(disp[i])}}));
+  }else cand.innerHTML=S.cbuf&&!tot?(hasPre?'<span style="color:#000080">（尚有前綴，繼續輸入或按「?」反查）</span>':'<span style="color:#c00">（無匹配 — 請修正）</span>'):'<span style="color:#000080">（無重碼）</span>';
+  $("line18Radicals").innerHTML=S.cbuf?esc([...S.cbuf].map(k=>`${k}(${CJM[k]||k}) `).join("")):"&nbsp;";
+  const ps=$("line18PreviewChar");
+  if(disp.length)ps.textContent=disp[0]+(tot>1?"▾":"");else if(S.cbuf)ps.textContent=hasPre?"…":"？";else ps.innerHTML="&nbsp;";
+  updateStats();
+}
+
+function backSpace(){
+  const mv=()=>{if(S.c>0)S.c--;else if(S.g>0){S.g--;S.c=COLS-1}else if(S.p>0){S.p--;const li=S.pages[S.p].length-1;S.g=li/COLS|0;S.c=li%COLS}else return false;return true};
+  while(mv()){
+    const i=S.g*COLS+S.c,prev=S.typed[S.p][i];
+    if(prev){prev===S.pages[S.p][i]?S.ok=Math.max(0,S.ok-1):S.bad=Math.max(0,S.bad-1);S.typed[S.p][i]=""}
+    const t=target();
+    if(t!==" "&&isTypeable(t))break;
+  }
+  renderExam();
+}
+function examKey(k){
+  if(S.escSt===1)resetEsc();
+  const tc0=target();
+  if(tc0&&!isTypeable(tc0)){nextNonSpace();renderExam();return}
+  if(k==="BACKSPACE"){sound.key();if(S.cbuf){S.cbuf=S.cbuf.slice(0,-1);updateCand();renderExam()}else backSpace();return}
+  const tc=target();if(!tc)return sound.nav();
+  if(k==="["||k==="PAGEUP"||k==="]"||k==="PAGEDOWN"){
+    const p=Math.ceil(S.cand.length/9);
+    if(p>1){sound.nav();S.cpage=(S.cpage+(k==="["||k==="PAGEUP"?-1:1)+p)%p;renderExam()}
+    else if(k==="PAGEUP"||k==="PAGEDOWN"){sound.err()}
+    return;
+  }
+  const disp=S.cand.slice(S.cpage*9,S.cpage*9+9);
+  if(/^[1-9]$/.test(k)){const i=+k-1;if(i<disp.length){startTimer();sound.key();commit(disp[i])}else sound.err();return}
+  if(k===" "||k==="ENTER"){if(!S.cbuf)return;startTimer();if(!disp.length){sound.err();if((S.cbuf.includes("Z")&&hasZMatch(S.cbuf))||PREF.has(S.cbuf))showHint("⚠️ 前綴不完整，請繼續輸入或按 Backspace 修正");else{showHint("⚠️ 此碼無匹配字，請按 Backspace 修正");S.cbuf="";updateCand();renderExam()}return}sound.ok();commit(disp[0]);return}
+  if(/^[A-Z]$/.test(k)){startTimer();if(S.cbuf.length<5){sound.key();S.cbuf+=k;updateCand();renderExam()}else{sound.err();showHint("⚠️ 碼已滿 5 位，請按 Space 提交或 Backspace 修正")}return}
+  if(k==="?"){sound.key();const codes=DICT[tc];showHint(`提示「${tc}」：`+(codes?codes.map((c,i)=>(i?"容錯 ":"主碼 ")+c).join("／"):"無紀錄"))}
+}
+function showHint(msg){clearTimeout(S.hintTimer);$("line18HintMsg").textContent=msg;S.hintTimer=setTimeout(()=>{$("line18HintMsg").textContent=HINT;S.hintTimer=null},3500)}
+function updateCand(){S.cpage=0;S.cand=candidates(S.cbuf,target())}
+function nextNonSpace(){
+  let i=S.g*COLS+S.c;
+  const pa=S.pages[S.p]||[];
+  while(i<pa.length&&(pa[i]===" "||!isTypeable(pa[i])))i++;
+  if(i>=pa.length){
+    if(S.p<S.pages.length-1){S.p++;S.g=0;S.c=0;nextNonSpace()}
+    else if(S.tRun&&S.rem>0){appendPages(1);S.p++;S.g=0;S.c=0;nextNonSpace()}
+    else endExam();
+    return;
+  }
+  S.g=i/COLS|0;S.c=i%COLS;
+}
+function commit(out){const t=target(),i=S.g*COLS+S.c;S.typed[S.p][i]=out;out===t?S.ok++:S.bad++;S.cbuf="";S.cand=[];S.cpage=0;const ni=i+1,pa=S.pages[S.p]||[];if(S.p>=S.pages.length-1&&ni>=pa.length){if(S.tRun&&S.rem>0){appendPages(1);S.p++;S.g=0;S.c=0;nextNonSpace();renderExam();return}return endExam()}if(ni>=pa.length){S.p++;S.g=0;S.c=0;nextNonSpace()}else{if(++S.c>=COLS){S.c=0;S.g++}nextNonSpace()}renderExam()}
+function endExam(){if(S.fin)return;S.fin=true;S.saved=false;clearInterval(S.tInt);const sp=S.tRun?Math.round(S.ok/elapsed()):0,t=S.ok+S.bad,ac=t>0?Math.round(S.ok/t*100):0;S.result={speed:sp,acc:ac,duration:S.dur+"分鐘",mode:S.articleMode?"測驗(文章)":S.type==="COMPUTER"?"測驗(電腦)":"測驗(自訂)"};$("resTableHeader").textContent=t===0?"成績（未作答）":"您的成績";$("resSpeed").textContent=sp;$("resAccuracy").textContent=ac;setView("RESULT")}
+function resetEsc(){S.escSt=0;clearTimeout(S.escTimer);S.escTimer=null;$("exam18Title").textContent=S.examTitle}
+function exitExam(){if(S.cbuf){sound.nav();S.cbuf="";updateCand();renderExam();return}if(!S.escSt){S.escSt=1;sound.nav();$("exam18Title").textContent="⚠️ 再按一次 Esc 放棄測驗";S.escTimer=setTimeout(resetEsc,3e3)}else setView("MENU")}
+
+function doQuery(ch){const t=[...(ch||"")].find(isHanX)||"",d=$("queryDetails");if(!t){d.style.display="none";return}d.style.display="flex";const codes=DICT[t];if(codes){$("qResRadicals").textContent=`「${t}」主碼：${codes[0]} [ ${[...codes[0]].map(c=>`${CJM[c]}(${c})`).join("＋")} ]`;$("qResStruct").textContent=codes.length>1?"容錯碼："+codes.slice(1).join("、"):"單一標準碼"}else{$("qResRadicals").textContent=`查無「${t}」`;$("qResStruct").textContent="字庫未收此字（可上傳 chinese.tt 擴充字庫）"}}
+function renderLB(){const b=$("lbTableBody"),l=getLB();b.innerHTML=l.length?l.map((it,i)=>`<tr${S.scoreId&&it.id===S.scoreId?' class="latest-score-row"':""}><td>${i+1}</td><td style="color:#ff5;font-weight:bold">${esc(it.name||"匿名")}</td><td>${esc(it.mode)}</td><td>${esc(it.duration)}</td><td style="color:#5f5;font-weight:bold">${+it.speed||0}</td><td style="color:#5ff">${it.acc||0}%</td><td>${esc(it.date)}</td></tr>`).join(""):'<tr><td colspan="7" style="color:#ff5;text-align:center">尚無紀錄</td></tr>'}
+
+const dlFile=(s,fn,mime)=>{try{const u=URL.createObjectURL(new Blob([s],{type:mime})),a=document.createElement("a");a.href=u;a.download=fn;a.style.display="none";document.body.appendChild(a);a.click();const h=$("lbStatusHint");if(h)h.textContent=`✅ 已匯出 ${fn}`;sfxToast(`✅ 已匯出下載：${fn}`,true);setTimeout(()=>{try{a.remove()}catch(e){}URL.revokeObjectURL(u)},1e3)}catch(e){sfxToast("⚠️ 匯出失敗（環境限制）")}};
+function exportDict(isJs){const ks=Object.keys(DICT);if(!ks.length)return $("lbStatusHint").textContent="⚠️ 無字碼可匯出";let s="# 倉頡三代碼表\n";ks.forEach(c=>DICT[c].forEach(v=>s+=`${c} ${v}\n`));isJs?dlFile(`/* chinese_dict.js */\nwindow.EXTERNAL_CHINESE_TT=${JSON.stringify(s)};`,"chinese_dict.js","text/javascript;charset=utf-8"):dlFile(s,"chinese.tt","text/plain;charset=utf-8")}
+function exportSelfHtml(){
+  sound.ok();
+  const clone=document.documentElement.cloneNode(true);
+  clone.classList.remove("js");
+  const tk=clone.querySelector("#touchKeypad"),ka=clone.querySelector("#kpAbc"),kr=clone.querySelector("#kpRad"),eb=clone.querySelector("#errorBanner"),ds=clone.querySelector("#dosScreen");
+  if(tk)tk.style.display="none";if(ka)ka.innerHTML="";if(kr)kr.innerHTML="";if(eb)eb.style.display="none";if(ds)ds.style.transform="";
+  dlFile("<!DOCTYPE html>\n"+clone.outerHTML,"index.html","text/html;charset=utf-8");
+}
+
+function downloadBlob(blob, filename){
+  return new Promise(res => {
+    const u = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = u;
+    a.download = filename;
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { try { a.remove(); } catch(e){} URL.revokeObjectURL(u); res(); }, 1200);
+  });
+}
+async function downloadRemoteLatest(){
+  const btn = $("btnDlRemoteAbout");
+  if (btn && btn.disabled) return;
+  if (btn) btn.disabled = true;
+  sfxToast("⏳ 正在從專案下載最新版…", true);
+  const repo = "https://raw.githubusercontent.com/ck-from-hk/-/";
+  let ok = 0;
+  try {
+    let branch = null;
+    for (const br of ["main", "master"]) {
+      try { const r = await fetch(repo + br + "/index.html", { cache: "no-store" }); if (r.ok) { branch = br; break; } } catch(e){}
+    }
+    if (!branch) { sfxToast("❌ 無法連接專案網址——請手動前往 GitHub 專案主頁", true); return; }
+    try { const r = await fetch(repo + branch + "/index.html", { cache: "no-store" }); if (r.ok) { await downloadBlob(await r.blob(), "index.html"); ok++; } } catch(e){}
+    await new Promise(res => setTimeout(res, 600));
+    for (const name of ["generator.html", "generator2.html", "generator/index.html"]) {
+      try { const r = await fetch(repo + branch + "/" + name, { cache: "no-store" }); if (r.ok) { await downloadBlob(await r.blob(), "generator.html"); ok++; break; } } catch(e){}
+    }
+    await new Promise(res => setTimeout(res, 600));
+    for (const name of ["tutorial.html"]) {
+      try { const r = await fetch(repo + branch + "/" + name, { cache: "no-store" }); if (r.ok) { await downloadBlob(await r.blob(), "tutorial.html"); ok++; break; } } catch(e){}
+    }
+    if (ok >= 1) sfxToast(`✅ 已從專案下載 ${ok} 個檔案`, true);
+    else sfxToast("❌ 下載失敗——請手動前往 GitHub 專案主頁", true);
+  } finally { if (btn) setTimeout(() => { btn.disabled = false; }, 2000); }
+}
+
+function applyDict(raw){const res=buildDict(raw);DICT=res.dict;rebuild();S.list.forEach(it=>{if(DICT[it.char])Object.assign(it,mkItem(it.char))});updatePracticeScopeUI();if(S.view==="PRACTICE"&&S.list.length)renderPractice();const s=$("dictSizeDisplay");if(s)s.textContent=Object.keys(DICT).length;return res.extCount}
+
+async function initSys(){
+  const msg=$("examSetupMsg"),upSz=()=>$("dictSizeDisplay").textContent=Object.keys(DICT).length;
+  try{
+    if(typeof window.EXTERNAL_CHINESE_TT==="string"&&window.EXTERNAL_CHINESE_TT.trim()){applyDict(window.EXTERNAL_CHINESE_TT);msg.textContent=`✅ 已從 chinese_dict.js 載入外掛字庫（共 ${Object.keys(DICT).length} 字）`;upSz();return tryLoadPool()}
+    if(location.protocol!=="file:"){
+      let raw=null,src="chinese.tt";
+      try{const r=await fetch("chinese.tt");if(r.ok)raw=await r.text()}catch(e){}
+      if(!raw){src="線上碼表";try{const r2=await fetch(chinese(1).tt);if(r2.ok)raw=await r2.text()}catch(e){}}
+      if(raw){const text=raw.replace(/^\uFEFF/,"").trim();if(S.view==="EXAM"||S.view==="PRACTICE"){S.pendingDict=text;msg.textContent="⏳ 外部碼表已載入，離開測驗後自動套用"}else{const n=applyDict(text);if(n>0)msg.textContent=`✅ 已以外部碼表（${src}）校正 ${n} 字（共 ${Object.keys(DICT).length} 字）`}upSz();return tryLoadPool()}
+    }
+    const v=await IDB.get("chinese_tt");
+    if(typeof v==="string"&&v.trim()){applyDict(v);msg.textContent=`✅ 已從瀏覽器記憶載入字庫（共 ${Object.keys(DICT).length} 字）`;upSz();return tryLoadPool()}
+  }catch(e){}
+  if(location.protocol==="file:")msg.textContent="ℹ️ file:// 模式：可放 chinese_dict.js 自動載入，或選檔一次永久記住";
+  upSz();tryLoadPool();
+}
+
+const gkE=k=>k.length===1?/[A-Z0-9\[\]? ]/.test(k):["ENTER","BACKSPACE","TAB","PAGEUP","PAGEDOWN"].includes(k),
+gkP=k=>k.length===1?/[A-Z? ]/.test(k):["ENTER","BACKSPACE","TAB"].includes(k);
+
+const bootApp=()=>{
+  if(bootApp._done)return;bootApp._done=true;
+  try{
+    initKeypads();$("touchKeypad").style.display="none";
+    const unlockAudioOnce=()=>{sound.unlock();if(sound.ctx?.state==="running")["touchend","keydown","click"].forEach(ev=>window.removeEventListener(ev,unlockAudioOnce,true))};
+    ["touchend","keydown","click"].forEach(ev=>window.addEventListener(ev,unlockAudioOnce,true));
+    document.addEventListener("visibilitychange",()=>{if(!document.hidden&&sound.en&&sound.ctx&&sound.ctx.state!=="running")sound._ensure()});
+    buildMenu();
+    document.querySelectorAll("button").forEach(el=>el.setAttribute("type","button"));
+    const menuEv=t=>safe(e=>{if(t===1&&!isTouch())return;const r=e.target.closest?.(".menu-item-row");if(r){if(t<2&&e.cancelable)e.preventDefault();window.__menuGo(+r.dataset.i||0)}});
+    $("mainMenuPanel").addEventListener("touchstart",menuEv(0),{passive:false});
+    $("mainMenuPanel").addEventListener("pointerdown",menuEv(1));
+    $("mainMenuPanel").addEventListener("click",menuEv(2));
+    setView("MENU");try{scaleScreen()}catch(e){}
+    window.addEventListener("touchstart",()=>{_hadTouch=true;S.hasPhys=false;if(S.view==="EXAM"||S.view==="PRACTICE"){const tk=$("touchKeypad");if(tk&&tk.style.display!=="flex"){tk.style.display="flex";schedScale()}}},{passive:true});
+    bindVirtualKeypad();
+    let kpTouch=null;const tkEl=$("touchKeypad");
+    if(tkEl){
+      tkEl.addEventListener("touchstart",e=>{if(e.touches.length===1){const t=e.touches[0];kpTouch={x:t.clientX,y:t.clientY,t:Date.now()}}},{passive:true});
+      tkEl.addEventListener("touchend",e=>{if(!kpTouch)return;const t=e.changedTouches[0],dx=t.clientX-kpTouch.x,dy=t.clientY-kpTouch.y;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.5&&Date.now()-kpTouch.t<600){sound.nav();toggleKeypad()}kpTouch=null},{passive:true});
+    }
+    $("practiceQueryBtn").addEventListener("click",safe(doPQuery));
+    $("btnToggleAuxMode")?.addEventListener("click",safe(cycleAuxMode));
+    $("scopeCommonBtn").addEventListener("click",safe(()=>setPracticeScope("COMMON")));
+    $("scopeAllBtn").addEventListener("click",safe(()=>setPracticeScope("ALL")));
+    updatePracticeScopeUI();
+    $("btnExitYes").addEventListener("click",safe(()=>{sound.nav();try{window.close()}catch(e){}setView("DOS_EXIT")}));
+    $("btnExitNo").addEventListener("click",safe(()=>setView("MENU")));
+    $("btnRestartDos").addEventListener("click",safe(()=>setView("MENU")));
+    $("optComputer").addEventListener("click",safe(()=>{S.type="COMPUTER";syncSetup();$("examTimeInput")?.blur()}));
+    $("optCustom").addEventListener("click",safe(()=>{S.type="CUSTOM";syncSetup();$("examTimeInput")?.blur()}));
+    $("customInputString").addEventListener("input",()=>{if(S.txtContent){S.txtContent=null;S.txtName="";$("examSetupMsg").textContent="💡 已改用文字框內容命題"}});
+    $("localTxtFileInput").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const t=decodeFile(ev);S.txtContent=t;S.txtName=f.name;S.type="CUSTOM";syncSetup();$("examSetupMsg").textContent=`✅ 已載入：${f.name}（可打 ${filterCJK(t).length} 字，共 ${filterWords(t).length} 詞）`};r.onloadend=()=>e.target.value="";r.readAsArrayBuffer(f)});
+    $("btnPoolFolder").addEventListener("click",safe(()=>$("poolFolderInput").click()));
+    $("poolFolderInput").addEventListener("change",e=>{
+      const all=[...e.target.files||[]],atcFs=all.filter(f=>/\.atc$/i.test(f.name)),txtFs=all.filter(f=>/\.txt$/i.test(f.name)),st=$("compPoolStatus");
+      try{e.target.value=""}catch(x){}
+      if(!atcFs.length&&!txtFs.length){st.style.color="#a00";st.textContent="⚠️ 資料夾內無 .txt / .atc 檔";return sound.err()}
+      const readBatch=(files,unit,onEach,onDone)=>{st.style.color="#004080";st.textContent=`讀取中…（0/${files.length}${unit}）`;let done=0;const chk=()=>{if(++done===files.length)onDone();else st.textContent=`讀取中…（${done}/${files.length}${unit}）`};files.forEach(f=>{const r=new FileReader();r.onload=ev=>{onEach(decodeBuf(ev.target.result));chk()};r.onerror=chk;r.readAsArrayBuffer(f)})};
+      if(atcFs.length){
+        let arts=[];
+        readBatch(atcFs," 篇",txt=>{const a=stripATC(txt).trim();if(a)arts.push(a)},()=>{if(arts.length){S.atcPool=arts;S.compPool=null;POOL_DONE=true;sound.ok();st.style.color="#004080";st.textContent=`✅ 文章題庫：${arts.length} 篇 .atc（已永久記住）`;IDB.set("atc_pool",JSON.stringify(arts)).catch(()=>{});IDB.set("words_pool","").catch(()=>{})}else{st.style.color="#a00";st.textContent="⚠️ .atc 檔內容為空";sound.err()}});
+      }else{
+        S.atcPool=null;IDB.set("atc_pool","").catch(()=>{});let ws=[];
+        readBatch(txtFs,"",txt=>{ws=ws.concat(parsePool(txt))},()=>{const u=[...new Set(ws)];if(u.length){S.compPool=u;POOL_DONE=true;sound.ok();st.style.color="#004080";st.textContent=`✅ 資料夾題庫：${txtFs.length} 檔／${u.length} 詞（已永久記住）`;IDB.set("words_pool",u.join("\n")).catch(()=>{})}else{st.style.color="#a00";st.textContent="⚠️ 檔內無可用詞條";sound.err()}});
+      }
+    });
+    $("cangjieTtFileInput").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const t=decodeFile(ev),n=applyDict(t);$("examSetupMsg").textContent=`✅ 已以外部碼表校正 ${n} 字（共 ${Object.keys(DICT).length} 字）`;$("dictSizeDisplay").textContent=Object.keys(DICT).length;IDB.set("chinese_tt",t).then(()=>{$("examSetupMsg").textContent+="；已存入瀏覽器，下次毋須再選"}).catch(()=>{})};r.onloadend=()=>e.target.value="";r.readAsArrayBuffer(f)});
+    $("btnStartExam").addEventListener("click",safe(startExam));
+    $("btnCancelExamSetup").addEventListener("click",safe(()=>setView("MENU")));
+    $("exportDictBtn").addEventListener("click",safe(()=>exportDict(0)));
+    $("exportDictJsBtn").addEventListener("click",safe(()=>exportDict(1)));
+    $("exportSelfHtmlBtn")?.addEventListener("click",safe(exportSelfHtml));
+    $("btnDlSelfAbout")?.addEventListener("click",safe(exportSelfHtml));
+    $("btnDlRemoteAbout")?.addEventListener("click",safe(downloadRemoteLatest));
+    $("queryBtnDo").addEventListener("click",safe(()=>doQuery($("queryCharInput").value)));
+    ["closeQueryBtn","closeAboutBtn","closeTutorialBackBtn","closeLbBtn"].forEach(id=>$(id)?.addEventListener("click",safe(()=>setView("MENU"))));
+    $("closeTutorialBtn").addEventListener("click",safe(()=>setView("PRACTICE")));
+    $("clearLbBtn").addEventListener("click",safe(()=>{if(!S.lbSt){S.lbSt=1;sound.nav();$("clearLbBtn").textContent="確定？";S.lbTimer=setTimeout(()=>{S.lbSt=0;$("clearLbBtn").textContent="重置"},3e3)}else{sound.ok();LB=[];S.scoreId=null;try{localStorage.setItem(LB_KEY,"[]")}catch(e){}S.lbSt=0;$("clearLbBtn").textContent="重置";renderLB()}}));
+    $("btnSaveResult").addEventListener("click",safe(()=>{if(S.result&&!S.saved)saveScore({name:($("resultNameInput").value||"").trim()||"倉頡小高手",...S.result,date:new Date().toISOString().slice(0,10)});setView("LEADERBOARD",{fromSave:true})}));
+    $("btnEnter").addEventListener("click",safe(()=>{const acts={MENU:()=>menuAction(S.sel),EXIT_CONFIRM:()=>setView("MENU"),DOS_EXIT:()=>setView("MENU"),EXAM_SETUP:startExam,EXAM:()=>examKey("ENTER"),PRACTICE:()=>practiceKey("ENTER"),ABOUT:()=>setView("MENU"),TUTORIAL:()=>setView("PRACTICE"),QUERY:()=>doQuery($("queryCharInput").value),RESULT:()=>$("btnSaveResult").click()};acts[S.view]?.()}));
+    $("btnEsc").addEventListener("click",safe(()=>{const v=S.view;if(v==="MENU")setView("EXIT_CONFIRM");else if(v==="EXAM")exitExam();else if(v==="PRACTICE"&&S.buf)clearSlots();else if(v==="RESULT"){if(S.result&&!S.saved&&!S.escConfirm){S.escConfirm=true;sound.err();$("resultHintBar").textContent="⚠️ 再按一次 Esc 確認不保存";setTimeout(()=>{S.escConfirm=false;$("resultHintBar").textContent="[Enter 保存｜Esc 不保存返回]"},3e3);return}setView("MENU")}else if(v!=="DOS_EXIT")setView("MENU")}));
+    const nav=d=>{if(S.view==="MENU"){sound.nav();S.sel=(S.sel-1+d+7)%7+1;updateMenu()} else if(window.__scrollActiveBox && window.__scrollActiveBox(d * 95)){ if(window.sound && typeof sound.nav === "function") sound.nav(); }};
+    $("btnUp").addEventListener("click",safe(()=>nav(-1)));
+    $("btnDown").addEventListener("click",safe(()=>nav(1)));
+    window.addEventListener("keydown",safe(e=>{
+      if(["F5","F12"].includes(e.key)||e.ctrlKey||e.metaKey||e.altKey||(e.repeat&&e.key!=="Backspace"))return;
+      const el=document.activeElement,isIn=!!(el&&(el.tagName==="INPUT"||el.tagName==="TEXTAREA"));
+      if(!isIn&&(/^Key[A-Z]$|^Digit[0-9]$|^(Space|Backspace|Enter)$/.test(e.code||""))&&!S.hasPhys){S.hasPhys=true;const tk=$("touchKeypad");if(tk?.style.display==="flex"){tk.style.display="none";schedScale()}}
+      const nk=resolveKey(e,isIn);
+      if(S.view==="EXIT_CONFIRM"){e.preventDefault();if(nk==="Y"){try{window.close()}catch(x){}setView("DOS_EXIT")}else setView("MENU");return}
+      if(S.view==="DOS_EXIT"){if(e.key==="Enter"){e.preventDefault();setView("MENU")}return}
+      if(e.key==="Escape"){e.preventDefault();return $("btnEsc").click()}
+      if(S.view==="MENU"){e.preventDefault();if(e.key==="ArrowUp")nav(-1);else if(e.key==="ArrowDown")nav(1);else if(/^[1-7]$/.test(nk)){S.sel=+nk;updateMenu();menuAction(S.sel)}else if(e.key==="Enter")menuAction(S.sel);return}
+      if(S.view==="EXAM_SETUP"){if(e.key==="Enter"){e.preventDefault();if(isIn)el.blur();startExam()}else if(!isIn&&/^[12]$/.test(nk))$(nk==="1"?"optComputer":"optCustom").click();return}
+      if(S.view==="EXAM"&&!isIn){if(gkE(nk)){e.preventDefault();examKey(nk)}return}
+      if(S.view==="PRACTICE"&&!isIn){if(gkP(nk)){e.preventDefault();practiceKey(nk)}return}
+      if(e.key==="Enter"){if(S.view==="QUERY")doQuery($("queryCharInput").value);else if(S.view==="RESULT")$("btnSaveResult").click();else if(S.view==="ABOUT"){e.preventDefault();setView("MENU")}else if(S.view==="TUTORIAL"){e.preventDefault();setView("PRACTICE")}}
+    }));
+  }catch(e){const b=$("errorBanner");if(b){b.style.display="block";b.textContent="⚠️ 啟動錯誤："+(e?.message||e)}console.error(e);return}
+  window.__BOOT_OK=true;setTimeout(initSys,50);
+};
+document.readyState==="loading"?document.addEventListener("DOMContentLoaded",bootApp):setTimeout(bootApp,0);
+</script>
+<script>setTimeout(()=>{if(!window.__BOOT_OK){const b=document.getElementById("errorBanner");if(b){b.style.display="block";b.textContent="⚠️ 主腳本啟動失敗（語法錯誤或載入中斷）——程式無法回應任何操作"}}},800);</script>
+
+<style id="unifiedScrollStyle">
+.scroll-box, #tutPageContent, .tut-content {
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+</style>
+<script id="unifiedScrollScript">
+/* === UNIFIED_SCROLL_HELPER_START === */
+(function(){
+  const STEP = 95;
+  function getActiveScrollBox(){
+    const selectors = [
+      "#tutPageContent",
+      "#aboutWindow > div:nth-child(2)",
+      "#leaderboardWindow > div:nth-child(2)",
+      ".tut-content"
+    ];
+    for(const sel of selectors){
+      const el = document.querySelector(sel);
+      if(el && el.offsetParent !== null) return el;
+    }
+    return null;
+  }
+  function scrollActiveBox(deltaY){
+    const box = getActiveScrollBox();
+    if(!box) return false;
+    box.scrollBy({ top: deltaY, behavior: "smooth" });
+    return true;
+  }
+  window.__scrollActiveBox = scrollActiveBox;
+
+  // 1. 滑鼠滾輪全區域支援
+  window.addEventListener("wheel", function(e){
+    const box = getActiveScrollBox();
+    if(!box) return;
+    if(!box.contains(e.target)){
+      box.scrollTop += e.deltaY;
+    }
+  }, { passive: true });
+
+  // 2. 鍵盤上下鍵集中攔截支援
+  window.addEventListener("keydown", function(e){
+    if(e.ctrlKey || e.metaKey || e.altKey) return;
+    const el = document.activeElement;
+    if(el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA")) return;
+    if(e.key === "ArrowUp"){
+      if(scrollActiveBox(-STEP)) e.preventDefault();
+    } else if(e.key === "ArrowDown"){
+      if(scrollActiveBox(STEP)) e.preventDefault();
+    }
+  }, true);
+
+  // 3. 修復主檔離開確認對話框（EXIT_CONFIRM）左右方向鍵與 Enter 焦點切換
+  function setExitChoice(yesFocused){
+    const btnY = document.getElementById("btnExitYes");
+    const btnN = document.getElementById("btnExitNo");
+    if(!btnY || !btnN) return;
+    btnY.classList.toggle("focused-choice", !!yesFocused);
+    btnN.classList.toggle("focused-choice", !yesFocused);
+  }
+  window.addEventListener("keydown", function(e){
+    const dlg = document.getElementById("exitConfirmDialog");
+    if(!dlg || dlg.style.display !== "flex") return;
+    if(e.key === "ArrowLeft" || e.key === "ArrowRight"){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      const btnY = document.getElementById("btnExitYes");
+      const isY = btnY && btnY.classList.contains("focused-choice");
+      setExitChoice(!isY);
+      if(window.sound && typeof sound.nav === "function") sound.nav();
+    } else if(e.key === "Enter"){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      const btnY = document.getElementById("btnExitYes");
+      const btnN = document.getElementById("btnExitNo");
+      if(btnY && btnY.classList.contains("focused-choice")) btnY.click();
+      else if(btnN) btnN.click();
+    } else if(e.key === "n" || e.key === "N"){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      const btnN = document.getElementById("btnExitNo");
+      if(btnN) btnN.click();
+    }
+  }, true);
+  // 每次開啟離開確認框時預設聚焦「[X] 返回」
+  const exitDlgEl = document.getElementById("exitConfirmDialog");
+  if(exitDlgEl){
+    new MutationObserver(function(){
+      if(exitDlgEl.style.display === "flex") setExitChoice(false);
+    }).observe(exitDlgEl, { attributes: true, attributeFilter: ["style"] });
+  }
+})();
+/* === UNIFIED_SCROLL_HELPER_END === */
+
+function tutBuildPager(){
+  const pg=$("tutPager");if(!pg||!window.TUT_PAGES)return;
+  pg.innerHTML=window.TUT_PAGES.map((p,i)=>`<button type="button" class="key-button tut-pill" data-p="${i}">${p.label}</button>`).join("");
+  pg.querySelectorAll(".tut-pill").forEach(b=>b.addEventListener("click",safe(()=>{S.tutPage=+b.dataset.p;sound.nav();renderTutPage()})));
+}
+
+function scopeChars(scope){
+  const src=scope==="L1"?Object.keys(T1000):scope==="L2"?Object.keys(SIMP):Object.keys(T5000);
+  return src.filter(c=>isSingleHan(c));
+}
+</script>
+</body>
+</html>
