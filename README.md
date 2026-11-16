@@ -18,6 +18,9 @@ https://ck-from-hk.github.io/-/
 
 簡體倉頡教學及練習特別版(0.825-0.88限定)：　https://ck-from-hk.github.io/-/simp
 
+本網址
+https://github.com/ck-from-hk/-/
+
 [繁體中文](#繁體中文) ｜ [English](#english)
 
 ---
