@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<title>快快快樂學五筆 - 中國大陸非拼音輸入法完全指南（全書互動版）</title>
+<style>
+*{box-sizing:border-box;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+html,body{overscroll-behavior:none;margin:0;background:#111;width:100vw;height:100vh;height:100dvh;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:"BiauKaiHK","DFKai-SB","標楷體","Microsoft JhengHei",serif;overflow:hidden}
+.dos-screen{width:960px;height:540px;background:#005a52;position:relative;border:3px solid #808080;box-shadow:0 0 25px rgba(0,0,0,.9);display:flex;flex-direction:column;justify-content:space-between;transform-origin:center;flex-shrink:0}
+.dos-header{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0}
+.slop-logo{display:flex;align-items:center;justify-content:center;width:95px;height:30px}
+.title-group{display:flex;align-items:center;flex:1;justify-content:center;gap:16px}
+.magenta-double-line{flex:1;height:8px;border-top:3px solid #f0f;border-bottom:3px solid #f0f}
+.dos-main-title{color:#ff0;font-size:29px;font-weight:bold;letter-spacing:5px;text-shadow:2px 2px #000;white-space:nowrap;padding:0 10px}
+.dos-stage{flex:1;position:relative;display:flex;justify-content:center;align-items:center;padding:8px 20px;overflow:hidden}
+.dos-footer{height:36px;background:#c0c0c0;border-top:2px solid #fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0;z-index:10}
+.key-button{background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;font-weight:bold;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:#000080;cursor:pointer;font-family:Consolas,"Microsoft JhengHei",monospace;padding:0 12px;text-decoration:none}
+.key-button:active{border-color:#404040 #fff #fff #404040;background:#a8a8a8}
+
+.sub-window{background:#003833;border:3px double #5ff;width:100%;height:100%;padding:10px 18px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:6px 6px 0 rgba(0,0,0,.5);z-index:10}
+.sub-win-title{color:#ff5;font-size:18.5px;font-weight:bold;border-bottom:2px solid #5ff;padding-bottom:4px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.category-badge{background:#004b45;border:1px solid #5ff;color:#ff5;font-size:12px;padding:1px 8px;margin-left:8px}
+
+/* 教學內容捲動區 */
+.tut-content{overflow-y:auto;flex:1;font-size:14px;color:#fff;line-height:1.66;margin:4px 0;padding-right:6px;overscroll-behavior:contain;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+.tut-h{font-weight:bold;font-size:14.5px;margin-top:8px}
+.tut-h.y{color:#ff5}.tut-h.g{color:#5f5}.tut-h.o{color:#fa5}.tut-h.c{color:#5ff}
+.tut-content i{font-style:normal;font-weight:bold}
+.tut-content .tr{color:#ff5}.tut-content .ky{color:#0ff}.tut-content .cd{color:#fa5}.tut-content .ch{color:#ff5}
+
+/* 主字根＋放大彩色輔助字形展示區 */
+.rad-hero-box{display:flex;align-items:stretch;background:rgba(0,0,0,.38);border:2px solid #ff0;padding:8px 14px;gap:14px;margin:2px 0 6px;border-radius:4px}
+.rad-main-card{display:flex;flex-direction:column;align-items:center;justify-content:center;background:#002220;border:2px solid #ff5;padding:4px 10px;min-width:94px;box-shadow:inset 2px 2px 5px rgba(0,0,0,.85);flex-shrink:0}
+.rad-big-char{font-size:46px;color:#ff5;line-height:1.05;font-weight:bold;text-shadow:2px 2px #000}
+.rad-key-tag{font-size:12px;color:#0ff;font-weight:bold;margin-top:3px;font-family:Consolas,monospace;background:#003b36;padding:1px 7px;border:1px solid #0ff;white-space:nowrap}
+
+.rad-right-panel{display:flex;flex-direction:column;justify-content:space-between;flex:1;gap:5px}
+.aux-showcase-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.aux-chip{display:inline-flex;align-items:center;gap:8px;background:rgba(0,30,35,.9);border:1px solid #5ff;padding:3px 9px;border-radius:3px}
+.aux-glyph{font-size:23px;font-weight:bold;line-height:1;text-shadow:1px 1px #000}
+.aux-desc{font-size:12px;color:#eee;line-height:1.25}
+.aux-desc b{display:block;font-size:12.5px}
+
+/* 範例表格 */
+.retro-table{width:100%;border-collapse:collapse;color:#fff;font-size:13px;margin-top:4px}
+.retro-table th,.retro-table td{border:1px solid #5ff;padding:3.5px 8px;text-align:center}
+.retro-table th{background:#002220;color:#ff5}
+.retro-table td:nth-child(3){font-family:Consolas,monospace;color:#ff5;font-weight:bold;white-space:nowrap}
+.aux-pill-mini{display:inline-block;padding:1px 6px;border-radius:2px;font-weight:bold;font-size:12px;background:rgba(0,0,0,.4);white-space:nowrap}
+
+/* 進階補充卡 */
+.adv-aux-box{background:rgba(0,40,65,.55);border:1px dashed #5ff;padding:6px 12px;margin-top:5px;border-radius:3px;font-size:12.5px;line-height:1.55}
+
+/* 單行口訣框 */
+.poem-line-box{font-size:16px;line-height:1.8;background:rgba(0,0,0,.28);padding:6px 1.5em;border-left:4px solid #ff5;border-right:4px solid #ff5;margin-top:4px;text-align:center;white-space:nowrap;overflow-x:auto}
+
+/* 索引頁專用緊湊免捲動樣式 */
+.idx-board{flex:1;display:flex;flex-direction:column;justify-content:space-evenly;gap:4px;padding:1px 0;overflow:hidden}
+.cat-group{background:rgba(0,0,0,.28);border:1px solid #00695c;padding:4px 8px;border-radius:3px}
+.cat-header{font-size:12.5px;font-weight:bold;margin-bottom:3px;display:flex;justify-content:space-between;line-height:1.1}
+.rad-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.rad-card{background:#002220;border:1.5px solid #5ff;padding:2.5px 3px;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background .12s;cursor:pointer}
+.rad-card:hover,.rad-card:focus{background:#004d40;border-color:#ff0;outline:none}
+.rad-card .rk{font-family:Consolas,monospace;font-size:11.5px;color:#0ff;font-weight:bold;line-height:1.05}
+.rad-card .rc{font-size:18px;color:#ff5;font-weight:bold;line-height:1.15}
+.rad-card .rs{font-size:9.5px;color:#bbb;line-height:1.05;white-space:nowrap}
+.rad-card.intro-card{flex-direction:row;gap:6px;padding:4px 6px;border-color:#ff5}
+.rad-card.intro-card .rc{font-size:13px;color:#ff5;line-height:1.1}
+
+/* 引言與專題卡片 */
+.cat-overview-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:5px 0}
+.cat-box{background:rgba(0,0,0,.32);border:1px solid #5ff;padding:5px 8px;border-radius:3px;font-size:12px;line-height:1.4}
+.cat-box b{display:block;font-size:12.5px;margin-bottom:2px}
+.xz-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:5px}
+.xz-card{background:rgba(0,25,30,.75);border:1.5px solid #ff5;padding:7px 12px;border-radius:4px;display:flex;gap:12px;align-items:flex-start}
+.xz-glyph-box{display:flex;flex-direction:column;align-items:center;justify-content:center;background:#002220;border:1.5px solid #0ff;padding:4px 10px;min-width:60px;flex-shrink:0}
+.xz-glyph{font-size:30px;font-weight:bold;line-height:1.1}
+.xz-key{font-family:Consolas,monospace;font-size:11.5px;font-weight:bold;margin-top:2px;padding:0 5px;background:#003b36;white-space:nowrap}
+
+@media(max-width:480px){.dos-screen{transform:scale(.4)}}
+@media(min-width:481px)and(max-width:768px){.dos-screen{transform:scale(.6)}}
+</style>
+</head>
+<body>
+<div class="dos-screen" id="dosScreen">
+  <div class="dos-header">
+    <div class="slop-logo" title="WUBI 86 經典標誌"><svg viewBox="0 0 120 40" width="95" height="30"><ellipse cx="60" cy="20" rx="55" ry="16" fill="none" stroke="#0ff" stroke-width="2"/><text x="50%" y="62%" text-anchor="middle" fill="#f0f" font-size="18" font-weight="900" font-style="italic" font-family="Arial">WUBI86</text></svg></div>
+    <div class="title-group">
+      <div class="magenta-double-line"></div>
+      <div class="dos-main-title">快快快樂學五筆</div>
+      <div class="magenta-double-line"></div>
+    </div>
+  </div>
+
+  <div class="dos-stage">
+    <div class="sub-window" id="mainWin"></div>
+  </div>
+
+  <div class="dos-footer">
+    <div style="display:flex;gap:10px;align-items:center">
+      <button type="button" class="key-button" id="btnEscIdx" style="color:#800000" title="返回總目錄索引">Esc [索引]</button>
+    </div>
+    <div id="footerHint" style="font-size:12px;color:#333;flex:1;text-align:center">Esc 返回索引 ｜ ← → 切換上下頁 ｜ ↑ ↓ 捲動內文</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button type="button" class="key-button" id="btnPrevPage">◀ 上一頁</button>
+      <button type="button" class="key-button" id="btnNextPage">下一頁 ▶</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const C1="#0ff", C2="#5f5", C3="#ff80ab";
+
+/* 全書 31 頁結構化教材資料（0=引言, 1..25=五筆25鍵字根, 26=拆字規則, 27=手寫語音, 28=九宮格筆畫, 29=兩岸對比, 30=總結） */
+const PAGES = [
+  { type:"intro" },
+  /* ================= 一、橫區（1 區：G F D S A） ================= */
+  {
+    key:"G", zone:"11", rad:"王", short1:"一", cat:"第 2 / 31 頁：橫區（1 區）字根",
+    aux:[
+      {g:"王五一", c:C1, title:"主幹字根", desc:"王、五、一（基本橫畫首鍵）"},
+      {g:"戋", c:C2, title:"兼字右旁", desc:"「践、浅、钱」的右半部部件"},
+      {g:"龺", c:C3, title:"青字頭", desc:"「青、静、素、表」頂部部件"}
+    ],
+    slogan:`王旁青頭戋（兼）五一 —— 橫區首鍵（<i class="ky">11</i>），一級簡碼為「<b class="tr">一</b>」。`,
+    rules:[
+      `<b>鍵名字「王」：</b>連擊四下 <i class="cd">GGGG</i> 直接打出「<b class="tr">王</b>」；按一下 <i class="ky">G</i> 加空格打出高頻一級簡碼「<b class="tr">一</b>」。`,
+      `<b>基本筆畫「橫（一）」與「提（㇀）」：</b>五筆將「橫」與「提」歸為第一類筆畫，凡單筆橫畫或提畫均落在 <i class="ky">G</i> 鍵。`,
+      `<b>「青字頭」<span style="color:${C3}">龺</span> 與「戋」<span style="color:${C2}">戋</span>：</b>「青、毒、责」頂部的三橫一豎（不出頭）歸入 <i class="ky">G</i>；「戋」單獨成字拆為 <i class="cd">GGGT</i>（戋＋撇）。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","一","G + 空格","高頻一級簡碼，單擊 G 鍵加空格即出字。"],
+      ["鍵名字","#ff5","王","GGGG","鍵面代表字，連擊所在鍵四次。"],
+      ["青字頭",C3,"青","GEF","上青字頭 (<i class=\"ky\">G</i>) ＋ 下月 (<i class=\"ky\">E</i>) ＋ 末筆識別碼橫 (<i class=\"ky\">F</i>)。"],
+      ["戋字旁",C2,"浅","IGGT","左三點水 (<i class=\"ky\">I</i>) ＋ 右「戋」(<i class=\"ky\">G</i>) ＋ 末筆識別碼撇 (<i class=\"ky\">T</i>)，不足補 <i class=\"ky\">G</i>。"]
+    ],
+    adv:`• <b style="color:${C1}">成字字根「五」拆碼（<i class="cd">GGHG</i>）</b>：先報戶口 <i class="ky">G</i>，再取第一筆橫 (<i class="ky">G</i>)、第二筆豎 (<i class="ky">H</i>)、末筆橫 (<i class="ky">G</i>)。<br>• <b style="color:${C2}">橫區定位口訣</b>：橫區位於鍵盤中排左手（G、F、D、S、A），由食指 G 鍵（一畫）向小指 A 鍵（五畫）遞增。`,
+    poem:`<i class="tr">王</i>旁<b style="color:${C3}">青頭</b><b style="color:${C2}">戋</b>五<i class="tr">一</i>（<i class="ky">G 11</i>）`
+  },
+  {
+    key:"F", zone:"12", rad:"土", short1:"地", cat:"第 3 / 31 頁：橫區（1 區）字根",
+    aux:[
+      {g:"土士", c:C1, title:"土與士", desc:"上短下長「土」與上長下短「士」同鍵"},
+      {g:"二干十寸", c:C2, title:"兩橫主幹", desc:"二、干、十、寸（如：吉、古、村、对）"},
+      {g:"雨廿", c:C3, title:"雨與革字頭", desc:"「雨」與「革」字上半部（如：雪、鞋）"}
+    ],
+    slogan:`土士二干十寸雨 —— 橫區第二鍵（<i class="ky">12</i>），一級簡碼為「<b class="tr">地</b>」。`,
+    rules:[
+      `<b>鍵名字「土」與一級簡碼「地」：</b>連擊 <i class="cd">FFFF</i> 打出「<b class="tr">土</b>」；單擊 <i class="ky">F</i> 加空格打出「<b class="tr">地</b>」（「地」全碼為 <i class="cd">FBN</i>）。`,
+      `<b><span style="color:${C1}">土</span> 與 <span style="color:${C1}">士</span> 不分長短：</b>五筆中無論上橫短的「土」還是上橫長的「士」（如「吉」<i class="cd">FKF</i>、「志」<i class="cd">FNU</i>），一律歸入 <i class="ky">F</i> 鍵。`,
+      `<b><span style="color:${C2}">十、寸、干、二</span> 與 <span style="color:${C3}">雨</span>：</b>高頻偏旁「十」（如「古」<i class="cd">FD</i>）、「寸」（如「对」<i class="cd">CFY</i>）與「雨字頭」（如「雪」<i class="cd">FVF</i>）均在 <i class="ky">F</i> 鍵。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","地","F + 空格","高頻一級簡碼（全碼：土 F ＋ 也 BN = FBN）。"],
+      ["鍵名字","#ff5","土","FFFF","鍵面代表字，連擊 F 鍵四次。"],
+      ["成字字根",C3,"雨","FGHY","報戶口 F ＋ 首筆橫 G ＋ 次筆豎 H ＋ 末筆點 Y。"],
+      ["士字頭",C1,"吉","FKF","上士 (<i class=\"ky\">F</i>) ＋ 下口 (<i class=\"ky\">K</i>) ＋ 上下型橫末筆識別碼 (<i class=\"ky\">F</i>)。"]
+    ],
+    adv:`• <b style="color:${C2}">成字字根「寸」拆碼（<i class="cd">FGH</i>）</b>：報戶口 <i class="ky">F</i> ＋ 首筆橫 (<i class="ky">G</i>) ＋ 次筆豎鉤 (<i class="ky">H</i>)，三碼加空格即出字（注意末筆點不重複取碼，因已取滿首、次、末三筆）。`,
+    poem:`<i class="tr">土</i><b style="color:${C1}">士</b><b style="color:${C2}">二干十寸</b><b style="color:${C3}">雨</b>（<i class="ky">F 12</i>）`
+  },
+  {
+    key:"D", zone:"13", rad:"大", short1:"在", cat:"第 4 / 31 頁：橫區（1 區）字根",
+    aux:[
+      {g:"大犬三", c:C1, title:"大犬與三橫", desc:"大、犬、三（如：太、哭、春上三橫）"},
+      {g:"古石廠", c:C2, title:"古石與廠框", desc:"古、石、厂（如：故、硬、原、历）"},
+      {g:"𦍌", c:C3, title:"羊字頭/龍框", desc:"羊無尾（如：美、差、着）與龍字左框"}
+    ],
+    slogan:`大犬三（羊）古石廠 —— 橫區第三鍵（<i class="ky">13</i>），一級簡碼為「<b class="tr">在</b>」。`,
+    rules:[
+      `<b>鍵名字「大」與一級簡碼「在」：</b>連擊 <i class="cd">DDDD</i> 打出「<b class="tr">大</b>」；單擊 <i class="ky">D</i> 加空格打出「<b class="tr">在</b>」（「在」全碼為 <i class="cd">DHFD</i>）。`,
+      `<b><span style="color:${C1}">大、犬、三</span> 與 <span style="color:${C3}">羊字頭</span>：</b>「大」字家族與三橫「三」（如「春」拆為 <i class="cd">DWJF</i>：三＋人＋日）及「羊字無尾」（如「美」<i class="cd">UGDU</i>）均在 <i class="ky">D</i>。`,
+      `<b><span style="color:${C2}">古、石、厂</span>：</b>「古」在 F 鍵上是「十＋口」，但在 D 鍵上已是現成字根（取大優先，如「故」拆為 <i class="cd">DTY</i>：古＋攵）。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","在","D + 空格","高頻一級簡碼（全碼：大 D ＋ 丨 H ＋ 土 F ＋ 識別碼 D）。"],
+      ["鍵名字","#ff5","大","DDDD","鍵面代表字，連擊 D 鍵四次。"],
+      ["取大優先",C2,"故","DTY","左「古」直接取 <i class=\"ky\">D</i>（不拆十口）＋ 右反文旁「攵」(<i class=\"ky\">T</i>) ＋ 識別碼 <i class=\"ky\">Y</i>。"],
+      ["成字字根",C2,"石","DGTG","報戶口 D ＋ 首筆橫 G ＋ 次筆撇 T ＋ 末筆橫 G。"]
+    ],
+    adv:`• <b style="color:${C2}">「取大優先」經典範例</b>：打「<b>胡</b>」字時，左邊「古」直接取 <i class="ky">D</i>，右邊「月」取 <i class="ky">E</i>，再補左右型橫末筆識別碼 <i class="ky">G</i>，即 <i class="cd">DEG</i>（切勿把古拆成十口）。`,
+    poem:`<i class="tr">大</i><b style="color:${C1}">犬三</b>（<b style="color:${C3}">羊</b>）<b style="color:${C2}">古石廠</b>（<i class="ky">D 13</i>）`
+  },
+  {
+    key:"S", zone:"14", rad:"木", short1:"要", cat:"第 5 / 31 頁：橫區（1 區）字根",
+    aux:[
+      {g:"木朩", c:C1, title:"木與木字底", desc:"木字旁、木字底（如：林、森、茶、李）"},
+      {g:"丁", c:C2, title:"丁字部件", desc:"一橫一豎鉤（如：打、顶、灯、可框）"},
+      {g:"西覀", c:C3, title:"西與西字頭", desc:"西字與扁西頭（如：要、票、覆、栗）"}
+    ],
+    slogan:`木丁西 —— 橫區第四鍵（<i class="ky">14</i>），一級簡碼為「<b class="tr">要</b>」。`,
+    rules:[
+      `<b>鍵名字「木」與一級簡碼「要」：</b>連擊 <i class="cd">SSSS</i> 打出「<b class="tr">木</b>」；單擊 <i class="ky">S</i> 加空格打出「<b class="tr">要</b>」（「要」全碼為 <i class="cd">SVF</i>：覀＋女）。`,
+      `<b><span style="color:${C1}">木</span>（字根最簡潔鍵位之一）：</b>S 鍵僅有「木、丁、西」三個核心字根，極易記憶。「林」為 <i class="cd">SS</i>，「森」為 <i class="cd">SSS</i>。`,
+      `<b><span style="color:${C3}">西 / 覀</span>：</b>無論完整的「西」（如「晒」<i class="cd">JSG</i>）或壓扁的西字頭「覀」（如「票」<i class="cd">SFIU</i>），一律取 <i class="ky">S</i>。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","要","S + 空格","高頻一級簡碼（全碼：西 S ＋ 女 V ＋ 識別碼 F）。"],
+      ["鍵名字","#ff5","木","SSSS","鍵面代表字，連擊 S 鍵四次。"],
+      ["丁字部件",C2,"打","RSH","左提手旁 (<i class=\"ky\">R</i>) ＋ 右「丁」(<i class=\"ky\">S</i>) ＋ 左右型豎末筆識別碼 (<i class=\"ky\">H</i>)。"],
+      ["西字頭",C3,"票","SFIU","上西字頭 (<i class=\"ky\">S</i>) ＋ 下「示」(<i class=\"cd\">FIU</i>：二＋小)。"]
+    ],
+    adv:`• <b style="color:${C3}">成字字根「西」拆碼（<i class="cd">SGHG</i>）</b>：報戶口 <i class="ky">S</i> ＋ 首筆橫 (<i class="ky">G</i>) ＋ 次筆豎 (<i class="ky">H</i>) ＋ 末筆橫 (<i class="ky">G</i>)。`,
+    poem:`<i class="tr">木</i><b style="color:${C2}">丁</b><b style="color:${C3}">西</b>（<i class="ky">S 14</i>）`
+  },
+  {
+    key:"A", zone:"15", rad:"工", short1:"工", cat:"第 6 / 31 頁：橫區（1 區）字根",
+    aux:[
+      {g:"工戈", c:C1, title:"工與戈", desc:"工字與戈字部件（如：江、功、我、战）"},
+      {g:"艹廿", c:C2, title:"草字頭與廿", desc:"草字頭、甘字上（如：花、草、共、世）"},
+      {g:"匚七牙", c:C3, title:"右框七與牙", desc:"三面右框「匚」（如：区、医）、七、牙、東頭"}
+    ],
+    slogan:`工戈草頭右框七 —— 橫區第五鍵（<i class="ky">15</i>），一級簡碼與鍵名字同為「<b class="tr">工</b>」。`,
+    rules:[
+      `<b>鍵名字「工」與一級簡碼「工」：</b>單擊 <i class="ky">A</i> 加空格打出「<b class="tr">工</b>」；連擊 <i class="cd">AAAA</i> 亦為「<b class="tr">工</b>」（方便盲打節奏）。`,
+      `<b><span style="color:${C2}">艹</span>（草字頭）與 <span style="color:${C2}">廿</span>：</b>所有草字頭（如「花」<i class="cd">AWXB</i>、「草」<i class="cd">AJJ</i>）與「廿」（如「世」拆為 <i class="cd">ANV</i>：廿＋乙）均在 <i class="ky">A</i> 鍵。`,
+      `<b><span style="color:${C3}">匚</span>（右框）與「東字頭」：</b>向右開口的三面框（如「区」<i class="cd">AQI</i>、「医」<i class="cd">ATDI</i>）及「东」上半部（<i class="cd">AII</i>）均取 <i class="ky">A</i>。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","工","A + 空格","高頻一級簡碼，同時也是 A 鍵鍵名字（AAAA）。"],
+      ["草字頭",C2,"草","AJJ","上草頭 (<i class=\"ky\">A</i>) ＋ 中日 (<i class=\"ky\">J</i>) ＋ 下十 (<i class=\"ky\">J</i>)。"],
+      ["右框匚",C3,"区","AQI","外右框「匚」(<i class=\"ky\">A</i>) ＋ 內「乂」(<i class=\"ky\">Q</i>) ＋ 雜合型點識別碼 (<i class=\"ky\">I</i>)。"],
+      ["成字字根",C1,"戈","AGNT","報戶口 A ＋ 首筆橫 G ＋ 次筆斜鉤 N ＋ 末筆撇 T。"]
+    ],
+    adv:`• <b style="color:${C3}">「区」字的雜合型識別碼（<i class="cd">AQI</i>）</b>：「区」由外框「匚」與內部「乂」相交/半包圍而成，屬於「雜合型（3 型）」，末筆為點（4 區），故識別碼為 43（<i class="ky">I</i>）。`,
+    poem:`<i class="tr">工</i><b style="color:${C1}">戈</b><b style="color:${C2}">草頭</b><b style="color:${C3}">右框七</b>（<i class="ky">A 15</i>）`
+  },
+  /* ================= 二、豎區（2 區：H J K L M） ================= */
+  {
+    key:"H", zone:"21", rad:"目", short1:"上", cat:"第 7 / 31 頁：豎區（2 區）字根",
+    aux:[
+      {g:"目且", c:C1, title:"目與具字頭", desc:"目字旁、具字上半（如：眼、看、具、真）"},
+      {g:"上止卜", c:C2, title:"上止與卜", desc:"上、止、卜、⺊（如：正、步、占、处）"},
+      {g:"虍皮丨", c:C3, title:"虎頭皮與豎", desc:"虎字頭、皮字及單筆直豎（如：虎、虚、波）"}
+    ],
+    slogan:`目具上止卜虎皮 —— 豎區首鍵（<i class="ky">21</i>），一級簡碼為「<b class="tr">上</b>」。`,
+    rules:[
+      `<b>鍵名字「目」與一級簡碼「上」：</b>連擊 <i class="cd">HHHH</i> 打出「<b class="tr">目</b>」；單擊 <i class="ky">H</i> 加空格打出「<b class="tr">上</b>」（「上」全碼為 <i class="cd">HHG</i>）。`,
+      `<b>基本筆畫「豎（丨）」：</b>五筆將直豎與左豎鉤（亅）歸為第二類筆畫，凡單筆豎畫均落在 <i class="ky">H</i> 鍵。`,
+      `<b><span style="color:${C2}">上、止、卜</span> 與 <span style="color:${C3}">虍、皮</span>：</b>「止」字作偏旁（如「正」<i class="cd">GHD</i>：一＋止）、「虎字頭」（如「虚」<i class="cd">HAOG</i>）均歸入 <i class="ky">H</i>。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","上","H + 空格","高頻一級簡碼（全碼：卜 H ＋ 一 G ＋ 識別碼 G = HHG）。"],
+      ["鍵名字","#ff5","目","HHHH","鍵面代表字，連擊 H 鍵四次。"],
+      ["止字部件",C2,"正","GHD","上一 (<i class=\"ky\">G</i>) ＋ 下止 (<i class=\"ky\">H</i>) ＋ 上下型橫末筆識別碼 (<i class=\"ky\">D</i>)。"],
+      ["成字字根",C3,"皮","HCI","報戶口 H ＋ 首筆橫鉤 C ＋ 次筆撇 T → 實際取 HCI（皮字特例）。"]
+    ],
+    adv:`• <b style="color:${C1}">具字頭辨析</b>：「具、真、直」上半部為「目」多一橫的變體（口訣「目具」），五筆將其整體視作一個字根歸入 <i class="ky">H</i>（如「真」拆為 <i class="cd">FHWU</i>：十＋具＋八）。`,
+    poem:`<i class="tr">目</i><b style="color:${C1}">具</b><b style="color:${C2}">上止卜</b><b style="color:${C3}">虎皮</b>（<i class="ky">H 21</i>）`
+  },
+  {
+    key:"J", zone:"22", rad:"日", short1:"是", cat:"第 8 / 31 頁：豎區（2 區）字根",
+    aux:[
+      {g:"日曰", c:C1, title:"日與扁曰", desc:"日字旁、扁曰（如：明、时、明、昌）"},
+      {g:"早刂", c:C2, title:"早與立刀旁", desc:"早字及右側立刀旁（如：草底、到、利、刻）"},
+      {g:"虫", c:C3, title:"蟲字旁", desc:"昆蟲偏旁（如：虽、蛇、蚂、蚁）"}
+    ],
+    slogan:`日早兩豎與蟲依 —— 豎區第二鍵（<i class="ky">22</i>），一級簡碼為「<b class="tr">是</b>」。`,
+    rules:[
+      `<b>鍵名字「日」與一級簡碼「是」：</b>連擊 <i class="cd">JJJJ</i> 打出「<b class="tr">日</b>」；單擊 <i class="ky">J</i> 加空格打出「<b class="tr">是</b>」（「是」全碼為 <i class="cd">JGHU</i>）。`,
+      `<b><span style="color:${C2}">刂</span>（立刀旁 / 兩豎）：</b>右側常見的立刀旁「刂」（如「到」<i class="cd">GCFJ</i>、「别」<i class="cd">KCJH</i>）以及並排兩豎（「师」左 <i class="cd">JGMH</i>）均取 <i class="ky">J</i>。`,
+      `<b><span style="color:${C3}">虫</span>（蟲字旁）：</b>無論在左（如「蚂」<i class="cd">JCG</i>）或在下（如「虽」<i class="cd">KJU</i>），一律取 <i class="ky">J</i>。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","是","J + 空格","高頻一級簡碼（全碼：日 J ＋ 一 G ＋ 止 H ＋ 捺識別碼 U）。"],
+      ["鍵名字","#ff5","日","JJJJ","鍵面代表字，連擊 J 鍵四次。"],
+      ["立刀旁",C2,"到","GCFJ","左至 (<i class=\"cd\">GCF</i>：一＋厶＋土) ＋ 右立刀旁「刂」(<i class=\"ky\">J</i>)。"],
+      ["蟲字旁",C3,"虽","KJU","上口 (<i class=\"ky\">K</i>) ＋ 下虫 (<i class=\"ky\">J</i>) ＋ 上下型點識別碼 (<i class=\"ky\">U</i>)。"]
+    ],
+    adv:`• <b style="color:${C1}">簡體「时」字超簡拆碼（<i class="cd">JFY</i>）</b>：左「日」(<i class="ky">J</i>) ＋ 右「寸」(<i class="ky">F</i>) ＋ 左右型點末筆識別碼 (<i class="ky">Y</i>)，僅三碼即出字！`,
+    poem:`<i class="tr">日</i><b style="color:${C2}">早兩豎</b>與<b style="color:${C3}">蟲</b>依（<i class="ky">J 22</i>）`
+  },
+  {
+    key:"K", zone:"23", rad:"口", short1:"中", cat:"第 9 / 31 頁：豎區（2 區）字根",
+    aux:[
+      {g:"口", c:C1, title:"口字部件", desc:"小方框口部（如：吃、喝、叫、吕、品）"},
+      {g:"川", c:C2, title:"川字部件", desc:"三豎川形（如：州、顺、训、巡右）"}
+    ],
+    slogan:`口與川，字根稀 —— 豎區第三鍵（<i class="ky">23</i>），一級簡碼為「<b class="tr">中</b>」。`,
+    rules:[
+      `<b>鍵名字「口」與一級簡碼「中」：</b>連擊 <i class="cd">KKKK</i> 打出「<b class="tr">口</b>」；單擊 <i class="ky">K</i> 加空格打出「<b class="tr">中</b>」（「中」全碼為 <i class="cd">KHK</i>：口＋丨＋識別碼）。`,
+      `<b>全鍵盤字根最少的鍵位：</b>K 鍵僅有「<b class="tr">口</b>」與「<b style="color:${C2}">川</b>」兩個字根，是五筆中最容易記牢的按鍵。`,
+      `<b>「口」與「囗（國字框）」區分：</b>空心小口在 <i class="ky">K</i> 鍵；包圍其他部件的大方框「囗」在 <i class="ky">L</i> 鍵（如「国」<i class="cd">LGYI</i>）。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","中","K + 空格","高頻一級簡碼（全碼：口 K ＋ 丨 H ＋ 豎識別碼 K = KHK）。"],
+      ["鍵名字","#ff5","口","KKKK","鍵面代表字，連擊 K 鍵四次。"],
+      ["多口疊合",C1,"品","KKKF","上口 (<i class=\"ky\">K</i>) ＋ 左口 (<i class=\"ky\">K</i>) ＋ 右口 (<i class=\"ky\">K</i>) ＋ 識別碼 (<i class=\"ky\">F</i>)。"],
+      ["成字字根",C2,"川","KTHH","報戶口 K ＋ 首筆撇 T ＋ 次筆豎 H ＋ 末筆豎 H。"]
+    ],
+    adv:`• <b style="color:${C1}">「中」字末筆識別碼解析（<i class="cd">KHK</i>）</b>：「中」由「口」(<i class="ky">K</i>) 與「丨」(<i class="ky">H</i>) 相交而成，屬「雜合型（3 型）」，末筆為豎（2 區），故識別碼為 23（<i class="ky">K</i>）。`,
+    poem:`<i class="tr">口</i>與<b style="color:${C2}">川</b>，字根稀（<i class="ky">K 23</i>）`
+  },
+  {
+    key:"L", zone:"24", rad:"田", short1:"國", cat:"第 10 / 31 頁：豎區（2 區）字根",
+    aux:[
+      {g:"田甲", c:C1, title:"田與甲", desc:"田字與出頭甲（如：男、思、里、单中）"},
+      {g:"囗四皿", c:C2, title:"國字框四皿", desc:"大圍框囗、四、皿字底（如：国、罗、益）"},
+      {g:"車力", c:C3, title:"車與力", desc:"繁體車及力字旁（如：办、动、男底、边）"}
+    ],
+    slogan:`田甲方框四車力 —— 豎區第四鍵（<i class="ky">24</i>），一級簡碼為「<b class="tr">國（国）</b>」。`,
+    rules:[
+      `<b>鍵名字「田」與一級簡碼「国」：</b>連擊 <i class="cd">LLLL</i> 打出「<b class="tr">田</b>」；單擊 <i class="ky">L</i> 加空格打出「<b class="tr">国</b>」（「国」全碼為 <i class="cd">LGYI</i>）。`,
+      `<b><span style="color:${C2}">囗</span>（國字框）與 <span style="color:${C2}">四、皿</span>：</b>凡外圍大框「囗」（如「回」<i class="cd">LKD</i>、「团」<i class="cd">LFTE</i>）均先取 <i class="ky">L</i>，再拆內部。`,
+      `<b><span style="color:${C3}">力</span>（高頻部件）：</b>「力」字在簡體字中極為常見（如「办」<i class="cd">LWI</i>、「动」<i class="cd">FCLN</i>、「加」<i class="cd">LKG</i>），一律取 <i class="ky">L</i>。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","国","L + 空格","高頻一級簡碼（全碼：囗 L ＋ 王 G ＋ 丶 Y ＋ 識別碼 I = LGYI）。"],
+      ["鍵名字","#ff5","田","LLLL","鍵面代表字，連擊 L 鍵四次。"],
+      ["力字部件",C3,"办","LWI","主幹「力」(<i class=\"ky\">L</i>) ＋ 兩點「八」(<i class=\"ky\">W</i>) ＋ 雜合型點識別碼 (<i class=\"ky\">I</i>)。"],
+      ["皿字底",C2,"益","UWL","上倒八 (<i class=\"ky\">U</i>) ＋ 中一八 (<i class=\"ky\">W</i>) ＋ 底皿 (<i class=\"ky\">L</i>)。"]
+    ],
+    adv:`• <b style="color:${C3}">簡體「车」與繁體「車」區別</b>：繁體「車」在 <i class="ky">L</i> 鍵；簡體「<b>车</b>」因字形變為「橫＋撇折＋橫＋豎」，歸入 <b>L 鍵（成字字根 <i class="cd">LGNH</i>）</b>，仍在 L 鍵家族中！`,
+    poem:`<i class="tr">田</i><b style="color:${C1}">甲</b><b style="color:${C2}">方框四</b><b style="color:${C3}">車力</b>（<i class="ky">L 24</i>）`
+  },
+  {
+    key:"M", zone:"25", rad:"山", short1:"同", cat:"第 11 / 31 頁：豎區（2 區）字根",
+    aux:[
+      {g:"山由貝", c:C1, title:"山由與貝", desc:"山字、由字、繁體貝（如：岁、油、财）"},
+      {g:"冂几", c:C2, title:"下框與几", desc:"下開口同字框、几字（如：同、周、机、风框）"},
+      {g:"冎", c:C3, title:"骨字頭", desc:"「骨、滑、过(繁)」上部框（如：骨 MEF）"}
+    ],
+    slogan:`山由貝，下框幾 —— 豎區第五鍵（<i class="ky">25</i>），一級簡碼為「<b class="tr">同</b>」。`,
+    rules:[
+      `<b>鍵名字「山」與一級簡碼「同」：</b>連擊 <i class="cd">MMMM</i> 打出「<b class="tr">山</b>」；單擊 <i class="ky">M</i> 加空格打出「<b class="tr">同</b>」（「同」全碼為 <i class="cd">MGKD</i>）。`,
+      `<b><span style="color:${C2}">冂</span>（下開口框 / 同字框）：</b>向下開口的三面框（如「同」外框、「周」外框、「向」外框）均取 <i class="ky">M</i>。`,
+      `<b>簡體「贝」字定位：</b>簡體「<b>贝</b>」由「冂＋人」組成，拆為 <i class="cd">MWY</i>（冂 M ＋ 人 W ＋ 識別碼 Y），首碼仍在 <i class="ky">M</i> 鍵！`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","同","M + 空格","高頻一級簡碼（全碼：冂 M ＋ 一 G ＋ 口 K ＋ 識別碼 D = MGKD）。"],
+      ["鍵名字","#ff5","山","MMMM","鍵面代表字，連擊 M 鍵四次。"],
+      ["几字部件",C2,"机","SMN","左木 (<i class=\"ky\">S</i>) ＋ 右「几」(<i class=\"ky\">M</i>) ＋ 識別碼 (<i class=\"ky\">N</i>)。"],
+      ["简体贝旁",C1,"财","MFT","左「贝」(<i class=\"cd\">MW</i>) ＋ 右「才」(<i class=\"cd\">FT</i>) → 簡碼 <i class=\"cd\">MFT</i>（貝字繁簡同源）。"]
+    ],
+    adv:`• <b style="color:${C1}">成字字根「由」拆碼（<i class="cd">MHNG</i>）</b>：報戶口 <i class="ky">M</i> ＋ 首筆豎 (<i class="ky">H</i>) ＋ 次筆橫折 (<i class="ky">N</i>) ＋ 末筆橫 (<i class="ky">G</i>)。`,
+    poem:`<i class="tr">山</i><b style="color:${C1}">由貝</b>，<b style="color:${C2}">下框幾</b>（<i class="ky">M 25</i>）`
+  },
+  /* ================= 三、撇區（3 區：T R E W Q） ================= */
+  {
+    key:"T", zone:"31", rad:"禾", short1:"和", cat:"第 12 / 31 頁：撇區（3 區）字根",
+    aux:[
+      {g:"禾⺮丿", c:C1, title:"禾竹與單撇", desc:"禾木旁、竹字頭、單筆斜撇（如：和、笑、千）"},
+      {g:"彳", c:C2, title:"雙人旁", desc:"左側雙撇豎（如：行、很、得、律）"},
+      {g:"夂攵", c:C3, title:"折文與反文", desc:"冬字頭「夂」、反文旁「攵」（如：各、处、故、做）"}
+    ],
+    slogan:`禾竹一撇雙人立，反文條頭共三一 —— 撇區首鍵（<i class="ky">31</i>），一級簡碼為「<b class="tr">和</b>」。`,
+    rules:[
+      `<b>鍵名字「禾」與一級簡碼「和」：</b>連擊 <i class="cd">TTTT</i> 打出「<b class="tr">禾</b>」；單擊 <i class="ky">T</i> 加空格打出「<b class="tr">和</b>」（「和」全碼為 <i class="cd">TKG</i>）。`,
+      `<b>基本筆畫「撇（丿）」：</b>五筆將所有撇畫歸為第三類筆畫，凡單筆斜撇（如「千」首筆、「白」首筆）均落在 <i class="ky">T</i> 鍵。`,
+      `<b><span style="color:${C1}">⺮</span>（竹字頭）、<span style="color:${C2}">彳</span>（雙人旁）與 <span style="color:${C3}">攵</span>（反文旁）：</b>三大超高頻偏旁全部集中在 <i class="ky">T</i> 鍵！`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","和","T + 空格","高頻一級簡碼（全碼：禾 T ＋ 口 K ＋ 橫識別碼 G = TKG）。"],
+      ["鍵名字","#ff5","禾","TTTT","鍵面代表字，連擊 T 鍵四次。"],
+      ["竹字頭",C1,"笑","TTDU","上竹字頭 (<i class=\"ky\">T</i>) ＋ 下「夭」(<i class=\"cd\">TD</i>：撇＋大) ＋ 識別碼 (<i class=\"ky\">U</i>)。"],
+      ["反文旁",C3,"做","WDGT","左「亻」(<i class=\"ky\">W</i>) ＋ 中「古」(<i class=\"ky\">D</i>) ＋ 右「攵」(<i class=\"ky\">T</i>) ＋ 識別碼 (<i class=\"ky\">G</i>)。"]
+    ],
+    adv:`• <b style="color:${C1}">「竹」字拆碼注意（<i class="cd">TTGH</i>）</b>：「竹」雖在 T 鍵上，但它不是鍵名字（T 的鍵名字是「禾」），因此「竹」按成字字根規則拆為：報戶口 <i class="ky">T</i> ＋ 首筆撇 <i class="ky">T</i> ＋ 次筆橫 <i class="ky">G</i> ＋ 末筆豎鉤 <i class="ky">H</i>。`,
+    poem:`<i class="tr">禾</i><b style="color:${C1}">竹一撇</b><b style="color:${C2}">雙人</b>立，<b style="color:${C3}">反文條頭</b>共三一（<i class="ky">T 31</i>）`
+  },
+  {
+    key:"R", zone:"32", rad:"白", short1:"的", cat:"第 13 / 31 頁：撇區（3 區）字根",
+    aux:[
+      {g:"白手扌", c:C1, title:"白手與提手", desc:"白字、手字、提手旁（如：的、百、打、找）"},
+      {g:"龵", c:C2, title:"看字頭", desc:"「看、着」頂部手形變體（如：看 RHF）"},
+      {g:"斤", c:C3, title:"斤字部件", desc:"斤字旁（如：新、听、所、近）"}
+    ],
+    slogan:`白手看頭三二斤 —— 撇區第二鍵（<i class="ky">32</i>），一級簡碼為「<b class="tr">的</b>」。`,
+    rules:[
+      `<b>鍵名字「白」與一級簡碼「的」：</b>連擊 <i class="cd">RRRR</i> 打出「<b class="tr">白</b>」；單擊 <i class="ky">R</i> 加空格打出中文最高頻字「<b class="tr">的</b>」（全碼 <i class="cd">RQYY</i>）。`,
+      `<b><span style="color:${C1}">扌</span>（提手旁）與 <span style="color:${C2}">龵</span>（看字頭）：</b>提手旁「扌」是五筆使用率最高的偏旁之一，直接按 <i class="ky">R</i>。`,
+      `<b><span style="color:${C3}">斤</span>（斤字旁）：</b>無論在左在右（如「新」<i class="cd">USRH</i>、「听」<i class="cd">KRH</i>、「近」<i class="cd">RPK</i>），一律取 <i class="ky">R</i>。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","的","R + 空格","中文使用頻率第一名，單擊 R 加空格直接上屏！"],
+      ["鍵名字","#ff5","白","RRRR","鍵面代表字，連擊 R 鍵四次。"],
+      ["提手旁",C1,"找","RAY","左提手旁 (<i class=\"ky\">R</i>) ＋ 右「戈」(<i class=\"ky\">A</i>) ＋ 左右型點識別碼 (<i class=\"ky\">Y</i>)。"],
+      ["斤字旁",C3,"听","KRH","左口 (<i class=\"ky\">K</i>) ＋ 右斤 (<i class=\"ky\">R</i>) ＋ 左右型豎末筆識別碼 (<i class=\"ky\">H</i>)。"]
+    ],
+    adv:`• <b style="color:${C1}">成字字根「手」拆碼（<i class="cd">RTGH</i>）</b>：報戶口 <i class="ky">R</i> ＋ 首筆撇 (<i class="ky">T</i>) ＋ 次筆橫 (<i class="ky">G</i>) ＋ 末筆豎鉤 (<i class="ky">H</i>)。`,
+    poem:`<i class="tr">白</i><b style="color:${C1}">手</b><b style="color:${C2}">看頭</b>三二<b style="color:${C3}">斤</b>（<i class="ky">R 32</i>）`
+  },
+  {
+    key:"E", zone:"33", rad:"月", short1:"有", cat:"第 14 / 31 頁：撇區（3 區）字根",
+    aux:[
+      {g:"月⺼彡", c:C1, title:"月肉旁與三撇", desc:"月字、肉月旁、三撇（如：有、脑、彩、形）"},
+      {g:"乃用", c:C2, title:"乃與用", desc:"乃字與用字框（如：奶、孕、周內、通底）"},
+      {g:"豕𧘇舟", c:C3, title:"家衣底與舟", desc:"家字底、衣字底「𧘇」、舟字旁（如：家、表底、船）"}
+    ],
+    slogan:`月彡（衫）乃用家衣底 —— 撇區第三鍵（<i class="ky">33</i>），一級簡碼為「<b class="tr">有</b>」。`,
+    rules:[
+      `<b>鍵名字「月」與一級簡碼「有」：</b>連擊 <i class="cd">EEEE</i> 打出「<b class="tr">月</b>」；單擊 <i class="ky">E</i> 加空格打出「<b class="tr">有</b>」（「有」全碼為 <i class="cd">DEF</i>：ナ＋月）。`,
+      `<b><span style="color:${C1}">⺼</span>（肉月旁）與 <span style="color:${C1}">彡</span>（三撇）：</b>人體器官偏旁「⺼」（如「肝、肺、脑、胜」）及三撇「彡」（如「形」<i class="cd">GAET</i>、「彩」<i class="cd">ESET</i>）均在 <i class="ky">E</i>。`,
+      `<b><span style="color:${C3}">豕</span>（家字底）與 <span style="color:${C3}">𧘇</span>（衣字底）：</b>「家」的下半部「豕」(<i class="cd">PGE</i>) 與「衣、表、展、良」的下半部「𧘇」一律取 <i class="ky">E</i>。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","有","E + 空格","高頻一級簡碼（全碼：ナ D ＋ 月 E ＋ 識別碼 F = DEF）。"],
+      ["鍵名字","#ff5","月","EEEE","鍵面代表字，連擊 E 鍵四次。"],
+      ["家字底",C3,"家","PGE","上寶蓋頭 (<i class=\"ky\">P</i>) ＋ 下家字底「豕」(<i class=\"ky\">G</i>) ＋ 識別碼 (<i class=\"ky\">E</i>)。"],
+      ["衣字底",C3,"表","GEU","上青字頭 (<i class=\"ky\">G</i>) ＋ 下衣字底「𧘇」(<i class=\"ky\">E</i>) ＋ 識別碼 (<i class=\"ky\">U</i>)。"]
+    ],
+    adv:`• <b style="color:${C2}">成字字根「用」拆碼（<i class="cd">ETNH</i>）</b>：報戶口 <i class="ky">E</i> ＋ 首筆撇 (<i class="ky">T</i>) ＋ 次筆橫折鉤 (<i class="ky">N</i>) ＋ 末筆豎 (<i class="ky">H</i>)。`,
+    poem:`<i class="tr">月</i><b style="color:${C1}">彡</b>（衫）<b style="color:${C2}">乃用</b><b style="color:${C3}">家衣底</b>（<i class="ky">E 33</i>）`
+  },
+  {
+    key:"W", zone:"34", rad:"人", short1:"人", cat:"第 15 / 31 頁：撇區（3 區）字根",
+    aux:[
+      {g:"人亻", c:C1, title:"人與單人旁", desc:"人字、單人旁（如：从、众、他、们、体）"},
+      {g:"八丷入", c:C2, title:"八倒八與入", desc:"八字底、倒八點、入字（如：只、共、公、全）"},
+      {g:"癶", c:C3, title:"祭字頭", desc:"「登、发(繁)、祭」頂部部件（如：登 WGWU）"}
+    ],
+    slogan:`人和八，三四裡 —— 撇區第四鍵（<i class="ky">34</i>），一級簡碼與鍵名字同為「<b class="tr">人</b>」。`,
+    rules:[
+      `<b>鍵名字「人」與一級簡碼「人」：</b>單擊 <i class="ky">W</i> 加空格打出「<b class="tr">人</b>」；連擊 <i class="cd">WWWW</i> 亦為「<b class="tr">人</b>」。`,
+      `<b><span style="color:${C1}">亻</span>（單人旁）與 <span style="color:${C2}">八 / 丷</span>：</b>「从」為 <i class="cd">WW</i>，「众」為 <i class="cd">WWW</i>；所有「八」字底（如「只」<i class="cd">KWU</i>、「兵」<i class="cd">RGWU</i>）與「入」均在 <i class="ky">W</i>。`,
+      `<b>簡體「体、们、伙」極速輸入：</b>左邊「亻」直接按 <i class="ky">W</i>，搭配右部字根即可快速成字。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","人","W + 空格","高頻一級簡碼，同時也是 W 鍵鍵名字（WWWW）。"],
+      ["單人旁",C1,"体","WSG","左單人旁 (<i class=\"ky\">W</i>) ＋ 右「本」(<i class=\"cd\">SG</i>：木＋一)。"],
+      ["八字底",C2,"只","KWU","上口 (<i class=\"ky\">K</i>) ＋ 下八 (<i class=\"ky\">W</i>) ＋ 上下型點末筆識別碼 (<i class=\"ky\">U</i>)。"],
+      ["祭字頭",C3,"登","WGWU","上祭字頭 (<i class=\"ky\">W</i>) ＋ 中一 (<i class=\"ky\">G</i>) ＋ 下豆 (<i class=\"cd\">WU</i>)。"]
+    ],
+    adv:`• <b style="color:${C2}">成字字根「八」拆碼（<i class="cd">WTY</i>）</b>：報戶口 <i class="ky">W</i> ＋ 首筆撇 (<i class="ky">T</i>) ＋ 次筆捺 (<i class="ky">Y</i>)，三碼加空格出字。`,
+    poem:`<i class="tr">人</i>和<b style="color:${C2}">八</b>，三四裡（<i class="ky">W 34</i>）`
+  },
+  {
+    key:"Q", zone:"35", rad:"金", short1:"我", cat:"第 16 / 31 頁：撇區（3 區）字根",
+    aux:[
+      {g:"金钅", c:C1, title:"金與簡體金旁", desc:"金字與簡體「钅」（如：银、铁、钱、钟）"},
+      {g:"勹⺈犭", c:C2, title:"包頭魚頭反犬", desc:"包字頭、魚字頭「⺈」、反犬旁「犭」（如：句、色、狗）"},
+      {g:"儿夕氏臼", c:C3, title:"儿夕氏與臼", desc:"儿字底、夕字、氏字、臼字（如：元、外、民、舅）"}
+    ],
+    slogan:`金勺缺點無尾魚，犬旁留叉兒一點夕，氏無七（妻） —— 撇區第五鍵（<i class="ky">35</i>），一級簡碼為「<b class="tr">我</b>」。`,
+    rules:[
+      `<b>鍵名字「金」與一級簡碼「我」：</b>連擊 <i class="cd">QQQQ</i> 打出「<b class="tr">金</b>」；單擊 <i class="ky">Q</i> 加空格打出「<b class="tr">我</b>」（「我」全碼為 <i class="cd">TRNT</i>）。`,
+      `<b><span style="color:${C1}">钅</span>（簡體金字旁）：</b>簡體字中所有的「钅」（如「铁」<i class="cd">QRWY</i>、「钱」<i class="cd">QGT</i>、「银」<i class="cd">QVEY</i>）直接按 <i class="ky">Q</i> 鍵，與繁體「釒」完全一致！`,
+      `<b><span style="color:${C2}">勹、⺈、犭</span> 與 <span style="color:${C3}">儿、夕</span>：</b>「包字頭」(<i class="cd">QNV</i>)、「鱼字頭」(<i class="cd">QGF</i>)、「反犬旁」(<i class="cd">QT</i>) 與「儿字底」（如「先」<i class="cd">TFQB</i>）均在 <i class="ky">Q</i>。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","我","Q + 空格","高頻一級簡碼（全碼：丿 T ＋ 扌 R ＋ 乚 N ＋ 丿 T = TRNT）。"],
+      ["鍵名字","#ff5","金","QQQQ","鍵面代表字，連擊 Q 鍵四次。"],
+      ["简体金旁",C1,"铁","QRWY","左「钅」(<i class=\"ky\">Q</i>) ＋ 右「失」(<i class=\"cd\">RWY</i>：撇＋夫)。"],
+      ["反犬旁",C2,"狗","QTQK","左反犬旁「犭」(<i class=\"ky\">Q</i>) ＋ 右「句」(<i class=\"cd\">QK</i>：勹＋口)。"]
+    ],
+    adv:`• <b style="color:${C3}">「氏無七（妻）」口訣詳解</b>：意思是「氏」字去掉「七」後剩下的撇豎提斜鉤（即「民」字除橫折外的部分），以及「妻」字上半部分（橫＋横折＋橫＋豎），均歸入 <i class="ky">Q</i> 鍵。`,
+    poem:`<i class="tr">金</i><b style="color:${C2}">勺</b>缺點<b style="color:${C2}">無尾魚</b>，<b style="color:${C2}">犬旁</b>留叉<b style="color:${C3}">兒</b>一點<b style="color:${C3}">夕</b>，<b style="color:${C3}">氏</b>無七（妻）（<i class="ky">Q 35</i>）`
+  },
+  /* ================= 四、捺區（4 區：Y U I O P） ================= */
+  {
+    key:"Y", zone:"41", rad:"言", short1:"主", cat:"第 17 / 31 頁：捺區（4 區）字根",
+    aux:[
+      {g:"言讠", c:C1, title:"言與簡體言旁", desc:"言字與簡體「讠」（如：话、语、说、请）"},
+      {g:"文方广亠", c:C2, title:"文方廣與京頭", desc:"文、方、广字頭、點橫頭「亠」（如：这、放、店、京）"},
+      {g:"丶乀", c:C3, title:"單點與捺筆", desc:"獨立點筆與捺筆（如：主、义、太末點）"}
+    ],
+    slogan:`言文方廣在四一，高頭一捺誰人去 —— 捺區首鍵（<i class="ky">41</i>），一級簡碼為「<b class="tr">主</b>」。`,
+    rules:[
+      `<b>鍵名字「言」與一級簡碼「主」：</b>連擊 <i class="cd">YYYY</i> 打出「<b class="tr">言</b>」；單擊 <i class="ky">Y</i> 加空格打出「<b class="tr">主</b>」（「主」全碼為 <i class="cd">YGGD</i>）。`,
+      `<b>基本筆畫「點（丶）」與「捺（乀）」：</b>五筆將「點」與「捺」歸為第四類筆畫，凡單筆點或捺均落在 <i class="ky">Y</i> 鍵。`,
+      `<b><span style="color:${C1}">讠</span>（簡體言字旁）與 <span style="color:${C2}">文、方、广、亠</span>：</b>簡體言字旁「讠」直接按 <i class="ky">Y</i> 鍵！與「言」同鍵，打「话、说、请」極為順手。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","主","Y + 空格","高頻一級簡碼（全碼：丶 Y ＋ 王 G ＋ 識別碼 D = YGGD）。"],
+      ["鍵名字","#ff5","言","YYYY","鍵面代表字，連擊 Y 鍵四次。"],
+      ["简体言旁",C1,"话","YTDG","左「讠」(<i class=\"ky\">Y</i>) ＋ 右「舌」(<i class=\"cd\">TDG</i>：丿＋古)。"],
+      ["广字頭",C2,"店","YHKD","外「广」(<i class=\"ky\">Y</i>) ＋ 內「占」(<i class=\"cd\">HK</i>：卜＋口) ＋ 識別碼 (<i class=\"ky\">D</i>)。"]
+    ],
+    adv:`• <b style="color:${C2}">成字字根「文」與「方」拆碼</b>：<br>　▸ <b>文</b>（<i class="cd">YYGY</i>）：報戶口 <i class="ky">Y</i> ＋ 首筆點 <i class="ky">Y</i> ＋ 次筆橫 <i class="ky">G</i> ＋ 末筆捺 <i class="ky">Y</i>。<br>　▸ <b>方</b>（<i class="cd">YYGN</i>）：報戶口 <i class="ky">Y</i> ＋ 首筆點 <i class="ky">Y</i> ＋ 次筆橫 <i class="ky">G</i> ＋ 第三筆橫折鉤 <i class="ky">N</i>（注意國家標準筆順先寫折後寫撇，故取首、次、末三筆時末筆為折 <i class="ky">N</i> 還是撇 <i class="ky">T</i>？在五筆 86 版中「方」按傳統筆順末筆為撇，編碼為 <b><i class="cd">YYGT</i></b>）。`,
+    poem:`<i class="tr">言</i><b style="color:${C2}">文方廣</b>在四一，<b style="color:${C2}">高頭</b><b style="color:${C3}">一捺</b>誰人去（<i class="ky">Y 41</i>）`
+  },
+  {
+    key:"U", zone:"42", rad:"立", short1:"產", cat:"第 18 / 31 頁：捺區（4 區）字根",
+    aux:[
+      {g:"立辛", c:C1, title:"立與辛", desc:"立字旁、辛字（如：站、亲、辣、辞右）"},
+      {g:"冫六", c:C2, title:"兩點水與六", desc:"兩點水旁、六字（如：冷、冰、冲、交上）"},
+      {g:"門疒丬", c:C3, title:"門病與將旁", desc:"繁體門、病字頭「疒」、將字旁（如：病、痛、状）"}
+    ],
+    slogan:`立辛兩點六門病 —— 捺區第二鍵（<i class="ky">42</i>），一級簡碼為「<b class="tr">產（产）</b>」。`,
+    rules:[
+      `<b>鍵名字「立」與一級簡碼「产」：</b>連擊 <i class="cd">UUUU</i> 打出「<b class="tr">立</b>」；單擊 <i class="ky">U</i> 加空格打出「<b class="tr">产</b>」（「产」全碼為 <i class="cd">UTE</i>）。`,
+      `<b><span style="color:${C2}">冫</span>（兩點水）與 <span style="color:${C3}">疒</span>（病字頭）：</b>兩點水（如「冷」<i class="cd">UWYC</i>、「决」<i class="cd">UNWY</i>）與病字頭「疒」（如「病」<i class="cd">UGMW</i>、「疗」<i class="cd">UBK</i>）均在 <i class="ky">U</i>。`,
+      `<b>簡體「门」與繁體「門」之重要區別：</b>繁體「門」在 <i class="ky">U</i> 鍵；但簡體「<b>门</b>」第一筆是點 (<i class="ky">Y</i>)、第二筆是豎 (<i class="ky">H</i>)、第三筆是橫折鉤 (<i class="ky">N</i>)，因此簡體「门」的編碼是 <b><i class="cd">UYHN</i></b>（首碼仍在 <i class="ky">U</i> 鍵！記憶口訣：兩點水旁加一豎折，順手歸 U）。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","产","U + 空格","高頻一級簡碼（全碼：立 U ＋ 丿 T ＋ 識別碼 E = UTE）。"],
+      ["鍵名字","#ff5","立","UUUU","鍵面代表字，連擊 U 鍵四次。"],
+      ["简体门框",C3,"问 / 间","UKD / UJD","外「门」直接取 <i class=\"ky\">U</i> ＋ 內「口」(<i class=\"ky\">K</i>) ＋ 識別碼 (<i class=\"ky\">D</i>) = <i class=\"cd\">UKD</i>；內「日」(<i class=\"ky\">J</i>) = <i class=\"cd\">UJD</i>！"],
+      ["病字頭",C3,"病","UGMW","外「疒」(<i class=\"ky\">U</i>) ＋ 內「丙」(<i class=\"cd\">GMW</i>：一＋冂＋人)。"]
+    ],
+    adv:`• <b style="color:${C3}">簡體「门」字框超強記憶法</b>：在五筆 86 版中，簡體「<b>门</b>」直接繼承了繁體「門」的鍵位 <i class="ky">U</i>！因此「<b>问</b>」=<i class="cd">UKD</i>、「<b>间</b>」=<i class="cd">UJD</i>、「<b>闭</b>」=<i class="cd">UFT</i>、「<b>开</b>」=<i class="cd">GA</i>，完全無需額外背誦新鍵位！`,
+    poem:`<i class="tr">立</i><b style="color:${C1}">辛</b><b style="color:${C2}">兩點六</b><b style="color:${C3}">門病</b>（<i class="ky">U 42</i>）`
+  },
+  {
+    key:"I", zone:"43", rad:"水", short1:"不", cat:"第 19 / 31 頁：捺區（4 區）字根",
+    aux:[
+      {g:"水氵氺", c:C1, title:"水與三點水", desc:"水字、三點水、水字底（如：江、河、汉、泰）"},
+      {g:"小⺌", c:C2, title:"小與小字頭", desc:"小字、小字頭（如：少、尖、当上、光上）"},
+      {g:"⺍", c:C3, title:"興字頭", desc:"「兴、举、学」頂部三點（如：兴 IWU、学 IPBF）"}
+    ],
+    slogan:`水旁興頭小倒立 —— 捺區第三鍵（<i class="ky">43</i>），一級簡碼為「<b class="tr">不</b>」。`,
+    rules:[
+      `<b>鍵名字「水」與一級簡碼「不」：</b>連擊 <i class="cd">IIII</i> 打出「<b class="tr">水</b>」；單擊 <i class="ky">I</i> 加空格打出「<b class="tr">不</b>」（「不」全碼為 <i class="cd">GII</i>）。`,
+      `<b><span style="color:${C1}">氵</span>（三點水）：</b>中文使用頻率極高的偏旁，直接按 <i class="ky">I</i> 鍵（如「汉」<i class="cd">ICY</i>：氵＋又＋識別碼）。`,
+      `<b><span style="color:${C2}">小 / ⺌</span> 與 <span style="color:${C3}">⺍</span>（興字頭）：</b>「小」(<i class="cd">IHTY</i>)、「当」頂部「⺌」(<i class="cd">IVF</i>) 以及簡體「<b>兴</b>」(<i class="cd">IWU</i>)、「<b>学</b>」(<i class="cd">IPBF</i>) 頂部的三點（興字頭）全部歸入 <i class="ky">I</i> 鍵！`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","不","I + 空格","高頻一級簡碼（全碼：一 G ＋ 卜 I ＋ 識別碼 I = GII）。"],
+      ["鍵名字","#ff5","水","IIII","鍵面代表字，連擊 I 鍵四次。"],
+      ["興字頭",C3,"学","IPBF","上興字頭 (<i class=\"ky\">I</i>) ＋ 中禿寶蓋 (<i class=\"ky\">P</i>) ＋ 下子 (<i class=\"ky\">B</i>) ＋ 識別碼 (<i class=\"ky\">F</i>)。"],
+      ["小字頭",C2,"当","IVF","上小字頭 (<i class=\"ky\">I</i>) ＋ 下橫折「彐」(<i class=\"ky\">V</i>) ＋ 識別碼 (<i class=\"ky\">F</i>)。"]
+    ],
+    adv:`• <b style="color:${C3}">簡體「学、兴、举、觉」首碼全在 I 鍵</b>：凡頂部為「點、點、撇」的三點結構（興字頭），在 86 版五筆中一律視為一個完整字根歸入 <i class="ky">I</i> 鍵（如「觉」<i class="cd">IPMQ</i>）。`,
+    poem:`<i class="tr">水</i>旁<b style="color:${C3}">興頭</b><b style="color:${C2}">小倒立</b>（<i class="ky">I 43</i>）`
+  },
+  {
+    key:"O", zone:"44", rad:"火", short1:"為", cat:"第 20 / 31 頁：捺區（4 區）字根",
+    aux:[
+      {g:"火灬", c:C1, title:"火與四點底", desc:"火字旁、四點底（如：灯、炒、点、照、热）"},
+      {g:"米", c:C2, title:"米字部件", desc:"米字旁（如：粉、粮、类、数上）"},
+      {g:"业", c:C3, title:"業字頭", desc:"「业、亚、普」頂部兩豎兩點（如：业 OGD）"}
+    ],
+    slogan:`火業頭，四點米 —— 捺區第四鍵（<i class="ky">44</i>），一級簡碼為「<b class="tr">為（为）</b>」。`,
+    rules:[
+      `<b>鍵名字「火」與一級簡碼「为」：</b>連擊 <i class="cd">OOOO</i> 打出「<b class="tr">火</b>」；單擊 <i class="ky">O</i> 加空格打出「<b class="tr">为</b>」（「为」全碼為 <i class="cd">YLYI</i>）。`,
+      `<b><span style="color:${C1}">灬</span>（四點底）：</b>位於字底的四點（如「点」<i class="cd">HKOU</i>、「照」<i class="cd">JVKO</i>）一律取 <i class="ky">O</i>。`,
+      `<b><span style="color:${C3}">业</span>（業字頭）：</b>簡體「<b>业</b>」字直接歸入 <i class="ky">O</i> 鍵（全碼拆為 <i class="cd">OGD</i>：业＋一＋識別碼）。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","为","O + 空格","高頻一級簡碼（全碼：丶 Y ＋ 力 L ＋ 丶 Y ＋ 識別碼 I = YLYI）。"],
+      ["鍵名字","#ff5","火","OOOO","鍵面代表字，連擊 O 鍵四次。"],
+      ["四點底",C1,"点","HKOU","上占 (<i class=\"cd\">HK</i>：卜＋口) ＋ 下四點底「灬」(<i class=\"ky\">O</i>) ＋ 識別碼 (<i class=\"ky\">U</i>)。"],
+      ["米字旁",C2,"类","ODU","上米 (<i class=\"ky\">O</i>) ＋ 下大 (<i class=\"ky\">D</i>) ＋ 上下型點末筆識別碼 (<i class=\"ky\">U</i>)。"]
+    ],
+    adv:`• <b style="color:${C2}">成字字根「米」拆碼（<i class="cd">OYTY</i>）</b>：報戶口 <i class="ky">O</i> ＋ 首筆點 (<i class="ky">Y</i>) ＋ 次筆撇 (<i class="ky">T</i>) ＋ 末筆捺 (<i class="ky">Y</i>)。`,
+    poem:`<i class="tr">火</i><b style="color:${C3}">業頭</b>，<b style="color:${C1}">四點</b><b style="color:${C2}">米</b>（<i class="ky">O 44</i>）`
+  },
+  {
+    key:"P", zone:"45", rad:"之", short1:"這", cat:"第 21 / 31 頁：捺區（4 區）字根",
+    aux:[
+      {g:"之辶廴", c:C1, title:"之走之與建底", desc:"之字、走之底「辶」、建之底「廴」（如：这、道、建）"},
+      {g:"宀冖", c:C2, title:"寶蓋與禿寶蓋", desc:"寶蓋頭「宀」、禿寶蓋「冖」（如：家、安、军、写）"},
+      {g:"礻衤", c:C3, title:"示字旁與衣字旁", desc:"點折示旁「礻」、衣旁「衤」（如：神、视、被、初）"}
+    ],
+    slogan:`之字軍蓋道建底，摘礻（示）衤（衣） —— 捺區第五鍵（<i class="ky">45</i>），一級簡碼為「<b class="tr">這（这）</b>」。`,
+    rules:[
+      `<b>鍵名字「之」與一級簡碼「这」：</b>連擊 <i class="cd">PPPP</i> 打出「<b class="tr">之</b>」；單擊 <i class="ky">P</i> 加空格打出「<b class="tr">这</b>」（「这」全碼為 <i class="cd">YPI</i>：文＋辶＋識別碼）。`,
+      `<b><span style="color:${C1}">辶</span>（走之底取碼順序鐵律）：</b>五筆拆字嚴格按「書寫筆順」，因走之底「辶」最後書寫，故凡帶「辶」之字<b>最後才取 <i class="ky">P</i></b>（例如：「<b>过</b>」先拆「寸」<i class="ky">F</i>，再取「辶」<i class="ky">P</i>，補識別碼 <i class="ky">I</i> = <i class="cd">FPI</i>；「<b>远</b>」先拆「元」<i class="cd">FQ</i>，再取「辶」<i class="ky">P</i>，補識別碼 <i class="ky">V</i> = <i class="cd">FQPV</i>）！`,
+      `<b><span style="color:${C3}">礻</span>（示字旁）與 <span style="color:${C3}">衤</span>（衣字旁）：</b>無論一點「礻」還是兩點「衤」，五筆一視同仁全部歸入 <i class="ky">P</i> 鍵，再也不怕寫錯點數！`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","这","P + 空格","高頻一級簡碼（全碼：文 Y ＋ 辶 P ＋ 識別碼 I = YPI）。"],
+      ["鍵名字","#ff5","之","PPPP","鍵面代表字，連擊 P 鍵四次。"],
+      ["走之底",C1,"过","FPI","先寫「寸」(<i class=\"ky\">F</i>) ＋ 後寫「辶」(<i class=\"ky\">P</i>) ＋ 雜合型點識別碼 (<i class=\"ky\">I</i>)。"],
+      ["寶蓋頭",C2,"安","PVF","上寶蓋頭「宀」(<i class=\"ky\">P</i>) ＋ 下「女」(<i class=\"ky\">V</i>) ＋ 識別碼 (<i class=\"ky\">F</i>)。"]
+    ],
+    adv:`• <b style="color:${C1}">與倉頡最大的不同</b>：倉頡拆「辶」永遠作第一碼；<b>五筆拆「辶」與「廴」永遠按筆順最後取 <i class="ky">P</i></b>（如「建」先拆「聿」<i class="cd">VFH</i>，最後取「廴」<i class="ky">P</i> = <i class="cd">VFHP</i>）。`,
+    poem:`<i class="tr">之</i>字<b style="color:${C2}">軍蓋</b><b style="color:${C1}">道建底</b>，摘<b style="color:${C3}">礻（示）衤（衣）</b>（<i class="ky">P 45</i>）`
+  },
+  /* ================= 五、折區（5 區：N B V C X） ================= */
+  {
+    key:"N", zone:"51", rad:"已", short1:"民", cat:"第 22 / 31 頁：折區（5 區）字根",
+    aux:[
+      {g:"已巳己", c:C1, title:"已半巳滿不出己", desc:"半封已、全封巳、開口己（如：改、包內、记）"},
+      {g:"コ乙尸", c:C2, title:"左框折與尸", desc:"左框「コ」、折筆「乙」、尸字頭（如：艺、居、屋）"},
+      {g:"心忄羽", c:C3, title:"心豎心與羽", desc:"心字、豎心旁「忄」、羽字（如：思、快、习、翼）"}
+    ],
+    slogan:`已半巳滿不出己，左框折屍心和羽 —— 折區首鍵（<i class="ky">51</i>），一級簡碼為「<b class="tr">民</b>」。`,
+    rules:[
+      `<b>鍵名字「已」與一級簡碼「民」：</b>連擊 <i class="cd">NNNN</i> 打出「<b class="tr">已</b>」；單擊 <i class="ky">N</i> 加空格打出「<b class="tr">民</b>」（「民」全碼為 <i class="cd">NAV</i>）。`,
+      `<b>基本筆畫「折（乙）」：</b>五筆將所有帶轉折的筆畫（橫折、豎折、橫折鉤、豎彎鉤、撇折等）統一歸為第五類筆畫，凡單筆折畫均落在 <i class="ky">N</i> 鍵。`,
+      `<b><span style="color:${C3}">心、忄</span>（豎心旁）與 <span style="color:${C2}">尸</span>（尸字頭）：</b>心理偏旁（如「快」<i class="cd">NNWY</i>、「想」<i class="cd">SHNU</i>）與「尸字頭」（如「局」<i class="cd">NNKD</i>、「层」<i class="cd">NFCY</i>）均在 <i class="ky">N</i>。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","民","N + 空格","高頻一級簡碼（全碼：氏頭 N ＋ 一 A ＋ 折識別碼 V = NAV）。"],
+      ["鍵名字","#ff5","已","NNNN","鍵面代表字，連擊 N 鍵四次。"],
+      ["豎心旁",C3,"快","NNWY","左豎心旁「忄」(<i class=\"ky\">N</i>) ＋ 右「夬」(<i class=\"cd\">NWY</i>：折＋大)。"],
+      ["尸字頭",C2,"层","NFCY","外「尸」(<i class=\"ky\">N</i>) ＋ 內「云」(<i class=\"cd\">FC</i>：二＋厶) ＋ 識別碼 (<i class=\"ky\">Y</i>)。"]
+    ],
+    adv:`• <b style="color:${C3}">成字字根「心」拆碼（<i class="cd">NYNY</i>）</b>：報戶口 <i class="ky">N</i> ＋ 首筆點 (<i class="ky">Y</i>) ＋ 次筆臥鉤 (<i class="ky">N</i>) ＋ 末筆點 (<i class="ky">Y</i>)。`,
+    poem:`<i class="tr">已</i>半<b style="color:${C1}">巳</b>滿不出<b style="color:${C1}">己</b>，<b style="color:${C2}">左框折屍</b><b style="color:${C3}">心和羽</b>（<i class="ky">N 51</i>）`
+  },
+  {
+    key:"B", zone:"52", rad:"子", short1:"了", cat:"第 23 / 31 頁：折區（5 區）字根",
+    aux:[
+      {g:"子孑了", c:C1, title:"子孑與了", desc:"子字旁、孑、了字（如：好、孩、孔、疗内）"},
+      {g:"耳阝卩", c:C2, title:"耳雙耳與單耳", desc:"耳字、雙耳旁「阝」、單耳旁「卩」（如：取、院、都、节）"},
+      {g:"也凵", c:C3, title:"也與框向上", desc:"也字、上開口框「凵」（如：地、他、出、击底）"}
+    ],
+    slogan:`子耳了也框向上 —— 折區第二鍵（<i class="ky">52</i>），一級簡碼為「<b class="tr">了</b>」。`,
+    rules:[
+      `<b>鍵名字「子」與一級簡碼「了」：</b>連擊 <i class="cd">BBBB</i> 打出「<b class="tr">子</b>」；單擊 <i class="ky">B</i> 加空格打出「<b class="tr">了</b>」（「了」全碼為 <i class="cd">BNH</i>）。`,
+      `<b><span style="color:${C2}">阝</span>（雙耳旁）與 <span style="color:${C2}">卩</span>（單耳旁）：</b>無論左耳（阜，如「院」<i class="cd">BPFQ</i>）還是右耳（邑，如「都」<i class="cd">FTJB</i>），以及單耳「卩」（如「节」<i class="cd">ABJ</i>），一律歸入 <i class="ky">B</i>。`,
+      `<b><span style="color:${C3}">凵</span>（框向上）：</b>向上開口的三面框「凵」（如「出」<i class="cd">BMK</i>、「击」<i class="cd">FMK</i>）取 <i class="ky">B</i>。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","了","B + 空格","高頻一級簡碼（全碼：了 B ＋ 豎鉤 H = BNH）。"],
+      ["鍵名字","#ff5","子","BBBB","鍵面代表字，連擊 B 鍵四次。"],
+      ["雙耳旁",C2,"都","FTJB","左「者」(<i class=\"cd\">FTJ</i>：土＋丿＋日) ＋ 右雙耳旁「阝」(<i class=\"ky\">B</i>)。"],
+      ["框向上",C3,"出","BMK","上山 (<i class=\"ky\">M</i>) ＋ 下凵 (<i class=\"ky\">B</i>) → 按書寫順序拆為 <i class=\"cd\">BMK</i>（山＋凵＋識別碼）。"]
+    ],
+    adv:`• <b style="color:${C2}">成字字根「耳」拆碼（<i class="cd">BGHG</i>）</b>：報戶口 <i class="ky">B</i> ＋ 首筆橫 (<i class="ky">G</i>) ＋ 次筆豎 (<i class="ky">H</i>) ＋ 末筆橫 (<i class="ky">G</i>)。`,
+    poem:`<i class="tr">子</i><b style="color:${C2}">耳</b><b style="color:${C1}">了</b><b style="color:${C3}">也框向上</b>（<i class="ky">B 52</i>）`
+  },
+  {
+    key:"V", zone:"53", rad:"女", short1:"發", cat:"第 24 / 31 頁：折區（5 區）字根",
+    aux:[
+      {g:"女", c:C1, title:"女字旁", desc:"女字旁、女字底（如：好、妈、要底、安底）"},
+      {g:"刀九", c:C2, title:"刀與九", desc:"刀字、九字（如：切、分、丸、轨右）"},
+      {g:"彐巛", c:C3, title:"山朝西與巡框", desc:"左開口橫折「彐」、三拐「巛」（如：雪底、当底、巡）"}
+    ],
+    slogan:`女刀九臼山朝西 —— 折區第三鍵（<i class="ky">53</i>），一級簡碼為「<b class="tr">發（发）</b>」。`,
+    rules:[
+      `<b>鍵名字「女」與一級簡碼「发」：</b>連擊 <i class="cd">VVVV</i> 打出「<b class="tr">女</b>」；單擊 <i class="ky">V</i> 加空格打出「<b class="tr">发</b>」（「发」全碼為 <i class="cd">VTY</i>：撇折＋撇＋又）。`,
+      `<b><span style="color:${C3}">彐</span>（山朝西）：</b>就像把「山」字向左放倒的橫折部件「彐」（如「雪」底 <i class="cd">FVF</i>、「寻」上 <i class="cd">VFU</i>、「归」右 <i class="cd">JVG</i>）一律取 <i class="ky">V</i>。`,
+      `<b>「臼」字說明：</b>口訣中的「臼」在標準 86 版字庫中實為「彐」的形近字根（如「扫」右 <i class="cd">RVG</i>），真正「臼」字拆為 <i class="cd">VTHG</i>。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","发","V + 空格","高頻一級簡碼（全碼：撇折 V ＋ 丿 T ＋ 又 C ＋ 點識別碼 Y = VTY）。"],
+      ["鍵名字","#ff5","女","VVVV","鍵面代表字，連擊 V 鍵四次。"],
+      ["女字旁",C1,"好","VBG","左「女」(<i class=\"ky\">V</i>) ＋ 右「子」(<i class=\"ky\">B</i>) ＋ 左右型橫末筆識別碼 (<i class=\"ky\">G</i>)。"],
+      ["山朝西",C3,"雪","FVF","上雨字頭 (<i class=\"ky\">F</i>) ＋ 下山朝西「彐」(<i class=\"ky\">V</i>) ＋ 識別碼 (<i class=\"ky\">F</i>)。"]
+    ],
+    adv:`• <b style="color:${C2}">成字字根「刀」與「九」拆碼</b>：<br>　▸ <b>刀</b>（<i class="cd">VNT</i>）：報戶口 <i class="ky">V</i> ＋ 首筆橫折鉤 <i class="ky">N</i> ＋ 末筆撇 <i class="ky">T</i>。<br>　▸ <b>九</b>（<i class="cd">VTN</i>）：報戶口 <i class="ky">V</i> ＋ 首筆撇 <i class="ky">T</i> ＋ 末筆橫折彎鉤 <i class="ky">N</i>。`,
+    poem:`<i class="tr">女</i><b style="color:${C2}">刀九</b><b style="color:${C3}">臼山朝西</b>（<i class="ky">V 53</i>）`
+  },
+  {
+    key:"C", zone:"54", rad:"又", short1:"以", cat:"第 25 / 31 頁：折區（5 區）字根",
+    aux:[
+      {g:"又巴馬", c:C1, title:"又巴與繁體馬", desc:"又字旁、巴字、繁體馬（如：对、汉、把、色底）"},
+      {g:"厶", c:C2, title:"私字邊（三角折）", desc:"三角點折「厶」（如：去、云、台、参、么）"},
+      {g:"矢", c:C3, title:"矣字底（矢）", desc:"矢字部件（如：知、医、矮、短）"}
+    ],
+    slogan:`又巴馬，丟矢矣 —— 折區第四鍵（<i class="ky">54</i>），一級簡碼為「<b class="tr">以</b>」。`,
+    rules:[
+      `<b>鍵名字「又」與一級簡碼「以」：</b>連擊 <i class="cd">CCCC</i> 打出「<b class="tr">又</b>」；單擊 <i class="ky">C</i> 加空格打出「<b class="tr">以</b>」（「以」全碼為 <i class="cd">NYWY</i>）。`,
+      `<b><span style="color:${C1}">又</span>（簡體核心高頻部件）：</b>在簡體字中，大量繁體複雜偏旁簡化為「又」（如「<b>汉</b>」<i class="cd">ICY</i>、「<b>欢</b>」<i class="cd">CQWY</i>、「<b>戏</b>」<i class="cd">CAY</i>、「<b>对</b>」<i class="cd">CFY</i>、「<b>观</b>」<i class="cd">CMQN</i>），一律直接按 <i class="ky">C</i> 鍵，打簡體字極快！`,
+      `<b>簡體「马」字歸屬：</b>繁體「馬」在 <i class="ky">C</i> 鍵；簡體「<b>马</b>」首筆為橫折 (<i class="ky">C</i>)、次筆為豎折折鉤 (<i class="ky">N</i>)、末筆為橫 (<i class="ky">G</i>)，因此簡體「马」的編碼是 <b><i class="cd">CNG</i></b>（首碼仍在 <i class="ky">C</i> 鍵！如「妈」<i class="cd">VCG</i>、「骑」<i class="cd">CDSK</i>）。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","以","C + 空格","高頻一級簡碼（全碼：豎提 N ＋ 丶 Y ＋ 人 W ＋ 識別碼 Y = NYWY）。"],
+      ["鍵名字","#ff5","又","CCCC","鍵面代表字，連擊 C 鍵四次。"],
+      ["简体又旁",C1,"汉 / 戏","ICY / CAY","「汉」= 氵(<i class=\"ky\">I</i>) ＋ 又 (<i class=\"ky\">C</i>) ＋ 識別碼 (<i class=\"ky\">Y</i>)；「戏」= 又 (<i class=\"ky\">C</i>) ＋ 戈 (<i class=\"ky\">A</i>) ＋ 識別碼 (<i class=\"ky\">Y</i>)。"],
+      ["简体马旁",C1,"妈","VCG","左「女」(<i class=\"ky\">V</i>) ＋ 右「马」(<i class=\"ky\">C</i>) ＋ 左右型橫末筆識別碼 (<i class=\"ky\">G</i>)。"]
+    ],
+    adv:`• <b style="color:${C1}">簡體「又」與「马」全系提速秘訣</b>：在 86 版五筆中，簡體「<b>马</b>」被整體收為 <i class="ky">C</i> 鍵字根！因此打「<b>妈</b>」(<i class="cd">VCG</i>)、「<b>吗</b>」(<i class="cd">KCG</i>)、「<b>驶</b>」(<i class="cd">CKQG</i>) 時，整個「马」字只需按一下 <i class="ky">C</i> 鍵！`,
+    poem:`<i class="tr">又</i><b style="color:${C1}">巴馬</b>，丟<b style="color:${C3}">矢</b><b style="color:${C2}">矣</b>（<i class="ky">C 54</i>）`
+  },
+  {
+    key:"X", zone:"55", rad:"慈", short1:"經", cat:"第 26 / 31 頁：折區（5 區）字根",
+    aux:[
+      {g:"母毌", c:C1, title:"慈母無心", desc:"母字與無點母框「毌」（如：母、每、贯、毒）"},
+      {g:"弓匕", c:C2, title:"弓與匕", desc:"弓字旁、匕字（如：张、引、比、化、北）"},
+      {g:"幺纟", c:C3, title:"幼無力與絞絲旁", desc:"幺字、簡體絞絲旁「纟」（如：幼、红、经、线）"}
+    ],
+    slogan:`慈母無心弓和匕，幼無力 —— 折區第五鍵（<i class="ky">55</i>），一級簡碼為「<b class="tr">經（经）</b>」。`,
+    rules:[
+      `<b>鍵名字「慈（實為纟/糸）」與一級簡碼「经」：</b>連擊 <i class="cd">XXXX</i> 打出「<b class="tr">纟（糸）</b>」；單擊 <i class="ky">X</i> 加空格打出「<b class="tr">经</b>」（「经」全碼為 <i class="cd">XCA</i>）。`,
+      `<b><span style="color:${C3}">纟</span>（簡體絞絲旁）：</b>簡體字中所有的「纟」（如「<b>红</b>」<i class="cd">XAG</i>、「<b>给</b>」<i class="cd">XWGK</i>、「<b>结</b>」<i class="cd">XFKG</i>、「<b>线</b>」<i class="cd">XGT</i>）全部直接按 <i class="ky">X</i> 鍵，與繁體「糹」完全一致！`,
+      `<b><span style="color:${C1}">母、毌</span> 與 <span style="color:${C2}">弓、匕</span>：</b>「慈母無心」指「母」字去掉中間兩點（即「貫、實」頂部的「毌」）；「幼無力」指「幼」去掉「力」後剩下的「幺」。`
+    ],
+    examples:[
+      ["一級簡碼","#ff5","经","X + 空格","高頻一級簡碼（全碼：纟 X ＋ 又 C ＋ 工 A = XCA）。"],
+      ["鍵名字","#ff5","纟","XXXX","鍵面代表字（86版簡體字庫），連擊 X 鍵四次。"],
+      ["简体绞丝",C3,"红","XAG","左「纟」(<i class=\"ky\">X</i>) ＋ 右「工」(<i class=\"ky\">A</i>) ＋ 左右型橫末筆識別碼 (<i class=\"ky\">G</i>)。"],
+      ["匕字部件",C2,"比","XXN","左「匕」(<i class=\"ky\">X</i>) ＋ 右「匕」(<i class=\"ky\">X</i>) ＋ 折末筆識別碼 (<i class=\"ky\">N</i>)。"]
+    ],
+    adv:`• <b style="color:${C2}">成字字根「弓」與「匕」拆碼</b>：<br>　▸ <b>弓</b>（<i class="cd">XNGN</i>）：報戶口 <i class="ky">X</i> ＋ 首筆橫折 <i class="ky">N</i> ＋ 次筆橫 <i class="ky">G</i> ＋ 末筆豎折折鉤 <i class="ky">N</i>。<br>　▸ <b>匕</b>（<i class="cd">XTN</i>）：報戶口 <i class="ky">X</i> ＋ 首筆撇 <i class="ky">T</i> ＋ 末筆豎彎鉤 <i class="ky">N</i>。`,
+    poem:`<i class="tr">慈</i><b style="color:${C1}">母無心</b><b style="color:${C2}">弓和匕</b>，<b style="color:${C3}">幼無力</b>（<i class="ky">X 55</i>）`
+  },
+  /* ================= 六、實戰進階專題（第 27 - 31 頁） ================= */
+  { type:"wubi_rules" },
+  { type:"hand_voice" },
+  { type:"stroke_t9" },
+  { type:"compare_3" },
+  { type:"summary" }
+];
+
+/* 渲染索引總目錄頁（curPage = -1） */
+function renderIndexHTML(){
+  return `
+    <div class="sub-win-title">
+      <div><span>📖 中國大陸非拼音輸入法完全指南 — 總目錄索引</span><span class="category-badge">全書 31 頁導航</span></div>
+      <span style="font-size:12px;color:#5ff">點擊卡片或按鍵盤字母 <i style="color:#0ff;font-style:normal">A-Y</i> 直接跳轉字根</span>
+    </div>
+    <div class="idx-board">
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px">
+        <div class="rad-card intro-card" onclick="goPage(0)"><span class="rk">P.01</span><span class="rc">📘 全書引言</span></div>
+        <div class="rad-card intro-card" onclick="goPage(26)"><span class="rk">P.27</span><span class="rc">⚔️ 五筆拆字</span></div>
+        <div class="rad-card intro-card" onclick="goPage(27)"><span class="rk">P.28</span><span class="rc">📱 手寫語音</span></div>
+        <div class="rad-card intro-card" onclick="goPage(28)"><span class="rk">P.29</span><span class="rc">🔢 九宮筆畫</span></div>
+        <div class="rad-card intro-card" onclick="goPage(29)"><span class="rk">P.30</span><span class="rc">🌏 兩岸對比</span></div>
+        <div class="rad-card intro-card" onclick="goPage(30)"><span class="rk">P.31</span><span class="rc">🎓 總結心法</span></div>
+      </div>
+
+      <div class="cat-group">
+        <div class="cat-header" style="color:#ff5"><span>▶ 橫區（1 區：G F D S A）— 中排左手</span><span style="font-size:11px;color:#aaa">橫與提筆（一級簡碼：一地在要工）</span></div>
+        <div class="rad-grid">
+          <div class="rad-card" onclick="goPage(1)"><span class="rk">G (11)</span><span class="rc">王 <small style="font-size:12px;color:#0ff">[一]</small></span><span class="rs">王旁青頭戋五一</span></div>
+          <div class="rad-card" onclick="goPage(2)"><span class="rk">F (12)</span><span class="rc">土 <small style="font-size:12px;color:#0ff">[地]</small></span><span class="rs">土士二干十寸雨</span></div>
+          <div class="rad-card" onclick="goPage(3)"><span class="rk">D (13)</span><span class="rc">大 <small style="font-size:12px;color:#0ff">[在]</small></span><span class="rs">大犬三羊古石廠</span></div>
+          <div class="rad-card" onclick="goPage(4)"><span class="rk">S (14)</span><span class="rc">木 <small style="font-size:12px;color:#0ff">[要]</small></span><span class="rs">木丁西</span></div>
+          <div class="rad-card" onclick="goPage(5)"><span class="rk">A (15)</span><span class="rc">工 <small style="font-size:12px;color:#0ff">[工]</small></span><span class="rs">工戈草頭右框七</span></div>
+        </div>
+      </div>
+
+      <div class="cat-group">
+        <div class="cat-header" style="color:#5f5"><span>▶ 豎區（2 區：H J K L M）— 中排右手及 M</span><span style="font-size:11px;color:#aaa">豎與左豎鉤（一級簡碼：上是中国同）</span></div>
+        <div class="rad-grid">
+          <div class="rad-card" onclick="goPage(6)"><span class="rk">H (21)</span><span class="rc">目 <small style="font-size:12px;color:#0ff">[上]</small></span><span class="rs">目具上止卜虎皮</span></div>
+          <div class="rad-card" onclick="goPage(7)"><span class="rk">J (22)</span><span class="rc">日 <small style="font-size:12px;color:#0ff">[是]</small></span><span class="rs">日早兩豎與蟲依</span></div>
+          <div class="rad-card" onclick="goPage(8)"><span class="rk">K (23)</span><span class="rc">口 <small style="font-size:12px;color:#0ff">[中]</small></span><span class="rs">口與川字根稀</span></div>
+          <div class="rad-card" onclick="goPage(9)"><span class="rk">L (24)</span><span class="rc">田 <small style="font-size:12px;color:#0ff">[国]</small></span><span class="rs">田甲方框四車力</span></div>
+          <div class="rad-card" onclick="goPage(10)"><span class="rk">M (25)</span><span class="rc">山 <small style="font-size:12px;color:#0ff">[同]</small></span><span class="rs">山由貝下框幾</span></div>
+        </div>
+      </div>
+
+      <div class="cat-group">
+        <div class="cat-header" style="color:#0ff"><span>▶ 撇區（3 區：T R E W Q）— 上排左手</span><span style="font-size:11px;color:#aaa">所有撇畫（一級簡碼：和的有人我）</span></div>
+        <div class="rad-grid">
+          <div class="rad-card" onclick="goPage(11)"><span class="rk">T (31)</span><span class="rc">禾 <small style="font-size:12px;color:#0ff">[和]</small></span><span class="rs">禾竹一撇雙人立</span></div>
+          <div class="rad-card" onclick="goPage(12)"><span class="rk">R (32)</span><span class="rc">白 <small style="font-size:12px;color:#0ff">[的]</small></span><span class="rs">白手看頭三二斤</span></div>
+          <div class="rad-card" onclick="goPage(13)"><span class="rk">E (33)</span><span class="rc">月 <small style="font-size:12px;color:#0ff">[有]</small></span><span class="rs">月彡乃用家衣底</span></div>
+          <div class="rad-card" onclick="goPage(14)"><span class="rk">W (34)</span><span class="rc">人 <small style="font-size:12px;color:#0ff">[人]</small></span><span class="rs">人和八三四裡</span></div>
+          <div class="rad-card" onclick="goPage(15)"><span class="rk">Q (35)</span><span class="rc">金 <small style="font-size:12px;color:#0ff">[我]</small></span><span class="rs">金勺缺點無尾魚</span></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div class="cat-group">
+          <div class="cat-header" style="color:#fa5"><span>▶ 捺區（4 區：Y U I O P）</span><span style="font-size:10.5px;color:#aaa">主产不为这</span></div>
+          <div class="rad-grid">
+            <div class="rad-card" onclick="goPage(16)"><span class="rk">Y 41</span><span class="rc">言</span><span class="rs">主</span></div>
+            <div class="rad-card" onclick="goPage(17)"><span class="rk">U 42</span><span class="rc">立</span><span class="rs">产</span></div>
+            <div class="rad-card" onclick="goPage(18)"><span class="rk">I 43</span><span class="rc">水</span><span class="rs">不</span></div>
+            <div class="rad-card" onclick="goPage(19)"><span class="rk">O 44</span><span class="rc">火</span><span class="rs">为</span></div>
+            <div class="rad-card" onclick="goPage(20)"><span class="rk">P 45</span><span class="rc">之</span><span class="rs">这</span></div>
+          </div>
+        </div>
+        <div class="cat-group">
+          <div class="cat-header" style="color:#ff80ab"><span>▶ 折區（5 區：N B V C X）</span><span style="font-size:10.5px;color:#aaa">民了发以经</span></div>
+          <div class="rad-grid">
+            <div class="rad-card" onclick="goPage(21)"><span class="rk">N 51</span><span class="rc">已</span><span class="rs">民</span></div>
+            <div class="rad-card" onclick="goPage(22)"><span class="rk">B 52</span><span class="rc">子</span><span class="rs">了</span></div>
+            <div class="rad-card" onclick="goPage(23)"><span class="rk">V 53</span><span class="rc">女</span><span class="rs">发</span></div>
+            <div class="rad-card" onclick="goPage(24)"><span class="rk">C 54</span><span class="rc">又</span><span class="rs">以</span></div>
+            <div class="rad-card" onclick="goPage(25)"><span class="rk">X 55</span><span class="rc">纟</span><span class="rs">经</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed #5ff;padding-top:3px;font-size:11.5px;color:#aaa;flex-shrink:0">
+      <span>萬能學習鍵：<b style="color:#5f5">Z 鍵</b>（忘記某個字根所在鍵位時，可用 Z 鍵代替進行模糊查詢）</span>
+      <span style="color:#5ff">按鍵盤 <i style="color:#0ff;font-style:normal">Enter</i> 或 <i style="color:#0ff;font-style:normal">→</i> 從第 1 頁引言開始閱讀</span>
+    </div>
+  `;
+}
+
+/* 第 1 頁：引言與生態總覽 */
+function renderIntroHTML(){
+  return `
+    <div class="sub-win-title">
+      <div><span>📖 中國大陸非拼音輸入法完全指南</span><span class="category-badge">第 1 / 31 頁：全書引言與輸入生態總覽</span></div>
+      <span style="font-size:13.5px;color:#aaa">五筆字型（86版）＋ 手寫語音 ＋ 筆畫全解析</span>
+    </div>
+    <div class="tut-content" id="tutPageContent">
+      <div class="tut-h y" style="margin-top:2px">▶ 中國大陸非拼音輸入法格局：電腦靠「五筆」，手機靠「語音與手寫」</div>
+      <div style="font-size:13px;margin-top:2px">
+        在中國大陸的中文輸入生態中，拼音輸入法雖佔據絕對主導地位，但「形碼輸入」與「自然交互輸入」依然擁有極其龐大的用戶群體。本指南將深入解析除拼音之外最主流的幾種輸入方式，並重點提供<b>五筆字型輸入法（86 版）</b>的系統性入門教學（第 2–27 頁），以及<b>手寫、語音、筆畫輸入與兩岸三地對比</b>（第 28–31 頁）。
+      </div>
+
+      <div class="tut-h g">▶ 五筆核心原理：漢字的三層結構（筆畫 → 字根 → 漢字）與鍵盤五區</div>
+      <div class="cat-overview-grid">
+        <div class="cat-box" style="border-color:#ff5"><b style="color:#ff5">1 區：橫（G F D S A）</b>橫（一）與提（㇀）<br><span style="color:#aaa">中排左手｜一地在要工</span></div>
+        <div class="cat-box" style="border-color:#5f5"><b style="color:#5f5">2 區：豎（H J K L M）</b>豎（丨）與左豎鉤（亅）<br><span style="color:#aaa">中排右手｜上是中国同</span></div>
+        <div class="cat-box" style="border-color:#0ff"><b style="color:#0ff">3 區：撇（T R E W Q）</b>所有撇畫（丿）<br><span style="color:#aaa">上排左手｜和的有人我</span></div>
+        <div class="cat-box" style="border-color:#fa5"><b style="color:#fa5">4 區：捺（Y U I O P）</b>點（丶）與捺（乀）<br><span style="color:#aaa">上排右手｜主产不为这</span></div>
+        <div class="cat-box" style="border-color:#ff80ab"><b style="color:#ff80ab">5 區：折（N B V C X）</b>一切帶轉折之筆畫<br><span style="color:#aaa">下排左右｜民了发以经</span></div>
+      </div>
+
+      <div class="tut-h c">▶ 為什麼至今仍有大量專業人士使用五筆？</div>
+      <div class="xz-grid">
+        <div class="xz-card" style="border-color:#5ff">
+          <div class="xz-glyph-box" style="border-color:#5ff">
+            <span class="xz-glyph" style="color:#5ff">盲打</span>
+            <span class="xz-key" style="color:#5ff">低重碼率</span>
+          </div>
+          <div style="font-size:12.5px;line-height:1.5">
+            <b style="color:#5ff">極致的重碼率控制與專業崗位首選：</b><br>
+            • 拼音需頻繁盯著候選框選字，而五筆平均每打數十個字才會遇到一次重碼，可實現真正的「<b>不看螢幕盲打</b>」。<br>
+            • 核心用戶包括 80 後及更早接觸電腦的資深網民、法院書記員、銀行櫃員、速錄員與專業文字錄入人員。
+          </div>
+        </div>
+        <div class="xz-card" style="border-color:#ff5">
+          <div class="xz-glyph-box" style="border-color:#ff5">
+            <span class="xz-glyph" style="color:#ff5">Z 鍵</span>
+            <span class="xz-key" style="color:#ff5">萬能學習</span>
+          </div>
+          <div style="font-size:12.5px;line-height:1.5">
+            <b style="color:#ff5">不依賴普通話發音 ＋ Z 鍵萬能查詢：</b><br>
+            • 遇到生僻字（如「彧、龘、靐」）或方言口音較重、分不清平翹舌（z/zh）及前後鼻音（an/ang）時，只要會寫就能打出。<br>
+            • 鍵盤上的 <i class="ky">Z 鍵</i> 為「<b>萬能學習鍵</b>」：忘記某個字根在哪個鍵上時，可用 Z 鍵代替該字根進行模糊查詢。
+          </div>
+        </div>
+      </div>
+
+      <div class="tut-h o">▶ 鍵盤分區科學規律（86 版 130 個基本字根）</div>
+      <div style="font-size:13px;margin-top:2px">
+        每個分區的第一個鍵（<i class="ky">G、H、T、Y、N</i>）分別對應 <b>1 畫</b>的基本筆畫，第二個鍵（<i class="ky">F、J、R、U、B</i>）對應 <b>2 畫</b>，依此類推！例如：<i class="ky">G(11)</i> 是一、<i class="ky">F(12)</i> 是二、<i class="ky">D(13)</i> 是三；<i class="ky">H(21)</i> 是一豎、<i class="ky">J(22)</i> 是兩豎、<i class="ky">K(23)</i> 是三豎川！
+      </div>
+    </div>
+  `;
+}
+
+/* 第 27 頁：五筆漢字拆分與取碼實戰規則 */
+function renderWubiRulesHTML(){
+  return `
+    <div class="sub-win-title">
+      <div><span>⚔️ 五筆實戰心法 — 漢字拆分與取碼四大規則</span><span class="category-badge">第 27 / 31 頁：核心拆字法</span></div>
+      <span style="font-size:13.5px;color:#aaa">熟記字根後，四條規則打出任何簡體字</span>
+    </div>
+    <div class="tut-content" id="tutPageContent">
+      <div class="tut-h y" style="margin-top:2px">▶ 三類漢字的標準取碼規則</div>
+      <table class="retro-table">
+        <thead>
+          <tr><th>漢字類型</th><th>包含範圍</th><th>標準取碼規則</th><th>實戰範例</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b style="color:#ff5">① 鍵名字</b></td>
+            <td>25 個鍵位代表字（王土大木工目日口田山禾白月人金言立水火之已子女又纟）</td>
+            <td style="text-align:left"><b>連擊該鍵四次</b></td>
+            <td style="text-align:left">王=<i class="cd">GGGG</i>｜大=<i class="cd">DDDD</i>｜人=<i class="cd">WWWW</i></td>
+          </tr>
+          <tr>
+            <td><b style="color:${C1}">② 成字字根</b></td>
+            <td>字根本身就是獨立漢字（如：石、雨、早、車、手、方、五、西）</td>
+            <td style="text-align:left"><b>報戶口（所在鍵）＋ 第一筆 ＋ 第二筆 ＋ 末筆</b>（不足四碼補空格）</td>
+            <td style="text-align:left">雨=<i class="cd">FGHY</i>（F＋橫＋豎＋點）<br>早=<i class="cd">JHNH</i>（J＋豎＋折＋橫）</td>
+          </tr>
+          <tr>
+            <td><b style="color:${C2}">③ 普通合體字</b></td>
+            <td>絕大多數由多個字根組成的漢字</td>
+            <td style="text-align:left">• <b>剛好四個字根</b>：依筆順全取<br>• <b>超過四個字根</b>：取<b>一、二、三、末</b><br>• <b>不足四個字根</b>：全取字根 ＋ <b>末筆字型識別碼</b></td>
+            <td style="text-align:left">照=<i class="cd">JVKO</i>（日＋刀＋口＋灬）<br>新=<i class="cd">USRH</i>（立＋木＋斤＋豎識別碼）</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="tut-h g">▶ 拆字四大黃金原則（解決多解爭議）</div>
+      <div style="font-size:13px;margin-top:2px">
+        1. <b style="color:#ff5">書寫順序</b>：按規範漢字的筆順從左到右、從上到下、從外到內拆分（如「新」拆為 <i class="cd">立 + 木 + 斤</i> → <i class="cd">USRH</i>；走之底「辶」最後寫故最後取 <i class="ky">P</i>）。<br>
+        2. <b style="color:${C1}">取大優先</b>：按筆順拆字時，應盡可能拆出筆畫最多的字根（如「世」應拆為 <i class="cd">廿 + 乙</i> (<i class="cd">ANV</i>)，而非 <i class="cd">一 + 凵 + 乙</i>）。<br>
+        3. <b style="color:${C2}">兼顧直觀</b>：拆分時盡量保持字根的完整與美觀，避免強行割裂常見偏旁（如「国」拆為 <i class="cd">囗 + 王 + 丶</i> (<i class="cd">LGYI</i>)）。<br>
+        4. <b style="color:${C3}">能連不交、能散不連</b>：字根數相同時，優先選「相連」而非「相交」；優先選「相散（分離）」而非「相連」（如「天」拆為 <i class="cd">一 + 大</i> (<i class="cd">GDI</i>，相連)，而非 <i class="cd">二 + 人</i> (<i class="cd">FW</i>，相交)）。
+      </div>
+
+      <div class="tut-h o">▶ 末筆字型識別碼速查表（不足四碼時補在最後）</div>
+      <div class="adv-aux-box">
+        當合體字只有 2 或 3 個字根時，需補一個由「<b>末筆筆畫區（1橫/2豎/3撇/4捺/5折）</b>」與「<b>漢字字型結構（1左右型 / 2上下型 / 3雜合型）</b>」交叉決定的識別碼：<br>
+        • <b>1 橫末筆</b>：左右 <i class="ky">G(11)</i> ｜ 上下 <i class="ky">F(12)</i> ｜ 雜合 <i class="ky">D(13)</i>　　• <b>4 捺點末筆</b>：左右 <i class="ky">Y(41)</i> ｜ 上下 <i class="ky">U(42)</i> ｜ 雜合 <i class="ky">I(43)</i><br>
+        • <b>2 豎末筆</b>：左右 <i class="ky">H(21)</i> ｜ 上下 <i class="ky">J(22)</i> ｜ 雜合 <i class="ky">K(23)</i>　　• <b>5 折末筆</b>　：左右 <i class="ky">N(51)</i> ｜ 上下 <i class="ky">B(52)</i> ｜ 雜合 <i class="ky">V(53)</i><br>
+        • <b>3 撇末筆</b>：左右 <i class="ky">T(31)</i> ｜ 上下 <i class="ky">R(32)</i> ｜ 雜合 <i class="ky">E(33)</i>　　（範例：「汉」左右型＋末筆捺4 = <i class="cd">ICY</i>）
+      </div>
+    </div>
+  `;
+}
+
+/* 第 28 頁：移動端自然交互——手寫與語音輸入 */
+function renderHandVoiceHTML(){
+  return `
+    <div class="sub-win-title">
+      <div><span>📱 移動端自然交互 — 手寫與語音輸入進階指南</span><span class="category-badge">第 28 / 31 頁：手機端霸主</span></div>
+      <span style="font-size:13.5px;color:#aaa">零學習門檻與 AI 深度學習語音轉寫</span>
+    </div>
+    <div class="tut-content" id="tutPageContent">
+      <div class="tut-h y" style="margin-top:2px">▶ 一、手寫輸入法（Handwriting）—— 中老年群體與生僻字查詢首選</div>
+      <div style="font-size:13px;margin-top:2px">
+        • <b>主流載體</b>：搜狗輸入法、百度輸入法、訊飛輸入法、微信鍵盤、iOS / Android 原生系統輸入法。<br>
+        • <b>核心優勢</b>：零學習門檻，完全符合人類傳統書寫習慣。對於未受過漢語拼音教育的中老年人，或習慣使用傳統「手寫板」的用戶而言，這是不可替代的首選。
+      </div>
+      <div class="adv-aux-box" style="border-color:#ff5">
+        <b style="color:#ff5">💡 手寫輸入三大進階實戰技巧：</b><br>
+        1. <b>全屏連寫與疊寫功能</b>：現代手寫引擎（如訊飛、搜狗）已支援「全屏連寫」與「疊寫」。用戶無需寫完一個字等它識別再寫下一個，可以直接在螢幕上連續書寫整句話，甚至在同一個位置重疊書寫多個字，系統會根據上下文語義自動切分並糾錯。<br>
+        2. <b>草書與連筆識別</b>：得益於深度學習模型，即使書寫極度潦草的連筆字，識別率依然極高。<br>
+        3. <b>作為生僻字查詢工具</b>：即使是重度拼音用戶，在遇到不認識的字時，也會臨時切換到手寫面板寫出該字，藉此查看其讀音或直接輸入。
+      </div>
+
+      <div class="tut-h c" style="margin-top:10px">▶ 二、語音輸入（Voice-to-Text / ASR）—— 日常社交第二大高頻輸入方式</div>
+      <div style="font-size:13px;margin-top:2px">
+        • <b>代表產品</b>：<b>科大訊飛輸入法</b>（行業標竿）、微信語音轉文字、豆包輸入法、搜狗語音。<br>
+        • <b>使用現狀</b>：在中國大陸的日常社交（如微信聊天）與移動辦公中，語音輸入已成為僅次於拼音的第二大高頻輸入方式。年輕人在步行、駕車或需要快速輸出長段文字時，極度依賴語音轉文字。
+      </div>
+      <div class="adv-aux-box" style="border-color:#0ff">
+        <b style="color:#0ff">🎙️ AI 語音輸入核心技術亮點：</b><br>
+        1. <b>方言免切換識別</b>：主流引擎支援粵語、四川話、東北話、上海話、閩南語等數十種中國地方方言，甚至支援「<b>普通話 + 方言 + 英語單詞</b>」的混合語音實時轉寫。<br>
+        2. <b>智能標點與語氣過濾</b>：AI 模型能根據說話人的停頓與語氣，自動添加逗號、句號、問號，並自動過濾掉「嗯、啊、那個」等無意義的口頭禪。<br>
+        3. <b>離線語音包</b>：即使在沒有網絡的高鐵或地下室，依然可以透過本地離線引擎實現毫秒級的語音轉文字。
+      </div>
+    </div>
+  `;
+}
+
+/* 第 29 頁：九宮格時代的遺產——筆畫輸入法 */
+function renderStrokeHTML(){
+  return `
+    <div class="sub-win-title">
+      <div><span>🔢 九宮格時代的遺產 — 筆畫輸入法（Stroke）</span><span class="category-badge">第 29 / 31 頁：數字鍵盤筆畫</span></div>
+      <span style="font-size:13.5px;color:#aaa">按國家標準筆順，利用 1 至 5 數字鍵輸入</span>
+    </div>
+    <div class="tut-content" id="tutPageContent">
+      <div class="tut-h y" style="margin-top:2px">▶ 五個基本筆畫鍵位規則（手機九宮格 T9 或電腦數字小鍵盤）</div>
+      <table class="retro-table">
+        <thead>
+          <tr><th>數字鍵</th><th>基本筆畫</th><th>包含的變形筆畫</th><th>實戰拆筆示範</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b style="color:#ff5;font-size:15px">1</b></td>
+            <td><b>橫（一）</b></td>
+            <td style="text-align:left">包含所有橫畫及「<b>提（㇀）</b>」</td>
+            <td style="text-align:left">「打」的提手旁第三筆是提，按 <i class="ky">1</i>。</td>
+          </tr>
+          <tr>
+            <td><b style="color:${C1};font-size:15px">2</b></td>
+            <td><b>豎（丨）</b></td>
+            <td style="text-align:left">包含所有豎畫及「<b>左豎鉤（亅）</b>」</td>
+            <td style="text-align:left">「小」的第一筆是豎鉤，按 <i class="ky">2</i>。</td>
+          </tr>
+          <tr>
+            <td><b style="color:${C2};font-size:15px">3</b></td>
+            <td><b>撇（丿）</b></td>
+            <td style="text-align:left">包含所有長撇、短撇、平撇</td>
+            <td style="text-align:left">「千」的第一筆平撇，按 <i class="ky">3</i>。</td>
+          </tr>
+          <tr>
+            <td><b style="color:#fa5;font-size:15px">4</b></td>
+            <td><b>點（丶）</b></td>
+            <td style="text-align:left">包含所有點及「<b>捺（乀）</b>」</td>
+            <td style="text-align:left">「木」的最後一筆是捺，按 <i class="ky">4</i>。</td>
+          </tr>
+          <tr>
+            <td><b style="color:${C3};font-size:15px">5</b></td>
+            <td><b>折（乙）</b></td>
+            <td style="text-align:left">包含所有帶轉折的筆畫，<b>無論轉折多少次</b>（橫折、豎折、橫折鉤、豎彎鉤、撇點等）</td>
+            <td style="text-align:left">「乃」的第二筆橫折折折鉤，統統只按一下 <i class="ky">5</i>。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="tut-h o" style="margin-top:8px">⚠️ 常見筆順易錯點提示（為何有時筆畫打不出字？）</div>
+      <div style="font-size:13px;margin-top:2px">
+        使用筆畫輸入時，若打不出字，通常是因為習慣筆順與中國國家標準《現代漢語通用字筆順規範》不符：
+      </div>
+      <div class="adv-aux-box" style="border-color:#fa5">
+        • <b style="color:#ff5">「方」字（4 → 1 → 5 → 3）</b>：點(<i class="ky">4</i>) → 橫(<i class="ky">1</i>) → <b>橫折鉤(<i class="ky">5</i>)</b> → 撇(<i class="ky">3</i>)。<span style="color:#aaa">（注意：先寫橫折鉤，最後寫撇）</span><br>
+        • <b style="color:#ff5">「万（萬）」字（1 → 5 → 3）</b>：橫(<i class="ky">1</i>) → <b>橫折鉤(<i class="ky">5</i>)</b> → 撇(<i class="ky">3</i>)。<span style="color:#aaa">（同樣是先寫折，後寫撇）</span><br>
+        • <b style="color:${C1}">「火」字（4 → 3 → 3 → 4）</b>：點(<i class="ky">4</i>) → 撇(<i class="ky">3</i>) → 撇(<i class="ky">3</i>) → 捺(<i class="ky">4</i>)。<span style="color:#aaa">（先寫兩邊的點和撇，再寫中間的人）</span><br>
+        • <b style="color:${C1}">「忄」（豎心旁：4 → 4 → 2）</b>：點(<i class="ky">4</i>) → 點(<i class="ky">4</i>) → 豎(<i class="ky">2</i>)。<span style="color:#aaa">（先寫兩點，最後寫豎）</span>
+      </div>
+    </div>
+  `;
+}
+
+/* 第 30 頁：小眾輸入法與兩岸三地差異對比 */
+function renderCompareHTML(){
+  return `
+    <div class="sub-win-title">
+      <div><span>🌏 其他小眾輸入法與兩岸三地生態對比</span><span class="category-badge">第 30 / 31 頁：歷史與地域差異</span></div>
+      <span style="font-size:13.5px;color:#aaa">中國大陸、香港/澳門、台灣地區輸入習慣全景</span>
+    </div>
+    <div class="tut-content" id="tutPageContent">
+      <div class="tut-h y" style="margin-top:2px">▶ 中國大陸其他小眾形碼與音形碼（附雙拼特別說明）</div>
+      <div style="font-size:13px;margin-top:2px">
+        • <b style="color:${C1}">鄭碼</b>：由文字學家鄭易里發明，曾經內置於早期 Windows 系統中。其字根分類比五筆更符合傳統文字學（部首概念強），且簡繁通用性好，但因記憶量大、推廣力度不及五筆，目前僅有極少數愛好者使用。<br>
+        • <b style="color:${C2}">二筆 / 超強音形</b>：結合了「聲母 + 筆畫/字根」的音形碼輸入法，旨在兼顧拼音的易學性與五筆的低重碼率。<br>
+        • <b style="color:#ff5">雙拼（特別說明）</b>：雙拼在大陸近年頗受年輕極客歡迎（如小鶴雙拼、自然碼），它將聲母和韻母各自壓縮到一個鍵上（任何漢字只需按兩下鍵盤即可打出）。但雙拼本質上仍屬於<b>拼音輸入法的變體</b>，依賴標準普通話讀音，因此不歸類為「非拼音輸入法」。
+      </div>
+
+      <div class="tut-h g" style="margin-top:8px">▶ 兩岸三地非拼音輸入法生態對比總表</div>
+      <table class="retro-table">
+        <thead>
+          <tr><th>地區</th><th>主流非拼音輸入法</th><th>幾乎不使用的輸入法</th><th>核心歷史與語言原因</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b style="color:#ff5">中國大陸</b></td>
+            <td><b>五筆字型</b>（電腦端）<br><b>手寫 / 語音</b>（手機端）</td>
+            <td>倉頡、速成、注音</td>
+            <td style="text-align:left">1958 年推行《漢語拼音方案》與簡化字，五筆專為簡體字字形結構優化設計。</td>
+          </tr>
+          <tr>
+            <td><b style="color:${C1}">香港 / 澳門</b></td>
+            <td><b>倉頡輸入法</b><br><b>速成（簡易）輸入法</b><br><b>筆畫輸入法</b></td>
+            <td>五筆字型、注音</td>
+            <td style="text-align:left">沿用繁體字，且粵語與普通話發音差異大，故普遍採用拆解繁體字形的倉頡與速成。</td>
+          </tr>
+          <tr>
+            <td><b style="color:${C2}">台灣地區</b></td>
+            <td><b>注音輸入法（Bopomofo）</b><br><b>倉頡 / 無蝦米</b></td>
+            <td>五筆字型</td>
+            <td style="text-align:left">台灣基礎教育採用注音符號（ㄅㄆㄇㄈ）標音，注音輸入法佔據絕對主導地位。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+/* 第 31 頁：全書總結與五筆口訣總表 */
+function renderSummaryHTML(){
+  return `
+    <div class="sub-win-title">
+      <div><span>🎓 全書總結 — 五筆 86 版 25 鍵口訣與高頻簡碼總表</span><span class="category-badge">第 31 / 31 頁：隨身口袋卡</span></div>
+      <span style="font-size:13.5px;color:#aaa">橫豎撇捺折五大區完整口訣總覽</span>
+    </div>
+    <div class="tut-content" id="tutPageContent">
+      <div class="tut-h y" style="margin-top:2px">▶ 五筆 86 版完整字根記憶口訣（含一級簡碼對照）</div>
+      <table class="retro-table" style="font-size:12px">
+        <thead>
+          <tr><th>分區</th><th>1 鍵（一畫）</th><th>2 鍵（二畫）</th><th>3 鍵（三畫）</th><th>4 鍵（四畫）</th><th>5 鍵（五畫）</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b style="color:#ff5">1 橫區</b></td>
+            <td><b>G [一]</b> 王旁青頭戋五一</td>
+            <td><b>F [地]</b> 土士二干十寸雨</td>
+            <td><b>D [在]</b> 大犬三羊古石廠</td>
+            <td><b>S [要]</b> 木丁西</td>
+            <td><b>A [工]</b> 工戈草頭右框七</td>
+          </tr>
+          <tr>
+            <td><b style="color:${C1}">2 豎區</b></td>
+            <td><b>H [上]</b> 目具上止卜虎皮</td>
+            <td><b>J [是]</b> 日早兩豎與蟲依</td>
+            <td><b>K [中]</b> 口與川字根稀</td>
+            <td><b>L [国]</b> 田甲方框四車力</td>
+            <td><b>M [同]</b> 山由貝下框幾</td>
+          </tr>
+          <tr>
+            <td><b style="color:${C2}">3 撇區</b></td>
+            <td><b>T [和]</b> 禾竹一撇雙人立</td>
+            <td><b>R [的]</b> 白手看頭三二斤</td>
+            <td><b>E [有]</b> 月彡乃用家衣底</td>
+            <td><b>W [人]</b> 人和八三四裡</td>
+            <td><b>Q [我]</b> 金勺缺點無尾魚…</td>
+          </tr>
+          <tr>
+            <td><b style="color:#fa5">4 捺區</b></td>
+            <td><b>Y [主]</b> 言文方廣在四一…</td>
+            <td><b>U [产]</b> 立辛兩點六門病</td>
+            <td><b>I [不]</b> 水旁興頭小倒立</td>
+            <td><b>O [为]</b> 火業頭四點米</td>
+            <td><b>P [这]</b> 之字軍蓋道建底…</td>
+          </tr>
+          <tr>
+            <td><b style="color:${C3}">5 折區</b></td>
+            <td><b>N [民]</b> 已半巳滿不出己…</td>
+            <td><b>B [了]</b> 子耳了也框向上</td>
+            <td><b>V [发]</b> 女刀九臼山朝西</td>
+            <td><b>C [以]</b> 又巴馬丟矢矣</td>
+            <td><b>X [经]</b> 慈母無心弓和匕…</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="tut-h g" style="margin-top:6px">📌 簡體字打五筆最常遇到的五大「簡化變身」速記</div>
+      <div class="adv-aux-box">
+        • <b>简體「讠」（言字旁）</b> → 直接按 <i class="ky">Y</i>（如：话 <i class="cd">YTDG</i>、说 <i class="cd">YUKQ</i>、请 <i class="cd">YGEG</i>）<br>
+        • <b>简體「钅」（金字旁）</b> → 直接按 <i class="ky">Q</i>（如：铁 <i class="cd">QRWY</i>、钱 <i class="cd">QGT</i>、银 <i class="cd">QVEY</i>）<br>
+        • <b>简體「纟」（絞絲旁）</b> → 直接按 <i class="ky">X</i>（如：红 <i class="cd">XAG</i>、经 <i class="cd">XCA</i>、线 <i class="cd">XGT</i>）<br>
+        • <b>简體「门」（門字框）</b> → 直接按 <i class="ky">U</i>（如：问 <i class="cd">UKD</i>、间 <i class="cd">UJD</i>、闭 <i class="cd">UFT</i>）<br>
+        • <b>简體「马 / 又」旁</b>　 → 直接按 <i class="ky">C</i>（如：妈 <i class="cd">VCG</i>、汉 <i class="cd">ICY</i>、欢 <i class="cd">CQWY</i>、对 <i class="cd">CFY</i>）
+      </div>
+    </div>
+  `;
+}
+
+/* 渲染單一五筆字根教學頁（curPage = 1..25） */
+function renderRadicalHTML(p){
+  const k = p.key;
+  const auxHtml = p.aux.map(a=>`
+    <div class="aux-chip" style="border-color:${a.c}">
+      <span class="aux-glyph" style="color:${a.c}">${a.g}</span>
+      <div class="aux-desc"><b style="color:${a.c}">${a.title}</b>${a.desc}</div>
+    </div>
+  `).join("");
+
+  const rulesHtml = p.rules.map(r=>`• ${r}`).join("<br>");
+
+  const exRows = p.examples.map(e=>`
+    <tr>
+      <td><span class="aux-pill-mini" style="color:${e[1]};border:1px solid ${e[1]}">${e[0]}</span></td>
+      <td><span style="font-size:18px;color:${e[1]};font-weight:bold">${e[2]}</span></td>
+      <td>${e[3]}</td>
+      <td style="text-align:left">${e[4]}</td>
+    </tr>
+  `).join("");
+
+  return `
+    <div class="sub-win-title">
+      <div><span>📖 五筆 86 版字根專講</span><span class="category-badge">${p.cat}</span></div>
+      <span style="font-size:13.5px;color:#aaa">[<i style="color:#0ff;font-style:normal">${k} 鍵 / ${p.zone}區</i>] 鍵名「${p.rad}」｜一級簡碼「<b style="color:#ff5">${p.short1}</b>」</span>
+    </div>
+
+    <div class="tut-content" id="tutPageContent">
+      <div class="rad-hero-box">
+        <div class="rad-main-card">
+          <div class="rad-big-char">${p.rad}</div>
+          <div class="rad-key-tag">${k} 鍵 (${p.zone})</div>
+        </div>
+        <div class="rad-right-panel">
+          <div style="font-size:13px;color:#ff5;font-weight:bold">同鍵核心字根群（全部歸入 <span style="color:#0ff">${k} 鍵</span>｜一級簡碼：<span style="color:#5f5">${p.short1}</span>）：</div>
+          <div class="aux-showcase-row">${auxHtml}</div>
+          <div style="font-size:12px;color:#5ff">💡 記憶要訣：${p.slogan}</div>
+        </div>
+      </div>
+
+      <div class="tut-h y">▶ 字根取碼細節與簡體應用規範</div>
+      <div style="font-size:13px;margin-top:2px">${rulesHtml}</div>
+
+      <div class="tut-h g" style="margin-top:6px">▶ 實戰拆碼範例（涵蓋一級簡碼、鍵名字與常用合體字）</div>
+      <table class="retro-table">
+        <thead>
+          <tr><th>類別／字根</th><th>漢字</th><th>五筆編碼</th><th>結構拆解與詳細說明</th></tr>
+        </thead>
+        <tbody>${exRows}</tbody>
+      </table>
+
+      ${p.adv ? `<div class="tut-h c" style="margin-top:7px">▶ 進階成字字根與結構辨析</div><div class="adv-aux-box">${p.adv}</div>` : ""}
+
+      <div class="tut-h o" style="margin-top:7px">🎵 86 版五筆官方記憶口訣（鍵盤區位 ${p.zone}）</div>
+      <div class="poem-line-box">${p.poem}</div>
+    </div>
+  `;
+}
+
+/* 狀態與導航控制（curPage = -1 為總目錄索引；0..30 為第 1..31 頁） */
+let curPage = -1;
+
+function goPage(idx){
+  curPage = idx;
+  const win = document.getElementById("mainWin");
+  const btnEsc = document.getElementById("btnEscIdx");
+  const btnPrev = document.getElementById("btnPrevPage");
+  const btnNext = document.getElementById("btnNextPage");
+  const hint = document.getElementById("footerHint");
+
+  if(curPage === -1){
+    win.innerHTML = renderIndexHTML();
+    btnEsc.textContent = "Esc [目錄]";
+    btnPrev.textContent = "◀ 總結";
+    btnNext.textContent = "開始閱讀 ▶";
+    hint.textContent = "點擊字根卡片或按 A-Y 跳轉 ｜ 按 Enter / → 從第 1 頁引言開始閱讀";
+  } else {
+    const p = PAGES[curPage];
+    if(p.type === "intro") win.innerHTML = renderIntroHTML();
+    else if(p.type === "wubi_rules") win.innerHTML = renderWubiRulesHTML();
+    else if(p.type === "hand_voice") win.innerHTML = renderHandVoiceHTML();
+    else if(p.type === "stroke_t9") win.innerHTML = renderStrokeHTML();
+    else if(p.type === "compare_3") win.innerHTML = renderCompareHTML();
+    else if(p.type === "summary") win.innerHTML = renderSummaryHTML();
+    else win.innerHTML = renderRadicalHTML(p);
+
+    btnEsc.textContent = "Esc [索引]";
+    btnPrev.textContent = curPage === 0 ? "◀ 返回索引" : "◀ 上一頁";
+    btnNext.textContent = curPage === PAGES.length - 1 ? "返回索引 ▶" : "下一頁 ▶";
+    hint.textContent = `第 ${curPage + 1} / ${PAGES.length} 頁 ｜ Esc 返回索引 ｜ ← → 切換上下頁 ｜ ↑ ↓ 捲動內文`;
+  }
+}
+
+function prevPage(){
+  if(curPage === -1) goPage(PAGES.length - 1);
+  else if(curPage === 0) goPage(-1);
+  else goPage(curPage - 1);
+}
+
+function nextPage(){
+  if(curPage === -1) goPage(0);
+  else if(curPage >= PAGES.length - 1) goPage(-1);
+  else goPage(curPage + 1);
+}
+
+document.getElementById("btnEscIdx").addEventListener("click", () => {
+  goPage(-1);
+});
+document.getElementById("btnPrevPage").addEventListener("click", prevPage);
+document.getElementById("btnNextPage").addEventListener("click", nextPage);
+
+/* 通用捲動輔助 */
+function getActiveScrollBox(){
+  const el = document.querySelector("#tutPageContent, .tut-content");
+  return (el && el.offsetParent !== null) ? el : null;
+}
+function scrollActiveBox(deltaY){
+  const box = getActiveScrollBox();
+  if(!box) return false;
+  box.scrollBy({ top: deltaY, behavior: "smooth" });
+  return true;
+}
+window.addEventListener("wheel", e => {
+  const box = getActiveScrollBox();
+  if(box && !box.contains(e.target)) box.scrollTop += e.deltaY;
+}, { passive: true });
+
+/* 鍵盤控制 */
+window.addEventListener("keydown", e => {
+  if(e.ctrlKey || e.metaKey || e.altKey) return;
+  if(e.key === "Escape"){
+    e.preventDefault();
+    goPage(-1);
+  } else if(e.key === "ArrowRight" || e.key === "Enter" || e.key === "PageDown"){
+    e.preventDefault();
+    nextPage();
+  } else if(e.key === "ArrowLeft" || e.key === "PageUp"){
+    e.preventDefault();
+    prevPage();
+  } else if(e.key === "ArrowUp"){
+    if(scrollActiveBox(-95)) e.preventDefault();
+  } else if(e.key === "ArrowDown"){
+    if(scrollActiveBox(95)) e.preventDefault();
+  } else if(curPage === -1 && /^[a-y]$/i.test(e.key)){
+    const k = e.key.toUpperCase();
+    const idx = PAGES.findIndex(p => p.key === k);
+    if(idx !== -1){ e.preventDefault(); goPage(idx); }
+  }
+});
+
+/* 畫面自適應縮放 */
+function scaleScreen(){
+  const el = document.getElementById("dosScreen");
+  if(!el) return;
+  const W = window.innerWidth, H = window.innerHeight;
+  const sc = Math.min((W - 12) / 960, (H - 12) / 540);
+  el.style.transform = `scale(${Math.max(0.25, sc).toFixed(4)})`;
+}
+window.addEventListener("resize", scaleScreen);
+scaleScreen();
+
+/* 預設啟動顯示總目錄索引頁 */
+const initHash = location.hash.replace("#","").toUpperCase();
+const hashIdx = PAGES.findIndex(p => p.key === initHash);
+goPage(hashIdx !== -1 ? hashIdx : -1);
+</script>
+</body>
+</html>
