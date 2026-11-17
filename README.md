@@ -220,4 +220,4 @@ Released under the [MIT License](LICENSE). The Cangjie method itself carries no 
 
 無編碼的字同標點會自動灰走唔使打
 
-**作為七日鮮project唔會有乜maintain計劃**
+**作為七日鮮project唔會有乜maintain計劃，頂多不定時更新**
