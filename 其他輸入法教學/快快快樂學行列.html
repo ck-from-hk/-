@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<title>快快快樂學行列 - 行列 30 雙位數座標與 Windows 實戰指南（全書 36 頁互動版）</title>
+<style>
+*{box-sizing:border-box;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+html,body{overscroll-behavior:none;margin:0;background:#0a1212;width:100vw;height:100vh;height:100dvh;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:"BiauKaiHK","DFKai-SB","標楷體","Microsoft JhengHei",serif;overflow:hidden}
+.dos-screen{width:960px;height:540px;background:#002b2b;position:relative;border:3px solid #00aaaa;box-shadow:0 0 28px rgba(0,0,0,.95);display:flex;flex-direction:column;justify-content:space-between;transform-origin:center;flex-shrink:0}
+.dos-header{height:48px;background:#003d3d;border-bottom:2px solid #00ffff;display:flex;align-items:center;justify-content:space-between;padding:0 22px;flex-shrink:0}
+.eten-logo{display:flex;align-items:center;justify-content:center;width:102px;height:30px}
+.title-group{display:flex;align-items:center;flex:1;justify-content:center;gap:14px}
+.eten-double-line{flex:1;height:8px;border-top:3px solid #ffaa00;border-bottom:3px solid #00ffff}
+.dos-main-title{color:#ffff55;font-size:29px;font-weight:bold;letter-spacing:6px;text-shadow:2px 2px #000;white-space:nowrap;padding:0 10px}
+.dos-stage{flex:1;position:relative;display:flex;justify-content:center;align-items:center;padding:7px 18px;overflow:hidden}
+.dos-footer{height:36px;background:#c0c0c0;border-top:2px solid #fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0;z-index:10}
+.key-button{background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;font-weight:bold;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:#000080;cursor:pointer;font-family:Consolas,"Microsoft JhengHei",monospace;padding:0 12px;text-decoration:none}
+.key-button:active{border-color:#404040 #fff #fff #404040;background:#a8a8a8}
+
+.sub-window{background:#001515;border:3px double #00ffff;width:100%;height:100%;padding:10px 18px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:6px 6px 0 rgba(0,0,0,.6);z-index:10}
+.sub-win-title{color:#ffff55;font-size:19px;font-weight:bold;border-bottom:2px solid #00ffff;padding-bottom:5px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.category-badge{background:#003333;border:1px solid #00ffff;color:#ffff55;font-size:12.5px;padding:2px 9px;margin-left:8px}
+
+/* 教學內容區（彈性鋪滿整頁，放大字級且免捲動） */
+.tut-content{overflow-y:auto;flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-between;gap:4px;font-size:14px;color:#e0ffff;line-height:1.55;margin:4px 0 2px;padding-right:4px;overscroll-behavior:contain;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+.tut-h{font-weight:bold;font-size:14.5px;margin-top:0;background:rgba(0,170,170,.22);padding:2px 8px;border-left:4px solid;flex-shrink:0}
+.tut-h.y{color:#ffff55;border-color:#ffff55}.tut-h.g{color:#55ff55;border-color:#55ff55}.tut-h.o{color:#ffaa00;border-color:#ffaa00}.tut-h.c{color:#00ffff;border-color:#00ffff}
+.tut-content i{font-style:normal;font-weight:bold}
+.tut-content .tr{color:#ffff55}.tut-content .ky{color:#00ffff}.tut-content .cd{color:#ffaa00}.tut-content .c-coord{color:#55ff55;font-family:Consolas,monospace}
+
+/* 主字根＋放大彩色輔助字形展示區 */
+.rad-hero-box{display:flex;align-items:stretch;background:rgba(0,0,0,.5);border:2px solid #ffaa00;padding:5px 10px;gap:12px;margin:0;border-radius:4px;flex-shrink:0}
+.rad-main-card{display:flex;flex-direction:column;align-items:center;justify-content:center;background:#002222;border:2px solid #ffff55;padding:4px 10px;min-width:90px;box-shadow:inset 2px 2px 5px rgba(0,0,0,.85);flex-shrink:0}
+.rad-big-char{font-size:40px;color:#ffff55;line-height:1.05;font-weight:bold;text-shadow:2px 2px #000}
+.rad-key-tag{font-size:11.5px;color:#00ffff;font-weight:bold;margin-top:3px;font-family:Consolas,monospace;background:#003333;padding:1px 6px;border:1px solid #00ffff;white-space:nowrap}
+
+.rad-right-panel{display:flex;flex-direction:column;justify-content:space-between;flex:1;gap:4px}
+.aux-showcase-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.aux-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(0,43,43,.92);border:1px solid #00ffff;padding:3px 8px;border-radius:3px}
+.aux-glyph{font-size:20px;font-weight:bold;line-height:1;text-shadow:1px 1px #000}
+.aux-desc{font-size:12px;color:#ccffff;line-height:1.25}
+.aux-desc b{display:block;font-size:12.5px}
+
+/* 一行兩字雙欄範例網格（自動撐滿剩餘版面高度） */
+.ex-grid-2col{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:5px;margin-top:0}
+.ex-card{display:flex;align-items:center;gap:6px;background:rgba(0,25,25,.88);border:1px solid #009999;padding:4px 8px;border-radius:3px;font-size:12.8px;line-height:1.3}
+.ex-char{font-size:20px;font-weight:bold;min-width:24px;text-align:center;flex-shrink:0}
+.ex-code{font-family:Consolas,monospace;font-size:13px;color:#ffff55;font-weight:bold;background:#000;border:1px solid #55ff55;padding:2px 6px;border-radius:2px;white-space:nowrap;flex-shrink:0}
+.ex-note{color:#e0ffff;flex:1;text-align:left}
+.ex-note b{color:#ffaa00}
+
+/* 範例表格 */
+.retro-table{width:100%;border-collapse:collapse;color:#fff;font-size:13.5px;margin-top:0}
+.retro-table th,.retro-table td{border:1px solid #00ffff;padding:3px 6px;text-align:center}
+.retro-table th{background:#003333;color:#ffff55}
+.retro-table td:nth-child(3){font-family:Consolas,monospace;color:#55ff55;font-weight:bold;white-space:nowrap}
+
+/* 進階補充卡 */
+.adv-aux-box{background:rgba(0,40,40,.65);border:1px dashed #00ffff;padding:6px 10px;margin-top:0;border-radius:3px;font-size:13px;line-height:1.5;color:#ccffff}
+
+/* 頁腳口訣樣式 */
+.poem-in-footer { color: #222; font-size: 13.5px; font-weight: bold; }
+.poem-in-footer b[style*="#ffaa00"] { color: #b34700 !important; }
+.poem-in-footer b[style*="#55ff55"] { color: #006600 !important; }
+.poem-in-footer .ky { color: #0000bb !important; font-style: normal; }
+.poem-in-footer .poem-title { color: #800000; margin-right: 6px; }
+
+/* 索引頁矩陣佈局 (上方 3行 × 10鍵精準對齊矩陣 + 底部單行專題區) */
+.idx-board{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-between;gap:10px;padding:3px 0;overflow:hidden}
+.matrix-area{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-between;gap:14px}
+.col-header-row{display:flex;align-items:stretch;gap:6px;flex-shrink:0;margin-bottom:-6px}
+.row-spacer{width:42px;flex-shrink:0}
+.col-headers{flex:1;min-width:0;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;text-align:center;font-size:13px;font-weight:bold;color:#ffaa00;background:rgba(0,0,0,.45);padding:4px 0;border-top:1.5px solid #007777;border-bottom:1.5px solid #007777}
+.col-headers span{white-space:nowrap;overflow:hidden}
+.rad-row{flex:1;min-height:0;display:flex;align-items:stretch;gap:6px}
+.row-label{width:42px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:bold;line-height:1.25;text-align:center;background:rgba(0,0,0,.35);border:1px solid #005555;border-radius:2px;white-space:nowrap}
+.rad-grid-10{flex:1;min-width:0;min-height:0;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px}
+.rad-card{background:#001a1a;border:1.5px solid #00aaaa;padding:3px 1px;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background .12s;cursor:pointer;min-height:0;min-width:0;overflow:hidden;width:100%}
+.rad-card:hover,.rad-card:focus{background:#004040;border-color:#ffff55;outline:none}
+.rad-card .rk{font-family:Consolas,monospace;font-size:14px;color:#55ff55;font-weight:bold;line-height:1.1;white-space:nowrap}
+.rad-card .rc{font-size:23px;color:#ffff55;font-weight:bold;line-height:1.15;margin:2px 0;white-space:nowrap}
+.rad-card .rs{font-size:11.5px;color:#00ffff;line-height:1.1;white-space:nowrap;overflow:hidden}
+.bottom-nav-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;flex-shrink:0;padding-top:5px;border-top:1px dashed #007777}
+.rad-card.intro-card{flex-direction:row;justify-content:center;gap:6px;padding:6px 6px;border-color:#ffff55;background:#1a0000}
+.rad-card.intro-card:hover{background:#3a0000;border-color:#00ffff}
+.rad-card.intro-card .rk{font-size:12.5px;color:#ffaa00}
+.rad-card.intro-card .rc{font-size:15px;color:#ffff55;margin:0;letter-spacing:1px}
+
+@media(max-width:480px){.dos-screen{transform:scale(.4)}}
+@media(min-width:481px)and(max-width:768px){.dos-screen{transform:scale(.6)}}
+</style>
+</head>
+<body>
+<div class="dos-screen" id="dosScreen">
+  <div class="dos-header">
+    <div class="eten-logo" title="ETen 倚天經典標誌"><svg viewBox="0 0 120 40" width="98" height="30"><rect x="4" y="4" width="112" height="32" rx="4" fill="#001a1a" stroke="#00ffff" stroke-width="2"/><text x="50%" y="65%" text-anchor="middle" fill="#ffaa00" font-size="16" font-weight="900" font-family="Consolas,Arial">ARRAY 30</text></svg></div>
+    <div class="title-group">
+      <div class="eten-double-line"></div>
+      <div class="dos-main-title">快快快樂學行列</div>
+      <div class="eten-double-line"></div>
+    </div>
+  </div>
+
+  <div class="dos-stage">
+    <div class="sub-window" id="mainWin"></div>
+  </div>
+
+  <div class="dos-footer">
+    <div style="display:flex;gap:10px;align-items:center">
+      <button type="button" class="key-button" id="btnEscIdx" style="color:#800000" title="返回總目錄索引">Esc [索引]</button>
+    </div>
+    <div id="footerHint" style="font-size:12px;color:#333;flex:1;text-align:center">Esc 返回索引 ｜ ← → 切換上下頁 ｜ 點擊卡片或直接按鍵盤字根鍵跳轉</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button type="button" class="key-button" id="btnPrevPage">◀ 上一頁</button>
+      <button type="button" class="key-button" id="btnNextPage">下一頁 ▶</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const C1="#00ffff", C2="#55ff55", C3="#ffaa00";
+
+/* 全書 36 頁結構化教材資料（0=引言, 1..30=行列30鍵雙位數座標專講, 31..35=五大實戰專題） */
+const PAGES = [
+  { type:"intro" },
+
+  /* ================= 第一列：上排字母鍵區（Q ～ P，尾筆為 1～4，共 10 鍵） ================= */
+  {
+    key:"Q", coord:"1^ (11~14)", rad:"土", short1:"的", cat:"第 2 / 36 頁：上排字母區（直行 1 橫）",
+    aux:[
+      {g:"土士王工", c:C1, title:"座標 [11] 首1尾1", desc:"土、士、王、工、五、正（首橫底橫）"},
+      {g:"寸扌龺", c:C2, title:"座標 [14] 首1尾4", desc:"寸、提手旁扌、青字頭龺（橫交豎）"}
+    ],
+    slogan:`首筆 1（橫）、尾筆 1 或 4（橫/正交） → 座標 <i class="c-coord">11~14</i> 落在上排 <i class="ky">Q</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>「土、王、工」首筆橫(<i class="cd">1</i>)、尾筆橫(<i class="cd">1</i>)＝<i class="c-coord">11</i>；「寸、扌」首筆橫(<i class="cd">1</i>)、尾筆正交(<i class="cd">4</i>)＝<i class="c-coord">14</i>，全歸上排 <i class="ky">Q</i>。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">Q</i> ＋ 空白鍵直接打出最高頻字「<b class="tr">的</b>」。`
+    ],
+    examples:[
+      ["",C1,"地","QB","左土 <b>Q[11]</b> ＋ 右也 <b>B[52]</b>。"],
+      ["",C2,"打","QA","左扌 <b>Q[14]</b> ＋ 右丁 <b>A[1-]</b>。"],
+      ["",C1,"理","QPQ","左王 <b>Q[11]</b> ＋ 右里（田 <b>P</b> ＋ 土 <b>Q</b>）。"],
+      ["",C2,"青","QM","上青字頭 <b>Q[14]</b> ＋ 下月 <b>M[7v]</b>。"],
+      ["",C2,"時","UQQ","左日 <b>U[7^]</b> ＋ 右寺（土 <b>Q</b> ＋ 寸 <b>Q</b>）。"],
+      ["",C1,"堂","CJ;Q","尚頭 <b>C</b> ＋ 冖 <b>J</b> ＋ 口 <b>;</b> ＋ 尾碼土 <b>Q[11]</b>。"]
+    ],
+    poem:`首 <b style="color:${C3}">1</b> 橫起尾 <b style="color:${C2}">1、4</b>，土王工寸扌歸 <i class="ky">Q [1^]</i>`
+  },
+  {
+    key:"W", coord:"2^ (21~22)", rad:"女", short1:"一/標點", cat:"第 3 / 36 頁：上排字母區（直行 2 逆彎）",
+    aux:[
+      {g:"女彑", c:C1, title:"座標 [21] 首2尾1", desc:"女字旁、互字頭彑（逆彎起筆、橫收尾）"},
+      {g:"巛", c:C2, title:"座標 [22] 並排逆彎", desc:"三拐川「巛」（如：巡、災上、腦右上）"}
+    ],
+    slogan:`首筆 2（逆彎）、尾筆 1 或 2（橫/逆彎） → 座標 <i class="c-coord">21~22</i> 落在上排 <i class="ky">W</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>「女」第一筆撇點屬逆彎(<i class="cd">2</i>)、最後一筆長橫(<i class="cd">1</i>)，組合為 <i class="c-coord">21</i>，故在 <i class="ky">W</i> 鍵。`,
+      `<b>Windows 專屬功能：</b>在 Windows 版中，先按 <i class="ky">W</i> 再按數字鍵 <i class="cd">1~0</i> 可快速輸入全形標點符號。`
+    ],
+    examples:[
+      ["",C1,"好","WB","左女 <b>W[21]</b> ＋ 右子 <b>B[5v]</b>。"],
+      ["",C1,"如","W;","左女 <b>W[21]</b> ＋ 右口 <b>;[0-]</b>。"],
+      ["",C1,"媽","WU","左女 <b>W[21]</b> ＋ 右馬 <b>U[7^]</b>。"],
+      ["",C1,"姐","W/","左女 <b>W[21]</b> ＋ 右且 <b>/[0v]</b>。"],
+      ["",C2,"巡","WX","先寫內部巛 <b>W[22]</b> ＋ 後寫外圍辶 <b>X[2v]</b>。"],
+      ["",C1,"安","JW","上宀 <b>J[7-]</b> ＋ 尾碼女 <b>W[21]</b>。"]
+    ],
+    poem:`首 <b style="color:${C3}">2</b> 逆彎尾 <b style="color:${C2}">1、2</b>，女彑三拐巛入 <i class="ky">W [2^]</i>`
+  },
+  {
+    key:"E", coord:"3^ (31~34)", rad:"門", short1:"上", cat:"第 4 / 36 頁：上排字母區（直行 3 直豎）",
+    aux:[
+      {g:"止上非", c:C1, title:"座標 [31] 首3尾1", desc:"止、上、非（直豎起筆、底橫收尾）"},
+      {g:"門鬥", c:C2, title:"座標 [31/34] 雙豎框", desc:"門字框、鬥字框（兩側直豎對稱展開）"}
+    ],
+    slogan:`首筆 3（直豎）、尾筆 1 或 4（橫/正交） → 座標 <i class="c-coord">31~34</i> 落在上排 <i class="ky">E</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>「止、上」首筆直豎(<i class="cd">3</i>)、底筆長橫(<i class="cd">1</i>)＝<i class="c-coord">31</i>；雙豎外框「門、鬥」亦整體歸入 <i class="ky">E</i> 鍵。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">E</i> ＋ 空白鍵直接打出「<b class="tr">上</b>」。`
+    ],
+    examples:[
+      ["",C2,"間","EU","外門 <b>E[3^]</b> ＋ 內日 <b>U[7^]</b>。"],
+      ["",C2,"開","EAF","外門 <b>E[3^]</b> ＋ 內一 <b>A</b> ＋ 廾 <b>F</b>。"],
+      ["",C1,"步","EC","上止 <b>E[31]</b> ＋ 下少 <b>C[3v]</b>。"],
+      ["",C1,"肯","EM","上止 <b>E[31]</b> ＋ 下月 <b>M[7v]</b>。"],
+      ["",C1,"悲","EN","上非 <b>E[31]</b> ＋ 下心 <b>N[6v]</b>。"],
+      ["",C1,"正","AE","上一 <b>A[1-]</b> ＋ 尾碼止 <b>E[31]</b>。"]
+    ],
+    poem:`首 <b style="color:${C3}">3</b> 直豎尾 <b style="color:${C2}">1、4</b>，止上非門鬥歸 <i class="ky">E [3^]</i>`
+  },
+  {
+    key:"R", coord:"4^ (41~44)", rad:"艹", short1:"不", cat:"第 5 / 36 頁：上排字母區（直行 4 正交）",
+    aux:[
+      {g:"艹革", c:C1, title:"座標 [44] 雙十正交", desc:"草字頭艹、革字旁（雙十字正交結構）"},
+      {g:"甘共", c:C2, title:"座標 [41] 首4尾1", desc:"甘字、共字上廿（正交起筆、底橫封口）"}
+    ],
+    slogan:`首筆 4（正交）、尾筆 1 或 4（橫/正交） → 座標 <i class="c-coord">41~44</i> 落在上排 <i class="ky">R</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>草字頭「艹」由兩個十字正交(<i class="cd">4</i>)組成，座標為 <i class="c-coord">44</i>；「甘」首筆正交(<i class="cd">4</i>)、底橫(<i class="cd">1</i>)＝<i class="c-coord">41</i>，皆在 <i class="ky">R</i> 鍵。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">R</i> ＋ 空白鍵直接打出「<b class="tr">不</b>」。`
+    ],
+    examples:[
+      ["",C1,"花","RKS","上艹 <b>R[44]</b> ＋ 下化（亻 <b>K</b> ＋ 匕 <b>S</b>）。"],
+      ["",C1,"草","RUF","上艹 <b>R[44]</b> ＋ 中日 <b>U</b> ＋ 下十 <b>F</b>。"],
+      ["",C1,"苦","RZ","上艹 <b>R[44]</b> ＋ 下古 <b>Z[10]</b>（或 RF;）。"],
+      ["",C2,"某","RZ","上甘 <b>R[41]</b> ＋ 下木 <b>Z[18]</b>。"],
+      ["",C1,"鞋","RQQ","左革 <b>R[44]</b> ＋ 右圭（土 <b>Q</b> ＋ 土 <b>Q</b>）。"],
+      ["",C2,"甜","O;R","左舌（千 <b>O</b> ＋ 口 <b>;</b>）＋ 尾碼甘 <b>R[41]</b>。"]
+    ],
+    poem:`首 <b style="color:${C3}">4</b> 正交尾 <b style="color:${C2}">1、4</b>，草頭甘革全在 <i class="ky">R [4^]</i>`
+  },
+  {
+    key:"T", coord:"5^ (51~59)", rad:"刀", short1:"女/了", cat:"第 6 / 36 頁：上排字母區（直行 5 順彎）",
+    aux:[
+      {g:"艮聿", c:C1, title:"座標 [51] 首5尾1", desc:"艮字（眼/銀右旁）、聿字（筆畫字根）"},
+      {g:"刀力九皮", c:C2, title:"順彎主力群", desc:"刀、立刀旁刂、力、九、皮（高頻集中）"}
+    ],
+    slogan:`首筆 5（順彎橫折）→ 座標 <i class="c-coord">51~59</i> 高頻主力集中於上排 <i class="ky">T</i> 鍵。`,
+    rules:[
+      `<b>座標與高頻歸位：</b>「艮、聿」首筆順彎(<i class="cd">5</i>)、尾筆橫(<i class="cd">1</i>)＝<i class="c-coord">51</i>；同時將「刀、刂、力、九、皮」統一配置於 <i class="ky">T</i> 鍵，左手食指伸上即可連擊。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">T</i> ＋ 空白鍵打出「<b class="tr">女 / 了</b>」。`
+    ],
+    examples:[
+      ["",C2,"加","T;","左力 <b>T[5^]</b> ＋ 右口 <b>;[0-]</b>。"],
+      ["",C2,"切","AT","左七 <b>A[1-]</b> ＋ 右刀 <b>T[5^]</b>。"],
+      ["",C2,"男","PT","上田 <b>P[04]</b> ＋ 下力 <b>T[5^]</b>。"],
+      ["",C1,"眼","/T","左目 <b>/[0v]</b> ＋ 右艮 <b>T[51]</b>。"],
+      ["",C2,"破","ZT","左石 <b>Z[10]</b> ＋ 右皮 <b>T[5^]</b>。"],
+      ["",C2,"到","ASQT","左至（一 <b>A</b> 厶 <b>S</b> 土 <b>Q</b>）＋ 尾碼刂 <b>T[5^]</b>。"]
+    ],
+    poem:`首 <b style="color:${C3}">5</b> 順彎橫折起，刀力九皮艮歸 <i class="ky">T [5^]</i>`
+  },
+  {
+    key:"Y", coord:"6^ (61~64)", rad:"立", short1:"立", cat:"第 7 / 36 頁：上排字母區（直行 6 點筆）",
+    aux:[
+      {g:"立广鹿", c:C1, title:"座標 [61] 首6尾1", desc:"立字旁、廣字頭广、鹿字頭（點起橫收）"},
+      {g:"辛音", c:C2, title:"座標 [64/61] 點首部首", desc:"辛字（64）、音字（立＋日，首碼取 61）"}
+    ],
+    slogan:`首筆 6（點筆）、尾筆 1 或 4（橫/正交） → 座標 <i class="c-coord">61~64</i> 落在上排 <i class="ky">Y</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>「立」首筆點(<i class="cd">6</i>)、底筆長橫(<i class="cd">1</i>)＝<i class="c-coord">61</i>；「辛」首筆點(<i class="cd">6</i>)、尾筆十字正交(<i class="cd">4</i>)＝<i class="c-coord">64</i>，均歸 <i class="ky">Y</i> 鍵。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">Y</i> ＋ 空白鍵直接打出「<b class="tr">立</b>」。`
+    ],
+    examples:[
+      ["",C1,"站","YD;","左立 <b>Y[61]</b> ＋ 右占（卜 <b>D</b> ＋ 口 <b>;</b>）。"],
+      ["",C2,"音","YU","上立 <b>Y[61]</b> ＋ 下日 <b>U[7^]</b>。"],
+      ["",C1,"店","YD;","外广 <b>Y[61]</b> ＋ 內占（卜 <b>D</b> ＋ 口 <b>;</b>）。"],
+      ["",C1,"親","YZ/","左亲（立 <b>Y</b> ＋ 木 <b>Z</b>）＋ 右見 <b>/[0v]</b>。"],
+      ["",C1,"床","YZ","外广 <b>Y[61]</b> ＋ 內木 <b>Z[18]</b>。"],
+      ["",C1,"位","KY","左亻 <b>K[8-]</b> ＋ 尾碼立 <b>Y[61]</b>。"]
+    ],
+    poem:`首 <b style="color:${C3}">6</b> 點筆尾 <b style="color:${C2}">1、4</b>，立辛廣鹿齊聚 <i class="ky">Y [6^]</i>`
+  },
+  {
+    key:"U", coord:"7^ (71~74)", rad:"日", short1:"是", cat:"第 8 / 36 頁：上排字母區（直行 7 蓋框）",
+    aux:[
+      {g:"日曰耳", c:C1, title:"座標 [71] 封閉橫底", desc:"日、扁曰、耳字旁（上框橫折、底橫收尾）"},
+      {g:"車馬臣", c:C2, title:"座標 [74/71] 黃金部首", desc:"車字旁、馬字旁、臣字框（高頻集中）"}
+    ],
+    slogan:`蓋框橫底與車馬耳日 → 座標 <i class="c-coord">71~74</i> 黃金大鍵落於上排 <i class="ky">U</i> 鍵。`,
+    rules:[
+      `<b>上排黃金鍵位：</b>行列將「日、曰、耳、車、馬、臣」六大超高頻部首統一集中於右手食指上方的 <i class="ky">U</i> 鍵，打字連擊極快。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">U</i> ＋ 空白鍵直接打出高頻字「<b class="tr">是</b>」。`
+    ],
+    examples:[
+      ["",C1,"明","UM","左日 <b>U[7^]</b> ＋ 右月 <b>M[7v]</b>。"],
+      ["",C1,"昌","UU","上日 <b>U[7^]</b> ＋ 下曰 <b>U[7^]</b>。"],
+      ["",C1,"取","UB","左耳 <b>U[7^]</b> ＋ 右又 <b>B[5v]</b>。"],
+      ["",C2,"軍","JU","上冖 <b>J[7-]</b> ＋ 下車 <b>U[74]</b>。"],
+      ["",C2,"騎","UZA;","左馬 <b>U[7^]</b> ＋ 右奇（大 <b>Z</b> 一 <b>A</b> 口 <b>;</b>）。"],
+      ["",C1,"香","OU","上禾 <b>O[94]</b> ＋ 尾碼日 <b>U[7^]</b>。"]
+    ],
+    poem:`日曰耳與車馬臣，黃金大鍵在 <i class="ky">U [7^]</i>`
+  },
+  {
+    key:"I", coord:"8^ (81~84)", rad:"金", short1:"金", cat:"第 9 / 36 頁：上排字母區（直行 8 人八）",
+    aux:[
+      {g:"金釒並", c:C1, title:"座標 [81] 首8尾1", desc:"金字、金字旁釒、並字（八/人起、底橫收）"},
+      {g:"半酋頭", c:C2, title:"座標 [84] 首8尾4", desc:"半字、尊字上酋頭（倒八起筆、十字收尾）"}
+    ],
+    slogan:`首筆 8（人/八）、尾筆 1 或 4（橫/正交） → 座標 <i class="c-coord">81~84</i> 落在上排 <i class="ky">I</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>「金、釒」首筆人字蓋(<i class="cd">8</i>)、底筆長橫(<i class="cd">1</i>)＝<i class="c-coord">81</i>；「半」首筆倒八(<i class="cd">8</i>)、末筆十字正交(<i class="cd">4</i>)＝<i class="c-coord">84</i>，均歸 <i class="ky">I</i> 鍵。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">I</i> ＋ 空白鍵直接打出「<b class="tr">金</b>」。`
+    ],
+    examples:[
+      ["",C1,"銀","IT","左釒 <b>I[81]</b> ＋ 右艮 <b>T[51]</b>。"],
+      ["",C1,"針","IF","左釒 <b>I[81]</b> ＋ 右十 <b>F[4-]</b>。"],
+      ["",C1,"銅","IJA;","左釒 <b>I[81]</b> ＋ 右同（冂 <b>J</b> 一 <b>A</b> 口 <b>;</b>）。"],
+      ["",C2,"伴","KI","左亻 <b>K[8-]</b> ＋ 右半 <b>I[84]</b>。"],
+      ["",C2,"判","IT","左半 <b>I[84]</b> ＋ 右刂 <b>T[5^]</b>。"],
+      ["",C1,"釜","KKI","上父（八 <b>K</b> ＋ 乂 <b>K</b>）＋ 尾碼金 <b>I[81]</b>。"]
+    ],
+    poem:`首 <b style="color:${C3}">8</b> 人八尾 <b style="color:${C2}">1、4</b>，金旁半並全歸 <i class="ky">I [8^]</i>`
+  },
+  {
+    key:"O", coord:"9^ (91~94)", rad:"禾", short1:"手", cat:"第 10 / 36 頁：上排字母區（直行 9 撇筆）",
+    aux:[
+      {g:"白生臼", c:C1, title:"座標 [91] 首9尾1", desc:"白字、生字、臼框（頂撇起筆、底橫封口）"},
+      {g:"禾竹手千", c:C2, title:"座標 [93/94] 首9尾3/4", desc:"禾木旁、竹字頭⺮、手、看字頭龵、千"}
+    ],
+    slogan:`首筆 9（斜撇）、尾筆 1、3 或 4 → 座標 <i class="c-coord">91~94</i> 落在上排 <i class="ky">O</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>「白、生」首筆撇(<i class="cd">9</i>)、底橫(<i class="cd">1</i>)＝<i class="c-coord">91</i>；「千、禾、手、竹」首筆撇(<i class="cd">9</i>)、中間或底部正交/直豎(<i class="cd">4/3</i>)＝<i class="c-coord">94/93</i>，全在 <i class="ky">O</i> 鍵。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">O</i> ＋ 空白鍵直接打出「<b class="tr">手</b>」。`
+    ],
+    examples:[
+      ["",C2,"和","O;","左禾 <b>O[94]</b> ＋ 右口 <b>;[0-]</b>。"],
+      ["",C2,"看","O/","上看字頭龵 <b>O[94]</b> ＋ 下目 <b>/[0v]</b>。"],
+      ["",C2,"笑","OLZ","上竹字頭 <b>O[9^]</b> ＋ 下夭（丿 <b>L</b> ＋ 大 <b>Z</b>）。"],
+      ["",C1,"的","OLH","左白 <b>O[91]</b> ＋ 右勺（勹 <b>L</b> ＋ 丶 <b>H</b>）。"],
+      ["",C1,"先","OQS","上丿土（<b>OQ</b>）＋ 下儿 <b>S[2-]</b>。"],
+      ["",C2,"拿","KA;O","上合（人 <b>K</b> 一 <b>A</b> 口 <b>;</b>）＋ 尾碼手 <b>O[9^]</b>。"]
+    ],
+    poem:`首 <b style="color:${C3}">9</b> 撇起尾 <b style="color:${C2}">1~4</b>，禾竹手白千歸 <i class="ky">O [9^]</i>`
+  },
+  {
+    key:"P", coord:"0^ (01~04)", rad:"田", short1:"田", cat:"第 11 / 36 頁：上排字母區（直行 0 方框）",
+    aux:[
+      {g:"皿四罒西", c:C1, title:"座標 [01] 方框橫底", desc:"皿字底、四、網字頭罒、西字頭覀"},
+      {g:"田由甲申", c:C2, title:"座標 [04] 方框正交", desc:"田、由、甲、申（方框內含十字正交）"}
+    ],
+    slogan:`方框 0 內含正交 4 或橫底 1 → 座標 <i class="c-coord">01~04</i> 落在上排 <i class="ky">P</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>「田、由、甲、申」為方框(<i class="cd">0</i>)內包十字正交(<i class="cd">4</i>)＝<i class="c-coord">04</i>；「皿、四、罒、西」為方框(<i class="cd">0</i>)以長橫封底(<i class="cd">1</i>)＝<i class="c-coord">01</i>，全在 <i class="ky">P</i> 鍵。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">P</i> ＋ 空白鍵直接打出「<b class="tr">田</b>」。`
+    ],
+    examples:[
+      ["",C2,"思","PN","上田 <b>P[04]</b> ＋ 下心 <b>N[6v]</b>。"],
+      ["",C2,"界","PKD","上田 <b>P[04]</b> ＋ 下介（人 <b>K</b> ＋ 丨 <b>D</b>）。"],
+      ["",C1,"要","PW","上西字頭覀 <b>P[01]</b> ＋ 下女 <b>W[21]</b>。"],
+      ["",C1,"買","P/","上網字頭罒 <b>P[01]</b> ＋ 下貝 <b>/[0v]</b>。"],
+      ["",C1,"益","KKP","上丷一八（<b>KK</b>）＋ 下皿 <b>P[01]</b>。"],
+      ["",C1,"盒","KA;P","上合（人 <b>K</b> 一 <b>A</b> 口 <b>;</b>）＋ 尾碼皿 <b>P[01]</b>。"]
+    ],
+    poem:`方框 <b style="color:${C3}">0</b> 帶 <b style="color:${C2}">1、4</b> 底，田四皿西全在 <i class="ky">P [0^]</i>`
+  },
+
+  /* ================= 第二列：中排基準鍵區（A ～ ;，單筆畫 1～0 ＆ 尾筆為 5，共 10 鍵） ================= */
+  {
+    key:"A", coord:"1- (單筆 & 15)", rad:"一", short1:"一", cat:"第 12 / 36 頁：中排基準區（直行 1 橫）",
+    aux:[
+      {g:"一", c:C1, title:"基本筆畫 [1-] 橫", desc:"所有獨立平橫、提筆㇀（單筆橫本體）"},
+      {g:"丁七戈弋", c:C2, title:"座標 [15] 首1尾5", desc:"丁、七、戈、弋、尤（橫起帶鉤折）"}
+    ],
+    slogan:`基本筆畫 <i class="c-coord">1</i>（橫）本體，以及橫起帶鉤折 <i class="c-coord">15</i> → 中排基準 <i class="ky">A</i> 鍵。`,
+    rules:[
+      `<b>中排基準鐵律：</b>凡 10 種單筆畫本身，一律落在中排基準鍵！獨立橫畫或提筆按 <i class="ky">A</i>；「丁、七、戈」首橫(<i class="cd">1</i>)帶鉤(<i class="cd">5</i>)＝<i class="c-coord">15</i> 亦在 <i class="ky">A</i> 鍵。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">A</i> ＋ 空白鍵直接打出「<b class="tr">一</b>」。`
+    ],
+    examples:[
+      ["",C1,"三","AAA","一 <b>A[1-]</b> ＋ 一 <b>A[1-]</b> ＋ 一 <b>A[1-]</b>。"],
+      ["",C1,"下","AD","上一 <b>A[1-]</b> ＋ 下卜 <b>D[3-]</b>。"],
+      ["",C1,"天","AZ","上一 <b>A[1-]</b> ＋ 下大 <b>Z[18]</b>。"],
+      ["",C2,"頂","A,","左丁 <b>A[15]</b> ＋ 右頁 <b>,[8v]</b>。"],
+      ["",C2,"找","QA","左扌 <b>Q[14]</b> ＋ 右戈 <b>A[15]</b>。"],
+      ["",C1,"旦","UA","上日 <b>U[7^]</b> ＋ 尾碼一 <b>A[1-]</b>。"]
+    ],
+    poem:`單筆 <b style="color:${C3}">1</b> 橫坐中排，丁七戈弋歸 <i class="ky">A [1-]</i>`
+  },
+  {
+    key:"S", coord:"2- (單筆 & 25)", rad:"乙", short1:"乙", cat:"第 13 / 36 頁：中排基準區（直行 2 逆彎）",
+    aux:[
+      {g:"乙乚儿", c:C1, title:"基本筆畫 [2-] 逆彎", desc:"乙、豎彎鉤乚、兒字底儿（逆時針轉折）"},
+      {g:"厶已己巳", c:C2, title:"座標 [25/2-] 逆彎字根", desc:"私字邊厶、已、己、巳、乜（逆彎轉折）"}
+    ],
+    slogan:`基本筆畫 <i class="c-coord">2</i>（逆彎）本體，以及兒底、已己巳、厶 → 中排基準 <i class="ky">S</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>凡逆時針彎轉的單筆畫「乙、乚」與「儿、厶、已、己、巳」皆屬直行 <i class="cd">2</i> 中排基準鍵 <i class="ky">S</i>。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">S</i> ＋ 空白鍵直接打出「<b class="tr">乙</b>」。`
+    ],
+    examples:[
+      ["",C1,"元","AAS","上二（<b>AA</b>）＋ 下儿 <b>S[2-]</b>。"],
+      ["",C1,"兄",";S","上口 <b>;[0-]</b> ＋ 下儿 <b>S[2-]</b>。"],
+      ["",C2,"公","KS","上八 <b>K[8-]</b> ＋ 下厶 <b>S[2-]</b>。"],
+      ["",C2,"記","NS","左言 <b>N[60]</b> ＋ 右己 <b>S[2-]</b>。"],
+      ["",C2,"包","LS","外勹 <b>L[95]</b> ＋ 內巳 <b>S[2-]</b>。"],
+      ["",C1,"光","CAS","上⺌ <b>C[3v]</b> ＋ 中一 <b>A[1-]</b> ＋ 尾碼儿 <b>S[2-]</b>。"]
+    ],
+    poem:`單筆 <b style="color:${C3}">2</b> 彎乚與乙，儿厶已己巳歸 <i class="ky">S [2-]</i>`
+  },
+  {
+    key:"D", coord:"3- (單筆 & 35)", rad:"丨", short1:"十/卜", cat:"第 14 / 36 頁：中排基準區（直行 3 直豎）",
+    aux:[
+      {g:"丨亅", c:C1, title:"基本筆畫 [3-] 直豎", desc:"獨立直豎丨、左豎鉤亅（單筆直豎本體）"},
+      {g:"卜⺊川", c:C2, title:"座標 [3-] 豎筆組合", desc:"卜字、⺊（占上）、川字（直豎構成）"}
+    ],
+    slogan:`基本筆畫 <i class="c-coord">3</i>（直豎）本體，以及卜（⺊）、川 → 中排基準 <i class="ky">D</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>垂直豎畫代號為 <i class="cd">3</i>，獨立直豎「丨」、左豎鉤「亅」及「卜、川」全在中排 <i class="ky">D</i> 鍵（注意：貫穿中字的直豎在口之後寫，故「中」＝ <i class="cd">;D</i>）。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">D</i> ＋ 空白鍵打出「<b class="tr">十 / 卜</b>」。`
+    ],
+    examples:[
+      ["",C2,"占","D;","上卜 <b>D[3-]</b> ＋ 下口 <b>;[0-]</b>。"],
+      ["",C2,"外","MD","左夕 <b>M[7v]</b> ＋ 右卜 <b>D[3-]</b>。"],
+      ["",C2,"順","D,","左川 <b>D[3-]</b> ＋ 右頁 <b>,[8v]</b>。"],
+      ["",C2,"州","HD","先點 <b>H[6-]</b> ＋ 川 <b>D[3-]</b>。"],
+      ["",C1,"引","GD","左弓 <b>G[55]</b> ＋ 右丨 <b>D[3-]</b>。"],
+      ["",C1,"中",";D","先寫口 <b>;[0-]</b> ＋ 尾碼貫穿豎 <b>D[3-]</b>。"]
+    ],
+    poem:`單筆 <b style="color:${C3}">3</b> 直坐中排，豎鉤卜川全在 <i class="ky">D [3-]</i>`
+  },
+  {
+    key:"F", coord:"4- (單筆 & 45)", rad:"十", short1:"十", cat:"第 15 / 36 頁：中排基準區（直行 4 正交）",
+    aux:[
+      {g:"十", c:C1, title:"基本筆畫 [4-] 正交", desc:"單獨十字正交（如：計右、支上、早底）"},
+      {g:"廿廾卅丰", c:C2, title:"座標 [4-] 多橫正交", desc:"廿（不封口）、廾（雙豎托）、卅、丰、井"}
+    ],
+    slogan:`基本筆畫 <i class="c-coord">4</i>（正交十）本體，以及廿、廾、丰、井 → 中排基準 <i class="ky">F</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>一橫一豎十字交叉代號為 <i class="cd">4</i>，單獨「十」及「廿、廾、丰、井」皆落在左手食指基準鍵 <i class="ky">F</i>。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">F</i> ＋ 空白鍵直接打出「<b class="tr">十</b>」。`
+    ],
+    examples:[
+      ["",C1,"古","F;","上十 <b>F[4-]</b> ＋ 下口 <b>;[0-]</b>（偏旁亦歸 Z）。"],
+      ["",C1,"支","FB","上十 <b>F[4-]</b> ＋ 下又 <b>B[58]</b>。"],
+      ["",C1,"計","NF","左訁 <b>N[60]</b> ＋ 右十 <b>F[4-]</b>。"],
+      ["",C2,"共","FK","上廿 <b>F[4-]</b> ＋ 下八 <b>K[8-]</b>。"],
+      ["",C2,"弄","QF","上王 <b>Q[11]</b> ＋ 下廾 <b>F[4-]</b>。"],
+      ["",C1,"早","UF","上日 <b>U[7^]</b> ＋ 尾碼十 <b>F[4-]</b>。"]
+    ],
+    poem:`單筆 <b style="color:${C3}">4</b> 交十字架，廿廾丰井齊聚 <i class="ky">F [4-]</i>`
+  },
+  {
+    key:"G", coord:"5- (單筆 & 55)", rad:"弓", short1:"己", cat:"第 16 / 36 頁：中排基準區（直行 5 順彎）",
+    aux:[
+      {g:"┐フ", c:C1, title:"基本筆畫 [5-] 順彎", desc:"橫折┐、橫撇フ（順時針轉折單筆畫）"},
+      {g:"弓彐乃丑", c:C2, title:"座標 [55] 連續順彎", desc:"弓字旁、橫折彐（雪底）、乃、丑、予"}
+    ],
+    slogan:`基本筆畫 <i class="c-coord">5</i>（順彎）本體，以及首 5 尾 5 的弓、彐、乃 → 中排基準 <i class="ky">G</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>「弓、彐、乃」首筆順彎(<i class="cd">5</i>)、末筆亦為順彎折鉤(<i class="cd">5</i>)＝<i class="c-coord">55</i>，正好落在中排基準鍵 <i class="ky">G</i>。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">G</i> ＋ 空白鍵打出「<b class="tr">己</b>」。`
+    ],
+    examples:[
+      ["",C2,"引","GD","左弓 <b>G[55]</b> ＋ 右丨 <b>D[3-]</b>。"],
+      ["",C2,"奶","WG","左女 <b>W[21]</b> ＋ 右乃 <b>G[55]</b>。"],
+      ["",C2,"雪","MG","上雨 <b>M[76]</b> ＋ 下彐 <b>G[55]</b>。"],
+      ["",C2,"强","G;/","左弓 <b>G[55]</b> ＋ 右上口 <b>;</b> ＋ 右下虫 <b>/</b>。"],
+      ["",C2,"醜","UHG","左酉（<b>UH</b>）＋ 右鬼（撇折勾尾碼 <b>G</b>）。"],
+      ["",C2,"彎","NXG","上亦夾糸（<b>NX</b>）＋ 尾碼弓 <b>G[55]</b>。"]
+    ],
+    poem:`單筆 <b style="color:${C3}">5</b> 折順時針，弓彐乃丑全歸 <i class="ky">G [5-]</i>`
+  },
+  {
+    key:"H", coord:"6- (單筆 & 65)", rad:"方", short1:"方", cat:"第 17 / 36 頁：中排基準區（直行 6 點筆）",
+    aux:[
+      {g:"丶亠", c:C1, title:"基本筆畫 [6-] 點筆", desc:"獨立單點丶、點橫頭亠（如：主上、京上）"},
+      {g:"方穴戶", c:C2, title:"座標 [65] 首6尾5", desc:"方字旁、穴寶蓋、戶字框（點起順彎折）"}
+    ],
+    slogan:`基本筆畫 <i class="c-coord">6</i>（點）本體，以及首 6 尾 5（順彎鉤）的方、穴、戶 → 中排 <i class="ky">H</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>「方」首筆點(<i class="cd">6</i>)、國家標準筆順先寫橫折鉤順彎(<i class="cd">5</i>)＝<i class="c-coord">65</i>；「穴、戶」亦為點起順彎框(<i class="c-coord">65</i>)，全在 <i class="ky">H</i> 鍵。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">H</i> ＋ 空白鍵直接打出「<b class="tr">方</b>」。`
+    ],
+    examples:[
+      ["",C1,"主","HQ","上丶 <b>H[6-]</b> ＋ 下王 <b>Q[11]</b>。"],
+      ["",C2,"放","H.","左方 <b>H[65]</b> ＋ 右攵 <b>.[98]</b>。"],
+      ["",C2,"房","HH","外戶 <b>H[65]</b> ＋ 內方 <b>H[65]</b>。"],
+      ["",C2,"空","HQ","上穴 <b>H[65]</b> ＋ 下工 <b>Q[11]</b>。"],
+      ["",C1,"京","H;C","上亠 <b>H[6-]</b> ＋ 中口 <b>;[0-]</b> ＋ 下小 <b>C[3v]</b>。"],
+      ["",C1,"太","ZH","上大 <b>Z[18]</b> ＋ 尾碼丶 <b>H[6-]</b>。"]
+    ],
+    poem:`單筆 <b style="color:${C3}">6</b> 點坐中排，點橫方穴戶歸 <i class="ky">H [6-]</i>`
+  },
+  {
+    key:"J", coord:"7- (單筆 & 75)", rad:"宀", short1:"家", cat:"第 18 / 36 頁：中排基準區（直行 7 蓋框）",
+    aux:[
+      {g:"冖冂宀", c:C1, title:"基本筆畫 [7-] 蓋框", desc:"禿寶蓋冖、同字框冂、寶蓋頭宀"},
+      {g:"尸巾冊", c:C2, title:"座標 [7-/75] 蓋框字根", desc:"尸字頭、巾字旁、冊字（上方橫折蓋框）"}
+    ],
+    slogan:`基本筆畫 <i class="c-coord">7</i>（蓋框）本體，以及寶蓋宀、同框冂、尸、巾 → 中排基準 <i class="ky">J</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>上方或三面覆蓋的「冖、冂、宀、尸、巾」皆屬蓋框類(<i class="cd">7</i>)，全部集中在右手食指基準鍵 <i class="ky">J</i>。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">J</i> ＋ 空白鍵直接打出高頻字「<b class="tr">家</b>」。`
+    ],
+    examples:[
+      ["",C1,"同","JA;","外冂 <b>J[7-]</b> ＋ 內一 <b>A</b> ＋ 口 <b>;</b>。"],
+      ["",C1,"字","JB","上宀 <b>J[7-]</b> ＋ 下子 <b>B[5v]</b>。"],
+      ["",C1,"家","JZ","上宀 <b>J[7-]</b> ＋ 下豕 <b>Z[1v]</b>。"],
+      ["",C2,"居","JZ","外尸 <b>J[7-]</b> ＋ 內古 <b>Z[10]</b>（或 JF;）。"],
+      ["",C2,"局","JL;","外尸 <b>J[7-]</b> ＋ 內句（勹 <b>L</b> ＋ 口 <b>;</b>）。"],
+      ["",C2,"布","ZJ","左上ナ <b>Z[19]</b> ＋ 尾碼巾 <b>J[7-]</b>。"]
+    ],
+    poem:`單筆 <b style="color:${C3}">7</b> 蓋宀冂冖，尸巾冊框全歸 <i class="ky">J [7-]</i>`
+  },
+  {
+    key:"K", coord:"8- (單筆 & 85)", rad:"人", short1:"人", cat:"第 19 / 36 頁：中排基準區（直行 8 人八）",
+    aux:[
+      {g:"人亻入", c:C1, title:"基本筆畫 [8-] 人入", desc:"人字、單人旁亻、入字（撇捺相交傘蓋）"},
+      {g:"八丷乂", c:C2, title:"座標 [8-] 八字家族", desc:"八字、倒八點丷、交叉乂（八字分開）"}
+    ],
+    slogan:`基本筆畫 <i class="c-coord">8</i>（人/入/八/丷/乂）全數匯聚於右手中指基準 <i class="ky">K</i> 鍵！`,
+    rules:[
+      `<b>超高頻黃金基準鍵：</b>「人、亻、入、八、丷、乂」全部集中於右手中指自然放置的 <i class="ky">K</i> 鍵，打「他、們、你、分、全」無需移動手指！`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">K</i> ＋ 空白鍵直接打出「<b class="tr">人</b>」。`
+    ],
+    examples:[
+      ["",C1,"他","KB","左亻 <b>K[8-]</b> ＋ 右也 <b>B[52]</b>。"],
+      ["",C1,"休","KZ","左亻 <b>K[8-]</b> ＋ 右木 <b>Z[18]</b>。"],
+      ["",C2,"分","KT","上八 <b>K[8-]</b> ＋ 下刀 <b>T[5^]</b>。"],
+      ["",C1,"全","KQ","上入 <b>K[8-]</b> ＋ 下王 <b>Q[11]</b>。"],
+      ["",C2,"父","KK","上八 <b>K[8-]</b> ＋ 下乂 <b>K[8-]</b>。"],
+      ["",C1,"內","JK","外冂 <b>J[7-]</b> ＋ 尾碼入 <b>K[8-]</b>。"]
+    ],
+    poem:`單筆 <b style="color:${C3}">8</b> 撇捺人入，八字倒八乂歸 <i class="ky">K [8-]</i>`
+  },
+  {
+    key:"L", coord:"9- (單筆 & 95)", rad:"丿", short1:"九", cat:"第 20 / 36 頁：中排基準區（直行 9 撇筆）",
+    aux:[
+      {g:"丿彡", c:C1, title:"基本筆畫 [9-] 斜撇", desc:"獨立斜撇丿、三撇彡（由右上往左下撇）"},
+      {g:"勹几凡丸", c:C2, title:"座標 [95] 首9尾5", desc:"包字頭勹、無鉤几、凡、丸（撇起順彎折）"}
+    ],
+    slogan:`基本筆畫 <i class="c-coord">9</i>（撇）本體，以及首 9 尾 5（順彎折）的勹、几、凡 → 中排 <i class="ky">L</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>獨立斜撇「丿」與三撇「彡」在 <i class="ky">L</i> 鍵；「勹（包字頭）、几、凡」首筆撇(<i class="cd">9</i>)、次筆橫折鉤順彎(<i class="cd">5</i>)＝<i class="c-coord">95</i>，亦在 <i class="ky">L</i> 鍵。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">L</i> ＋ 空白鍵打出「<b class="tr">九</b>」。`
+    ],
+    examples:[
+      ["",C2,"句","L;","外勹 <b>L[95]</b> ＋ 內口 <b>;[0-]</b>。"],
+      ["",C2,"凡","LH","外几 <b>L[95]</b> ＋ 內丶 <b>H[6-]</b>。"],
+      ["",C2,"朵","LZ","上几 <b>L[95]</b> ＋ 下木 <b>Z[18]</b>。"],
+      ["",C1,"形","FL","左幵 <b>F[4-]</b> ＋ 右彡 <b>L[9-]</b>。"],
+      ["",C1,"少","CL","上小 <b>C[3v]</b> ＋ 下丿 <b>L[9-]</b>。"],
+      ["",C1,"杉","ZL","左木 <b>Z[18]</b> ＋ 尾碼彡 <b>L[9-]</b>。"]
+    ],
+    poem:`單筆 <b style="color:${C3}">9</b> 撇與三撇，包頭几凡丸歸 <i class="ky">L [9-]</i>`
+  },
+  {
+    key:";", coord:"0- (單筆方框)", rad:"口", short1:"口", cat:"第 21 / 36 頁：中排基準區（直行 0 方框）",
+    aux:[
+      {g:"口", c:C1, title:"基本筆畫 [0-] 小口", desc:"空心小方框口（如：吃、叫、和、古、知）"},
+      {g:"囗", c:C2, title:"基本筆畫 [0-] 大圍框", desc:"國字大外框囗（如：國、回、因、園）"}
+    ],
+    slogan:`基本筆畫 <i class="c-coord">0</i>（空心方框口與大圍框囗）直接落在右手小指基準 <i class="ky">;</i> 鍵！`,
+    rules:[
+      `<b>座標推導公式：</b>數字 <i class="cd">0</i> 象形四面封閉的方框「口」與「囗」，單獨方框（不含十字或橫底）直接按右手小指基準鍵 <i class="ky">;</i>。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">;</i> ＋ 空白鍵直接打出「<b class="tr">口</b>」。`
+    ],
+    examples:[
+      ["",C2,"回",";;","外囗 <b>;[0-]</b> ＋ 內口 <b>;[0-]</b>。"],
+      ["",C2,"因",";Z","外囗 <b>;[0-]</b> ＋ 內大 <b>Z[18]</b>。"],
+      ["",C1,"品",";;;","上口 <b>;</b> ＋ 左下口 <b>;</b> ＋ 右下口 <b>;</b>。"],
+      ["",C1,"吃",";LS","左口 <b>;[0-]</b> ＋ 右乞（<b>LS</b>）。"],
+      ["",C2,"國",";A;A","外囗 <b>;[0-]</b> ＋ 內或（戈 <b>A</b> ＋ 口 <b>;</b> ＋ 一 <b>A</b>）。"],
+      ["",C1,"古","F;","上十 <b>F[4-]</b> ＋ 尾碼口 <b>;[0-]</b>。"]
+    ],
+    poem:`單筆 <b style="color:${C3}">0</b> 框口與囗，右手小指基準 <i class="ky">; [0-]</i>`
+  },
+
+  /* ================= 第三列：下排字母與標點鍵區（Z ～ /，尾筆為 6～0，共 10 鍵） ================= */
+  {
+    key:"Z", coord:"1v (16~10)", rad:"木", short1:"在", cat:"第 22 / 36 頁：下排字母區（直行 1 橫）",
+    aux:[
+      {g:"木大犬", c:C1, title:"座標 [18] 首1尾8", desc:"木、大、犬（橫起筆、末筆撇捺八收尾）"},
+      {g:"石古厂豕", c:C2, title:"座標 [10/19] 首1尾0/9", desc:"石、古（橫起口底）、廠字頭厂、豕（家底）"}
+    ],
+    slogan:`首筆 1（橫）、尾筆 8、9 或 0（八/撇/口框） → 座標 <i class="c-coord">16~10</i> 落在下排 <i class="ky">Z</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>「木、大、犬」首橫(<i class="cd">1</i>)、末筆撇捺八(<i class="cd">8</i>)＝<i class="c-coord">18</i>；「石、古」首橫(<i class="cd">1</i>)、下部口框(<i class="cd">0</i>)＝<i class="c-coord">10</i>；「厂」首橫(<i class="cd">1</i>)、末撇(<i class="cd">9</i>)＝<i class="c-coord">19</i>，全在 <i class="ky">Z</i> 鍵！`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">Z</i> ＋ 空白鍵直接打出「<b class="tr">在</b>」。`
+    ],
+    examples:[
+      ["",C1,"林","ZZ","左木 <b>Z[18]</b> ＋ 右木 <b>Z[18]</b>。"],
+      ["",C1,"森","ZZZ","上木 <b>Z</b> ＋ 左下木 <b>Z</b> ＋ 右下木 <b>Z</b>。"],
+      ["",C1,"奇","ZA;","上大 <b>Z[18]</b> ＋ 下可（丁 <b>A</b> ＋ 口 <b>;</b>）。"],
+      ["",C2,"研","ZF","左石 <b>Z[10]</b> ＋ 右幵 <b>F[4-]</b>。"],
+      ["",C2,"原","ZOC","外厂 <b>Z[19]</b> ＋ 內白 <b>O[91]</b> ＋ 下小 <b>C[3v]</b>。"],
+      ["",C1,"尖","CZ","上小 <b>C[3v]</b> ＋ 尾碼大 <b>Z[18]</b>。"]
+    ],
+    poem:`首 <b style="color:${C3}">1</b> 橫起尾 <b style="color:${C2}">8、9、0</b>，木大犬石古厂歸 <i class="ky">Z [1v]</i>`
+  },
+  {
+    key:"X", coord:"2v (26~28)", rad:"糸", short1:"小", cat:"第 23 / 36 頁：下排字母區（直行 2 逆彎）",
+    aux:[
+      {g:"糸糹幺", c:C1, title:"座標 [28/26] 絲線族", desc:"糸字底、絞絲旁糹、幺字（逆彎起、小點收）"},
+      {g:"辶廴", c:C2, title:"座標 [28] 走之與建底", desc:"走之底辶、建之底廴（最後一碼才按 X）"}
+    ],
+    slogan:`首筆 2（逆彎）、尾筆 6 或 8（點/八捺）與走之底 → 座標 <i class="c-coord">26~28</i> 落在下排 <i class="ky">X</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>「糸、糹」首筆逆彎(<i class="cd">2</i>)、底部小八點(<i class="cd">8</i>)＝<i class="c-coord">28</i>；「幺」末筆點(<i class="cd">6</i>)＝<i class="c-coord">26</i>。`,
+      `<b>走之底鐵律：</b>凡帶「辶、廴」之字，<b>先寫右上方內部部件，最後一碼才按 <i class="ky">X</i></b>！`
+    ],
+    examples:[
+      ["",C1,"紅","XQ","左糹 <b>X[28]</b> ＋ 右工 <b>Q[11]</b>。"],
+      ["",C1,"線","XOC","左糹 <b>X[28]</b> ＋ 右泉（白 <b>O</b> ＋ 水 <b>C</b>）。"],
+      ["",C1,"給","XKA;","左糹 <b>X[28]</b> ＋ 右合（人 <b>K</b> 一 <b>A</b> 口 <b>;</b>）。"],
+      ["",C1,"幼","XT","左幺 <b>X[26]</b> ＋ 右力 <b>T[5^]</b>。"],
+      ["",C2,"近","LX","先寫斤 <b>L[9-]</b> ＋ 最後寫辶 <b>X[28]</b>。"],
+      ["",C2,"這","NHX","先寫言 <b>N</b> ＋ 文 <b>H</b> ＋ 尾碼辶 <b>X[28]</b>。"]
+    ],
+    poem:`首 <b style="color:${C3}">2</b> 逆彎尾 <b style="color:${C2}">6、8</b>，絞絲幺與走之歸 <i class="ky">X [2v]</i>`
+  },
+  {
+    key:"C", coord:"3v (36~38)", rad:"水", short1:"水", cat:"第 24 / 36 頁：下排字母區（直行 3 直豎）",
+    aux:[
+      {g:"水氵氺冫", c:C1, title:"座標 [38] 水部家族", desc:"水字、三點水氵、水底氺、兩點水冫"},
+      {g:"小⺌山凵", c:C2, title:"座標 [38/3v] 小與山", desc:"小、尚字頭⺌、山字旁、上開口框凵"}
+    ],
+    slogan:`中軸 3（直豎）配兩側點八 8，水部與小、山集中於下排 <i class="ky">C</i> 鍵！`,
+    rules:[
+      `<b>座標與高頻歸位：</b>「水、小、⺌」中軸為直豎鉤(<i class="cd">3</i>)、兩側為八字點(<i class="cd">8</i>)＝<i class="c-coord">38</i>，連帶將「氵、冫、山、凵」全部集中於 <i class="ky">C</i> 鍵。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">C</i> ＋ 空白鍵直接打出「<b class="tr">水</b>」。`
+    ],
+    examples:[
+      ["",C1,"江","CQ","左氵 <b>C[3v]</b> ＋ 右工 <b>Q[11]</b>。"],
+      ["",C1,"河","CA;","左氵 <b>C[3v]</b> ＋ 右可（丁 <b>A</b> ＋ 口 <b>;</b>）。"],
+      ["",C1,"海","CLXP","左氵 <b>C[3v]</b> ＋ 右上𠂉 <b>L</b> ＋ 右下母 <b>P</b>。"],
+      ["",C2,"岩","CZ","上山 <b>C[3v]</b> ＋ 下石 <b>Z[10]</b>。"],
+      ["",C2,"出","CC","上山 <b>C[3v]</b> ＋ 下凵 <b>C[3v]</b>。"],
+      ["",C1,"泉","OC","上白 <b>O[91]</b> ＋ 尾碼水 <b>C[38]</b>。"]
+    ],
+    poem:`豎軸配八水小山，三點水全歸 <i class="ky">C [3v]</i>`
+  },
+  {
+    key:"V", coord:"4v (46~48)", rad:"朩", short1:"要", cat:"第 25 / 36 頁：下排字母區（直行 4 正交）",
+    aux:[
+      {g:"朩", c:C1, title:"座標 [48] 木底變體", desc:"茶、殺、雜底部（十正交配八字點）"},
+      {g:"𢦏", c:C2, title:"座標 [46] 哉字外框", desc:"栽、裁、載、戴之外框（十起點收）"}
+    ],
+    slogan:`首筆 4（正交十）、尾筆 6 或 8（點/八） → 座標 <i class="c-coord">46~48</i> 落在下排 <i class="ky">V</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>「朩」由十字正交(<i class="cd">4</i>)與左右八字點(<i class="cd">8</i>)組成＝<i class="c-coord">48</i>；「栽、裁、載」的戈框「𢦏」首筆正交(<i class="cd">4</i>)、末筆右上點(<i class="cd">6</i>)＝<i class="c-coord">46</i>，均在 <i class="ky">V</i> 鍵。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">V</i> ＋ 空白鍵打出「<b class="tr">要</b>」。`
+    ],
+    examples:[
+      ["",C1,"茶","RKV","上艹 <b>R[44]</b> ＋ 中人 <b>K[8-]</b> ＋ 下朩 <b>V[48]</b>。"],
+      ["",C2,"栽","VZ","外𢦏 <b>V[46]</b> ＋ 內木 <b>Z[18]</b>。"],
+      ["",C2,"裁","VY","外𢦏 <b>V[46]</b> ＋ 內衣 <b>Y[6^]</b>。"],
+      ["",C2,"載","VU","外𢦏 <b>V[46]</b> ＋ 內車 <b>U[74]</b>。"],
+      ["",C1,"殺","KKZV","左上乂 <b>K</b> ＋ 左下朩 <b>V</b> ＋ 右殳（<b>LB</b>）。"],
+      ["",C1,"雜","HLZV","左上亠人 <b>HK</b> ＋ 朩 <b>V[48]</b> ＋ 右隹 <b>E</b>。"]
+    ],
+    poem:`首 <b style="color:${C3}">4</b> 正交尾 <b style="color:${C2}">6、8</b>，木底朩與哉框歸 <i class="ky">V [4v]</i>`
+  },
+  {
+    key:"B", coord:"5v (56~58)", rad:"子", short1:"子", cat:"第 26 / 36 頁：下排字母區（直行 5 順彎）",
+    aux:[
+      {g:"子孑了又", c:C1, title:"座標 [58/5v] 順彎字根", desc:"子字旁、孑、了、又字、祭字頭癶"},
+      {g:"阝卩", c:C2, title:"座標 [5v] 雙耳與單耳", desc:"左阜右邑雙耳旁阝、單耳旁卩（順彎起筆）"}
+    ],
+    slogan:`首筆 5（順彎）、尾筆 6 或 8（點/捺）與雙耳旁 → 座標 <i class="c-coord">56~58</i> 落在下排 <i class="ky">B</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>「又、癶」首筆順彎(<i class="cd">5</i>)、末筆長捺(<i class="cd">8</i>)＝<i class="c-coord">58</i>；「子、了」與「阝（雙耳旁）、卩（單耳旁）」首筆均為順彎(<i class="cd">5</i>)，統一歸入 <i class="ky">B</i> 鍵。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">B</i> ＋ 空白鍵直接打出「<b class="tr">子</b>」。`
+    ],
+    examples:[
+      ["",C1,"友","ZB","左上ナ <b>Z[19]</b> ＋ 右下又 <b>B[58]</b>。"],
+      ["",C2,"院","BJAS","左阝 <b>B[5v]</b> ＋ 右完（宀 <b>J</b> ＋ 元 <b>AAS</b>）。"],
+      ["",C2,"都","QLUB","左者（土 <b>Q</b> 丿 <b>L</b> 日 <b>U</b>）＋ 右阝 <b>B[5v]</b>。"],
+      ["",C1,"登","BA;F","上癶 <b>B[58]</b> ＋ 中一 <b>A</b> 口 <b>;</b> ＋ 下廾 <b>F</b>。"],
+      ["",C1,"孩","BHK","左子 <b>B[5v]</b> ＋ 右亥（亠 <b>H</b> ＋ ㄑ人 <b>K</b>）。"],
+      ["",C1,"叔","EAFB","左上上 <b>E</b> ＋ 左下小 <b>C</b> ＋ 尾碼又 <b>B[58]</b>。"]
+    ],
+    poem:`首 <b style="color:${C3}">5</b> 順彎尾 <b style="color:${C2}">6、8</b>，子了又與雙耳歸 <i class="ky">B [5v]</i>`
+  },
+  {
+    key:"N", coord:"6v (66~60)", rad:"心", short1:"心", cat:"第 27 / 36 頁：下排字母區（直行 6 點筆）",
+    aux:[
+      {g:"心忄", c:C1, title:"座標 [66] 首6尾6", desc:"心字、豎心旁忄（點筆起首、點筆收尾）"},
+      {g:"火灬言訁", c:C2, title:"座標 [68/60] 火與言", desc:"火、四點底灬 [68]；言、言字旁訁 [60]"}
+    ],
+    slogan:`首筆 6（點筆）、尾筆 6、8 或 0 → 座標 <i class="c-coord">66~60</i> 三大部首（心、火、言）匯聚 <i class="ky">N</i> 鍵！`,
+    rules:[
+      `<b>座標推導公式：</b>「心、忄」首點(<i class="cd">6</i>)尾點(<i class="cd">6</i>)＝<i class="c-coord">66</i>；「火、灬」首點(<i class="cd">6</i>)尾八(<i class="cd">8</i>)＝<i class="c-coord">68</i>；「言、訁」首點(<i class="cd">6</i>)尾口框(<i class="cd">0</i>)＝<i class="c-coord">60</i>，全部落在 <i class="ky">N</i> 鍵！`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">N</i> ＋ 空白鍵直接打出「<b class="tr">心</b>」。`
+    ],
+    examples:[
+      ["",C2,"話","NO;","左訁 <b>N[60]</b> ＋ 右舌（千 <b>O</b> ＋ 口 <b>;</b>）。"],
+      ["",C2,"語","NQ;","左訁 <b>N[60]</b> ＋ 右吾（五 <b>Q</b> ＋ 口 <b>;</b>）。"],
+      ["",C1,"情","NQM","左忄 <b>N[66]</b> ＋ 右青（龺 <b>Q</b> ＋ 月 <b>M</b>）。"],
+      ["",C2,"秋","ON","左禾 <b>O[94]</b> ＋ 右火 <b>N[68]</b>。"],
+      ["",C2,"照","UT;N","左上日 <b>U</b> ＋ 右上召（<b>T;</b>）＋ 下灬 <b>N[68]</b>。"],
+      ["",C1,"想","Z/N","左上木 <b>Z[18]</b> ＋ 右上目 <b>/[0v]</b> ＋ 尾碼心 <b>N[66]</b>。"]
+    ],
+    poem:`首 <b style="color:${C3}">6</b> 點起尾 <b style="color:${C2}">6、8、0</b>，心火言三大部首歸 <i class="ky">N [6v]</i>`
+  },
+  {
+    key:"M", coord:"7v (76~70)", rad:"月", short1:"月", cat:"第 28 / 36 頁：下排字母區（直行 7 蓋框）",
+    aux:[
+      {g:"月⺼雨", c:C1, title:"座標 [76] 框內含點", desc:"月字、肉月旁⺼、雨字頭⻗（框內點筆）"},
+      {g:"舟角骨夕", c:C2, title:"座標 [7v] 框內點撇", desc:"舟字旁、角字旁、骨字頭、夕字"}
+    ],
+    slogan:`蓋框 7 內含點筆 6 或撇筆 → 座標 <i class="c-coord">76~70</i> 落在下排 <i class="ky">M</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>「月、⺼、雨、舟、角、骨」皆以外框(<i class="cd">7</i>)包覆內部點筆(<i class="cd">6</i>)，座標為 <i class="c-coord">76</i>，統一歸入右手食指下方的 <i class="ky">M</i> 鍵。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">M</i> ＋ 空白鍵直接打出「<b class="tr">月</b>」。`
+    ],
+    examples:[
+      ["",C1,"朋","MM","左月 <b>M[76]</b> ＋ 右月 <b>M[76]</b>。"],
+      ["",C1,"有","ZM","上ナ <b>Z[19]</b> ＋ 下月 <b>M[76]</b>。"],
+      ["",C1,"腦","MWP","左⺼ <b>M[76]</b> ＋ 右上巛 <b>W</b> ＋ 右下囟 <b>P</b>。"],
+      ["",C1,"雲","MAAS","上雨 <b>M[76]</b> ＋ 下云（二 <b>AA</b> ＋ 厶 <b>S</b>）。"],
+      ["",C2,"船","ML;","左舟 <b>M[7v]</b> ＋ 右上几 <b>L</b> ＋ 右下口 <b>;</b>。"],
+      ["",C2,"多","MM","上夕 <b>M[7v]</b> ＋ 尾碼夕 <b>M[7v]</b>。"]
+    ],
+    poem:`蓋框 <b style="color:${C3}">7</b> 內含點 <b style="color:${C2}">6</b> 筆，月肉雨舟角夕歸 <i class="ky">M [7v]</i>`
+  },
+  {
+    key:",", coord:"8v (86~80)", rad:"米", short1:"中/米", cat:"第 29 / 36 頁：下排逗號區（直行 8 人八）",
+    aux:[
+      {g:"米食飠", c:C1, title:"座標 [88/86] 八字點食", desc:"米字旁、食字旁飠（八/人起、點八收）"},
+      {g:"頁豆齒", c:C2, title:"座標 [80/88] 頁豆齒", desc:"頁字旁（順/頭/頂右）、豆字、齒字"}
+    ],
+    slogan:`首筆 8（人/八）、尾筆 6、8 或 0 → 座標 <i class="c-coord">86~80</i> 落在下排逗號 <i class="ky">,</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>「米」首筆倒八(<i class="cd">8</i>)、末筆八(<i class="cd">8</i>)＝<i class="c-coord">88</i>；「食、飠」首筆人(<i class="cd">8</i>)、末筆點(<i class="cd">6</i>)＝<i class="c-coord">86</i>；「頁、豆」末筆八(<i class="cd">8</i>)或口(<i class="cd">0</i>)，全在逗號 <i class="ky">,</i> 鍵！`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">,</i> ＋ 空白鍵打出「<b class="tr">中 / 米</b>」。`
+    ],
+    examples:[
+      ["",C1,"粉",",KT","左米 <b>,[88]</b> ＋ 右分（八 <b>K</b> ＋ 刀 <b>T</b>）。"],
+      ["",C1,"精",",QM","左米 <b>,[88]</b> ＋ 右青（龺 <b>Q</b> ＋ 月 <b>M</b>）。"],
+      ["",C1,"飯",",ZB","左飠 <b>,[86]</b> ＋ 右反（厂 <b>Z</b> ＋ 又 <b>B</b>）。"],
+      ["",C1,"飲",",LK","左飠 <b>,[86]</b> ＋ 右欠（勹 <b>L</b> ＋ 人 <b>K</b>）。"],
+      ["",C2,"頭",",,","左豆 <b>,[8v]</b> ＋ 右頁 <b>,[8v]</b>。"],
+      ["",C2,"類",",Z,","左上米 <b>,</b> ＋ 左下大 <b>Z</b> ＋ 尾碼頁 <b>,[8v]</b>。"]
+    ],
+    poem:`首 <b style="color:${C3}">8</b> 人八尾 <b style="color:${C2}">6、8、0</b>，米食頁豆齒歸 <i class="ky">, [8v]</i>`
+  },
+  {
+    key:".", coord:"9v (96~90)", rad:"彳", short1:"個", cat:"第 30 / 36 頁：下排句點區（直行 9 撇筆）",
+    aux:[
+      {g:"彳牛牜魚", c:C1, title:"座標 [9v] 撇起偏旁", desc:"雙人旁彳、牛字旁牜、魚字旁（撇筆起首）"},
+      {g:"夂攵矢", c:C2, title:"座標 [98] 首9尾8", desc:"折文夂、反文旁攵、矢字（撇起捺收）"}
+    ],
+    slogan:`首筆 9（斜撇）、尾筆 8（捺筆）與雙人、牛、魚 → 座標 <i class="c-coord">96~90</i> 落在句點 <i class="ky">.</i> 鍵。`,
+    rules:[
+      `<b>座標推導公式：</b>「夂、攵（反文旁）、矢」首筆撇(<i class="cd">9</i>)、末筆長捺(<i class="cd">8</i>)＝<i class="c-coord">98</i>；連帶將首筆為撇的「彳（雙人旁）、牛、牜、魚」集中於句點 <i class="ky">.</i> 鍵。`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">.</i> ＋ 空白鍵直接打出高頻字「<b class="tr">個</b>」。`
+    ],
+    examples:[
+      ["",C1,"行",".AAD","左彳 <b>.[9v]</b> ＋ 右亍（二 <b>AA</b> ＋ 亅 <b>D</b>）。"],
+      ["",C1,"很",".T","左彳 <b>.[9v]</b> ＋ 右艮 <b>T[51]</b>。"],
+      ["",C1,"物",".LL","左牜 <b>.[9v]</b> ＋ 右勿（勹 <b>L</b> ＋ 丿 <b>L</b>）。"],
+      ["",C2,"知",".;","左矢 <b>.[98]</b> ＋ 右口 <b>;[0-]</b>。"],
+      ["",C1,"鮮",".R","左魚 <b>.[9v]</b> ＋ 右羊 <b>R[4^]</b>。"],
+      ["",C2,"故","Z.","左古 <b>Z[10]</b> ＋ 尾碼攵 <b>.[98]</b>。"]
+    ],
+    poem:`首 <b style="color:${C3}">9</b> 撇起尾 <b style="color:${C2}">8</b> 捺，雙人反文牛魚歸 <i class="ky">. [9v]</i>`
+  },
+  {
+    key:"/", coord:"0v (06~00)", rad:"目", short1:"目", cat:"第 31 / 36 頁：下排斜線區（直行 0 方框）",
+    aux:[
+      {g:"目且貝見", c:C1, title:"座標 [08/0v] 方框八底", desc:"目、且、貝字旁、見字（方框下帶八點）"},
+      {g:"虫足⻊", c:C2, title:"座標 [06/08] 方框虫足", desc:"蟲字旁虫、足字旁⻊（方框下帶點捺）"}
+    ],
+    slogan:`方框 0 下帶點 6 或八捺 8 → 座標 <i class="c-coord">06~00</i> 五大高頻部首（目貝見虫足）匯聚 <i class="ky">/</i> 鍵！`,
+    rules:[
+      `<b>座標推導公式：</b>「貝、見」為方框(<i class="cd">0</i>)下配八字點(<i class="cd">8</i>)＝<i class="c-coord">08</i>；「虫、足」為口框(<i class="cd">0</i>)下帶點捺(<i class="cd">6/8</i>)；連同「目、且」全部匯聚於右下角斜線 <i class="ky">/</i> 鍵！`,
+      `<b>一級簡碼字：</b>單擊 <i class="ky">/</i> ＋ 空白鍵直接打出「<b class="tr">目</b>」。`
+    ],
+    examples:[
+      ["",C1,"眼","/T","左目 <b>/[0v]</b> ＋ 右艮 <b>T[51]</b>。"],
+      ["",C1,"財","/Q","左貝 <b>/[08]</b> ＋ 右才 <b>Q[14]</b>。"],
+      ["",C1,"現","Q/","左王 <b>Q[11]</b> ＋ 右見 <b>/[08]</b>。"],
+      ["",C1,"助","/T","左且 <b>/[0v]</b> ＋ 右力 <b>T[5^]</b>。"],
+      ["",C2,"路","/. ;","左⻊ <b>/[08]</b> ＋ 右各（夂 <b>.</b> ＋ 口 <b>;</b>）。"],
+      ["",C1,"相","Z/","左木 <b>Z[18]</b> ＋ 尾碼目 <b>/[0v]</b>。"]
+    ],
+    poem:`方框 <b style="color:${C3}">0</b> 下帶 <b style="color:${C2}">6、8</b> 腳，目貝見虫足歸 <i class="ky">/ [0v]</i>`
+  },
+
+  /* ================= 第四部分：五大實戰進階專題頁（第 32 - 36 頁） ================= */
+  { type:"special_rules" },
+  { type:"windows_shortcodes" },
+  { type:"w_symbols" },
+  { type:"roadmap_5day" },
+  { type:"summary" }
+];
+
+/* 渲染索引總目錄頁（curPage = -1）：嚴格 3 行 × 10 鍵對齊矩陣 + 底部 6 專題卡 */
+function renderIndexHTML(){
+  const row1 = PAGES.slice(1, 11);   // Q..P (1^..0^)
+  const row2 = PAGES.slice(11, 21);  // A..; (1-..0-)
+  const row3 = PAGES.slice(21, 31);  // Z../ (1v..0v)
+
+  const buildRow = (arr, startIdx) => arr.map((p, i) => {
+    const safeTitle = (p.slogan || "").replace(/<[^>]+>/g, "").replace(/"/g, "&quot;");
+    return `
+      <div class="rad-card" onclick="goPage(${startIdx + i})" title="${p.key} 鍵 ${p.coord}：${safeTitle}">
+        <span class="rk">${p.key}</span>
+        <span class="rc">${p.rad}</span>
+        <span class="rs">[${p.short1}]</span>
+      </div>
+    `;
+  }).join("");
+
+  return `
+    <div class="sub-win-title">
+      <div><span>📖 快快快樂學行列 — 30 鍵雙位數座標總目錄</span><span class="category-badge">全書導航</span></div>
+      <span style="font-size:12.5px;color:#00ffff">點擊字根卡片或直接按鍵盤對應字根鍵跳轉</span>
+    </div>
+    <div class="idx-board">
+      <div class="matrix-area">
+        <div class="col-header-row">
+          <div class="row-spacer"></div>
+          <div class="col-headers">
+            <span>1 橫</span><span>2 逆彎</span><span>3 直</span><span>4 正交</span><span>5 順彎</span>
+            <span>6 點</span><span>7 蓋</span><span>8 人八</span><span>9 撇</span><span>0 框</span>
+          </div>
+        </div>
+
+        <div class="rad-row">
+          <div class="row-label" style="color:#55ff55">上排<br>^ 1~4</div>
+          <div class="rad-grid-10">${buildRow(row1, 1)}</div>
+        </div>
+
+        <div class="rad-row">
+          <div class="row-label" style="color:#ffff55">中排<br>- 本/5</div>
+          <div class="rad-grid-10">${buildRow(row2, 11)}</div>
+        </div>
+
+        <div class="rad-row">
+          <div class="row-label" style="color:#ffaa00">下排<br>v 6~0</div>
+          <div class="rad-grid-10">${buildRow(row3, 21)}</div>
+        </div>
+      </div>
+
+      <div class="bottom-nav-grid">
+        <div class="rad-card intro-card" onclick="goPage(0)"><span class="rk">P.01</span><span class="rc">引言座標</span></div>
+        <div class="rad-card intro-card" onclick="goPage(31)"><span class="rk">P.32</span><span class="rc">取碼原則</span></div>
+        <div class="rad-card intro-card" onclick="goPage(32)"><span class="rk">P.33</span><span class="rc">二級簡碼</span></div>
+        <div class="rad-card intro-card" onclick="goPage(33)"><span class="rk">P.34</span><span class="rc">W鍵符號</span></div>
+        <div class="rad-card intro-card" onclick="goPage(34)"><span class="rk">P.35</span><span class="rc">五日速成</span></div>
+        <div class="rad-card intro-card" onclick="goPage(35)"><span class="rk">P.36</span><span class="rc">總結總表</span></div>
+      </div>
+    </div>
+  `;
+}
+
+function renderIntroHTML() {
+  return `<div class="sub-win-title"><div><span>📖 第 1 頁：雙位數座標推導法（免背字根秘訣）</span></div></div>
+  <div class="tut-content">
+    <div class="tut-h y">▶ 行列 30 的核心靈魂：不背口訣，只看首尾筆畫！</div>
+    <div style="font-size:13.5px;line-height:1.55;background:rgba(0,40,40,.65);padding:8px 12px;border-left:4px solid #00ffff">
+      行列 30 將鍵盤的 30 個按鍵（Q~P, A~;, Z~/）構成了一個 <b>「10 行 × 3 列」</b>的座標矩陣。<br>
+      只要看字根的<b>「第一筆（決定直行十位數 1~0）」</b>與<b>「最後一筆（決定橫列上中下）」</b>，就能算出它在哪顆鍵！
+    </div>
+
+    <div class="tut-h g">▶ 十大基本筆畫（決定「直行 1～0」，即十位數）</div>
+    <table class="retro-table" style="font-size:13.5px">
+      <thead>
+        <tr><th>1 橫</th><th>2 逆彎</th><th>3 直</th><th>4 正交</th><th>5 順彎</th><th>6 點</th><th>7 蓋</th><th>8 人八</th><th>9 撇</th><th>0 框</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:7px 4px">一、㇀</td><td>乚、乙</td><td>丨、亅</td><td>十、艹</td><td>┐、乃</td><td>丶、亠</td><td>冖、宀</td><td>人、入</td><td>丿、彡</td><td>口、囗</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tut-h c">▶ 上、中、下三列（決定「橫列 ^ - v」，即個位數）</div>
+    <div style="font-size:13.5px;line-height:1.55;background:rgba(0,25,25,.75);padding:8px 12px;border:1px solid #006666;border-radius:3px">
+      • <b style="color:#55ff55">上列（Q~P，標記 ^）</b>：尾筆為 <b>1、2、3、4</b>。例如「土」首 1 尾 1 → <i class="c-coord">11</i> → 落在 <b>Q (1^)</b>。<br>
+      • <b style="color:#ffff55">中列（A~;，標記 -）</b>：<b>單筆畫本體</b> 或尾筆為 <b>5</b>。例如「一」單筆橫 → <i class="c-coord">1-</i> → 落在 <b>A (1-)</b>。<br>
+      • <b style="color:#ffaa00">下列（Z~/，標記 v）</b>：尾筆為 <b>6、7、8、9、0</b>。例如「木」首 1 尾 8 → <i class="c-coord">18</i> → 落在 <b>Z (1v)</b>。
+    </div>
+  </div>`;
+}
+
+function renderSpecialRulesHTML() {
+  return `<div class="sub-win-title"><div><span>📖 第 32 頁：行列取碼四大黃金原則與跨筆定則</span></div></div>
+  <div class="tut-content">
+    <div class="tut-h y">▶ 原則一：依書寫筆順，最多取「前三後一」四碼</div>
+    <div style="font-size:13.5px;line-height:1.55">
+      不論漢字筆畫多麼繁雜，行列 30 <b>最多只取 4 碼</b>：依筆順取第一、第二、第三及最後一個字根。<br>
+      • <b style="color:#00ffff">【輸】</b>（5 字根）：車(<i class="ky">U</i>) → 人(<i class="ky">K</i>) → 一(<i class="ky">A</i>) → 月(省略) → 刂(<i class="ky">T</i>) ＝ <b style="color:#ffaa00">UKAT</b>。
+    </div>
+
+    <div class="tut-h g">▶ 原則二 &amp; 三：取大優先 與 跨越筆順取大字根</div>
+    <div style="font-size:13.5px;line-height:1.55;background:rgba(0,40,40,.65);padding:7px 12px;border-left:4px solid #55ff55">
+      • <b style="color:#00ffff">取大優先</b>：「古」本身就是字根 <i class="ky">Z[10]</i>，絕不要拆碎成十＋口。<br>
+      • <b style="color:#00ffff">跨越筆順</b>：當完整字根被穿過時，先跨筆順取完整大字根，再取穿過筆畫。<br>
+      　- <b>【夫】</b>：先取「一 <i class="ky">A</i>」＋ 再取完整「大 <i class="ky">Z</i>」＝ <b style="color:#ffaa00">AZ</b>。<br>
+      　- <b>【申】</b>：先取「田/日框 <i class="ky">P/;</i>」＋ 再取貫穿直豎「丨 <i class="ky">D</i>」＝ <b style="color:#ffaa00">PD</b>。
+    </div>
+
+    <div class="tut-h c">▶ 原則四：包圍結構與「走之底（辶、廴）最後取」</div>
+    <div style="font-size:13.5px;line-height:1.55">
+      • <b>全包圍與上三包圍（囗、門、冂、匚）</b>：先取外框，再拆內部（如「因」＝ 囗 <i class="ky">;</i> ＋ 大 <i class="ky">Z</i> ＝ <b style="color:#ffaa00">;Z</b>）。<br>
+      • <b>走之底（辶、廴）</b>：順應手寫習慣，<b>先寫右上內部，最後一碼才按 X (2v)</b>！<br>
+      　- <b>【這】</b>：言(<i class="ky">N</i>) ＋ 文(<i class="ky">H</i>) ＋ 辶(<i class="ky">X</i>) ＝ <b style="color:#ffaa00">NHX</b>　｜　<b>【遠】</b>：土(<i class="ky">Q</i>) ＋ 口(<i class="ky">;</i>) ＋ 衣底(<i class="ky">K</i>) ＋ 辶(<i class="ky">X</i>) ＝ <b style="color:#ffaa00">Q;KX</b>。
+    </div>
+  </div>`;
+}
+
+function renderWindowsShortcodesHTML() {
+  return `<div class="sub-win-title"><div><span>📖 第 33 頁：Windows 內建版專屬提速神器（二級簡碼）</span></div></div>
+  <div class="tut-content">
+    <div class="tut-h y">▶ 行列極速盲打的核心秘密：二級簡碼（1 鍵 ＋ 數字鍵）</div>
+    <div style="font-size:13.5px;line-height:1.5;background:rgba(0,40,40,.65);padding:7px 12px;border-left:4px solid #00ffff">
+      當你按下<b>任何一顆字根鍵</b>時，Windows 候選窗會列出 <b>10 個以該字根開頭的最常用字（編號 1～0）</b>。你<b>不需拆完後面的字根，直接按上方數字鍵 1～0 就能選字</b>！（30 鍵 × 10 = 300 個簡碼字，只需兩鍵！）
+    </div>
+
+    <table class="retro-table" style="font-size:13.5px">
+      <thead>
+        <tr><th>字根鍵</th><th>一級簡碼(＋空白)</th><th>常用二級簡碼舉隅（按該鍵後，直接按上方數字鍵選字）</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><b>Q (1^)</b></td><td><b style="color:#ffff55">的</b></td><td style="text-align:left">現、理、地、場、提、報、持、指</td></tr>
+        <tr><td><b>R (4^)</b></td><td><b style="color:#ffff55">不</b></td><td style="text-align:left">花、草、苦、若、英、萬、落</td></tr>
+        <tr><td><b>U (7^)</b></td><td><b style="color:#ffff55">是</b></td><td style="text-align:left">日、明、時、車、馬、耳、取</td></tr>
+        <tr><td><b>K (8-)</b></td><td><b style="color:#ffff55">人</b></td><td style="text-align:left">他、們、你、休、入、內、八</td></tr>
+        <tr><td><b>N (6v)</b></td><td><b style="color:#ffff55">心</b></td><td style="text-align:left">火、情、快、話、語、說、請</td></tr>
+        <tr><td><b>M (7v)</b></td><td><b style="color:#ffff55">月</b></td><td style="text-align:left">朋、有、服、腦、雨、電、船</td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:13px;color:#55ff55;text-align:center">💡 提示：熟練使用這 300 個二級簡碼字，可讓您的打字速度瞬間提升 30% 以上！</div>
+  </div>`;
+}
+
+function renderWSymbolsHTML() {
+  return `<div class="sub-win-title"><div><span>📖 第 34 頁：W 鍵極速標點與特殊符號表</span></div></div>
+  <div class="tut-content" style="gap:4px">
+    <div class="tut-h y" style="font-size:14px">▶ Windows 行列專屬：W 鍵 ＋ 數字鍵 1～0（空白鍵翻頁，數字鍵選取）</div>
+
+    <table class="retro-table" style="font-size:13px;flex:1">
+      <thead>
+        <tr><th style="padding:3px 8px">組合</th><th style="padding:3px 8px">符號類別</th><th style="padding:3px 8px">常用全形符號範例</th></tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:2.5px 8px"><b style="color:#00ffff">W+1</b></td><td><b>一般標點</b></td><td style="text-align:left">， 。 、 ； ： ？ ！ … —</td></tr>
+        <tr><td style="padding:2.5px 8px"><b style="color:#00ffff">W+2</b></td><td><b>引號括號</b></td><td style="text-align:left">「 」 『 』 （ ） 【 】 《 》</td></tr>
+        <tr><td style="padding:2.5px 8px"><b style="color:#00ffff">W+3</b></td><td><b>特殊圖形</b></td><td style="text-align:left">※ ☆ ★ ○ ● ◎ ◇ ◆ □ ■</td></tr>
+        <tr><td style="padding:2.5px 8px"><b style="color:#00ffff">W+4</b></td><td><b>數學運算</b></td><td style="text-align:left">＋ － × ÷ ＝ ≠ ≒ ＜ ＞ ±</td></tr>
+        <tr><td style="padding:2.5px 8px"><b style="color:#00ffff">W+5</b></td><td><b>方向箭頭</b></td><td style="text-align:left">↑ ↓ ← → ↖ ↗ ↙ ↘ § ¶</td></tr>
+        <tr><td style="padding:2.5px 8px"><b style="color:#00ffff">W+6</b></td><td><b>計量貨幣</b></td><td style="text-align:left">＄ ￥ ％ ℃ ℉ ㎝ ㎞ ㎏ ㎡</td></tr>
+        <tr><td style="padding:2.5px 8px"><b style="color:#00ffff">W+7</b></td><td><b>表格畫線</b></td><td style="text-align:left">─ │ ┌ ┐ └ ┘ ├ ┤ ┬ ┴ ┼</td></tr>
+        <tr><td style="padding:2.5px 8px"><b style="color:#00ffff">W+8</b></td><td><b>羅馬序號</b></td><td style="text-align:left">Ⅰ Ⅱ Ⅲ Ⅳ ① ② ③ ㈠ ㈡ ㈢</td></tr>
+        <tr><td style="padding:2.5px 8px"><b style="color:#00ffff">W+9</b></td><td><b>希臘字母</b></td><td style="text-align:left">α β γ δ ε θ λ μ π ω</td></tr>
+        <tr><td style="padding:2.5px 8px"><b style="color:#00ffff">W+0</b></td><td><b>注音符號</b></td><td style="text-align:left">ㄅ ㄆ ㄇ ㄈ ㄉ ㄊ ㄋ ㄌ ㄧ ㄨ</td></tr>
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function renderRoadmapHTML() {
+  return `<div class="sub-win-title"><div><span>📖 第 35 頁：行列 30 五日速成特訓路線</span></div></div>
+  <div class="tut-content">
+    <div style="font-size:13.5px;line-height:1.5">拋棄死背口訣的包袱，五天即可建立堅實的行列雙位數推導反射！</div>
+
+    <div class="adv-aux-box" style="border-color:#ffff55;font-size:13px">
+      <b style="color:#ffff55;font-size:13.5px">【Day 1：掌握 10 大基本筆畫與直行 1～0】</b><br>
+      不背字根，先把 1橫, 2彎, 3直, 4交, 5彎, 6點, 7蓋, 8人八, 9撇, 0口 十個數字記熟，讓雙手在鍵盤中排 A~; 建立直覺數字對應。
+    </div>
+    <div class="adv-aux-box" style="border-color:#55ff55;font-size:13px">
+      <b style="color:#55ff55;font-size:13.5px">【Day 2：學會「上列 1~4、中列 5、下列 6~0」座標推導】</b><br>
+      練習看著任意偏旁，唸出它的「首筆十位數＋尾筆個位數」——看到「土」唸 11 按 Q；看到「言」唸 60 按 N。
+    </div>
+    <div class="adv-aux-box" style="border-color:#00ffff;font-size:13px">
+      <b style="color:#00ffff;font-size:13.5px">【Day 3：熟練二級簡碼與高頻部首反射】</b><br>
+      針對不走純筆畫推導的高頻群組（如 U的日車馬、C的水小山）進行專門盲打，並使用「1 鍵＋數字鍵」的 300 字二級簡碼提速。
+    </div>
+    <div class="adv-aux-box" style="border-color:#ffaa00;font-size:13px">
+      <b style="color:#ffaa00;font-size:13.5px">【Day 4 &amp; 5：跨越筆順與 W 鍵標點實戰】</b><br>
+      練習拆解複雜字（聽、輸），遇到「走之底」最後才按 X；打開記事本進行 500 字文章錄入，全程使用 W 鍵標點！
+    </div>
+  </div>`;
+}
+
+function renderSummaryHTML() {
+  return `<div class="sub-win-title"><div><span>📖 第 36 頁：全書總結 — 30 鍵雙位數座標與一級簡碼</span></div></div>
+  <div class="tut-content">
+    <div style="font-size:13.5px;line-height:1.5">
+      熟練這張 30 鍵座標總表，您已經完全掌握了行列輸入法的核心密碼！
+    </div>
+
+    <table class="retro-table" style="font-size:13px;flex:1">
+      <thead>
+        <tr><th>直行</th><th>1 橫</th><th>2 逆彎</th><th>3 直</th><th>4 正交</th><th>5 順彎</th><th>6 點</th><th>7 蓋</th><th>8 人八</th><th>9 撇</th><th>0 框</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b style="color:#55ff55">上排<br>(1~4)</b></td>
+          <td><b style="font-size:14.5px">Q</b> (的)<br><span style="color:#00ffff">11~14</span></td>
+          <td><b style="font-size:14.5px">W</b> (一)<br><span style="color:#00ffff">21,22</span></td>
+          <td><b style="font-size:14.5px">E</b> (上)<br><span style="color:#00ffff">31,34</span></td>
+          <td><b style="font-size:14.5px">R</b> (不)<br><span style="color:#00ffff">41,44</span></td>
+          <td><b style="font-size:14.5px">T</b> (女)<br><span style="color:#00ffff">51~59</span></td>
+          <td><b style="font-size:14.5px">Y</b> (立)<br><span style="color:#00ffff">61,64</span></td>
+          <td><b style="font-size:14.5px">U</b> (是)<br><span style="color:#00ffff">71,74</span></td>
+          <td><b style="font-size:14.5px">I</b> (金)<br><span style="color:#00ffff">81,84</span></td>
+          <td><b style="font-size:14.5px">O</b> (手)<br><span style="color:#00ffff">91~94</span></td>
+          <td><b style="font-size:14.5px">P</b> (田)<br><span style="color:#00ffff">01,04</span></td>
+        </tr>
+        <tr>
+          <td><b style="color:#ffff55">中排<br>(本/5)</b></td>
+          <td><b style="font-size:14.5px">A</b> (一)<br><span style="color:#00ffff">1-,15</span></td>
+          <td><b style="font-size:14.5px">S</b> (乙)<br><span style="color:#00ffff">2-,25</span></td>
+          <td><b style="font-size:14.5px">D</b> (十)<br><span style="color:#00ffff">3-,35</span></td>
+          <td><b style="font-size:14.5px">F</b> (十)<br><span style="color:#00ffff">4-,45</span></td>
+          <td><b style="font-size:14.5px">G</b> (己)<br><span style="color:#00ffff">5-,55</span></td>
+          <td><b style="font-size:14.5px">H</b> (方)<br><span style="color:#00ffff">6-,65</span></td>
+          <td><b style="font-size:14.5px">J</b> (家)<br><span style="color:#00ffff">7-,75</span></td>
+          <td><b style="font-size:14.5px">K</b> (人)<br><span style="color:#00ffff">8-,85</span></td>
+          <td><b style="font-size:14.5px">L</b> (九)<br><span style="color:#00ffff">9-,95</span></td>
+          <td><b style="font-size:14.5px">;</b> (口)<br><span style="color:#00ffff">0-</span></td>
+        </tr>
+        <tr>
+          <td><b style="color:#ffaa00">下排<br>(6~0)</b></td>
+          <td><b style="font-size:14.5px">Z</b> (在)<br><span style="color:#00ffff">10~19</span></td>
+          <td><b style="font-size:14.5px">X</b> (小)<br><span style="color:#00ffff">26,28</span></td>
+          <td><b style="font-size:14.5px">C</b> (水)<br><span style="color:#00ffff">38,3v</span></td>
+          <td><b style="font-size:14.5px">V</b> (要)<br><span style="color:#00ffff">40~48</span></td>
+          <td><b style="font-size:14.5px">B</b> (子)<br><span style="color:#00ffff">58,5v</span></td>
+          <td><b style="font-size:14.5px">N</b> (心)<br><span style="color:#00ffff">60~68</span></td>
+          <td><b style="font-size:14.5px">M</b> (月)<br><span style="color:#00ffff">76,7v</span></td>
+          <td><b style="font-size:14.5px">,</b> (中)<br><span style="color:#00ffff">80~88</span></td>
+          <td><b style="font-size:14.5px">.</b> (個)<br><span style="color:#00ffff">98,9v</span></td>
+          <td><b style="font-size:14.5px">/</b> (目)<br><span style="color:#00ffff">08,0v</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="font-size:14px;color:#ffff55;text-align:center;font-weight:bold">🎉 恭喜您完成《快快快樂學行列》全部課程！開始您的極速盲打之旅吧！</div>
+  </div>`;
+}
+
+function renderRadicalHTML(p){
+  const k = p.key;
+  const auxHtml = (p.aux || []).map(a=>`
+    <div class="aux-chip" style="border-color:${a.c}">
+      <span class="aux-glyph" style="color:${a.c}">${a.g}</span>
+      <div class="aux-desc"><b style="color:${a.c}">${a.title}</b>${a.desc}</div>
+    </div>
+  `).join("");
+
+  const rulesHtml = (p.rules || []).map(r=>`• ${r}`).join("<br>");
+
+  const exCards = (p.examples || []).map(e=>`
+    <div class="ex-card">
+      <span class="ex-char" style="color:${e[1]}">${e[2]}</span>
+      <span class="ex-code">${e[3]}</span>
+      <span class="ex-note">${e[4]}</span>
+    </div>
+  `).join("");
+
+  return `
+    <div class="sub-win-title">
+      <div><span>📖 行列 30 鍵雙位數座標專講</span><span class="category-badge">${p.cat.replace(" / 36", "")}</span></div>
+      <span style="font-size:13.5px;color:#00ffff">[<i style="color:#55ff55;font-style:normal;font-family:Consolas,monospace">${k} 鍵 · ${p.coord}</i>] 核心字根「${p.rad}」｜簡碼「<b style="color:#ffff55">${p.short1}</b>」</span>
+    </div>
+
+    <div class="tut-content" id="tutPageContent">
+      <div class="rad-hero-box">
+        <div class="rad-main-card">
+          <div class="rad-big-char">${p.rad}</div>
+          <div class="rad-key-tag">${k} 鍵 (${p.coord})</div>
+        </div>
+        <div class="rad-right-panel">
+          <div style="font-size:13.5px;color:#ffff55;font-weight:bold">同鍵核心字根群（全部歸入 <span style="color:#55ff55">${p.coord}</span>）：</div>
+          <div class="aux-showcase-row">${auxHtml}</div>
+          <div style="font-size:13px;color:#00ffff">💡 記憶要訣：${p.slogan}</div>
+        </div>
+      </div>
+
+      <div style="flex-shrink:0">
+        <div class="tut-h y">▶ 字根歸類邏輯與特例</div>
+        <div style="font-size:13.5px;line-height:1.5;margin-top:3px;padding:0 4px">${rulesHtml}</div>
+      </div>
+
+      <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:4px">
+        <div class="tut-h g">▶ 實戰拆碼範例（一行兩字，含尾碼範例）</div>
+        <div class="ex-grid-2col">${exCards}</div>
+      </div>
+    </div>
+  `;
+}
+
+/* 狀態與導航控制（curPage = -1 為總目錄索引；0..35 為第 1..36 頁） */
+let curPage = -1;
+
+function goPage(idx){
+  curPage = idx;
+  const win = document.getElementById("mainWin");
+  const btnEsc = document.getElementById("btnEscIdx");
+  const btnPrev = document.getElementById("btnPrevPage");
+  const btnNext = document.getElementById("btnNextPage");
+  const hint = document.getElementById("footerHint");
+  if(!win) return;
+
+  if(curPage === -1){
+    win.innerHTML = renderIndexHTML();
+    btnEsc.textContent = "Esc [目錄]";
+    btnPrev.textContent = "◀ 總結";
+    btnNext.textContent = "開始閱讀 ▶";
+    hint.textContent = "點擊字根卡片或直接按鍵盤對應字根鍵跳轉 ｜ 按 Enter / → 從第 1 頁引言開始閱讀";
+  } else {
+    const p = PAGES[curPage];
+    if(p.type === "intro") win.innerHTML = renderIntroHTML();
+    else if(p.type === "special_rules") win.innerHTML = renderSpecialRulesHTML();
+    else if(p.type === "windows_shortcodes") win.innerHTML = renderWindowsShortcodesHTML();
+    else if(p.type === "w_symbols") win.innerHTML = renderWSymbolsHTML();
+    else if(p.type === "roadmap_5day") win.innerHTML = renderRoadmapHTML();
+    else if(p.type === "summary") win.innerHTML = renderSummaryHTML();
+    else win.innerHTML = renderRadicalHTML(p);
+
+    btnEsc.textContent = "Esc [索引]";
+    btnPrev.textContent = curPage === 0 ? "◀ 返回索引" : "◀ 上一頁";
+    btnNext.textContent = curPage === PAGES.length - 1 ? "返回索引 ▶" : "下一頁 ▶";
+    
+    if (p && p.poem) {
+      hint.innerHTML = `<span class="poem-in-footer"><span class="poem-title">🎵 座標推導：</span>${p.poem}</span>`;
+    } else {
+      hint.textContent = `Esc 返回索引 ｜ ← → 切換上下頁`;
+    }
+  }
+}
+
+function prevPage(){
+  if(curPage === -1) goPage(PAGES.length - 1);
+  else if(curPage === 0) goPage(-1);
+  else goPage(curPage - 1);
+}
+
+function nextPage(){
+  if(curPage === -1) goPage(0);
+  else if(curPage >= PAGES.length - 1) goPage(-1);
+  else goPage(curPage + 1);
+}
+
+document.getElementById("btnEscIdx").addEventListener("click", () => {
+  goPage(-1);
+});
+document.getElementById("btnPrevPage").addEventListener("click", prevPage);
+document.getElementById("btnNextPage").addEventListener("click", nextPage);
+
+/* 通用捲動輔助 */
+function getActiveScrollBox(){
+  const el = document.querySelector("#tutPageContent, .tut-content");
+  return (el && el.offsetParent !== null) ? el : null;
+}
+function scrollActiveBox(deltaY){
+  const box = getActiveScrollBox();
+  if(!box) return false;
+  box.scrollBy({ top: deltaY, behavior: "smooth" });
+  return true;
+}
+window.addEventListener("wheel", e => {
+  const box = getActiveScrollBox();
+  if(box && !box.contains(e.target)) box.scrollTop += e.deltaY;
+}, { passive: true });
+
+/* 鍵盤控制（支援在索引頁直接按 30 個字根鍵跳轉） */
+window.addEventListener("keydown", e => {
+  if(e.ctrlKey || e.metaKey || e.altKey) return;
+  if(e.key === "Escape"){
+    e.preventDefault();
+    goPage(-1);
+  } else if(e.key === "ArrowRight" || e.key === "Enter" || e.key === "PageDown"){
+    e.preventDefault();
+    nextPage();
+  } else if(e.key === "ArrowLeft" || e.key === "PageUp"){
+    e.preventDefault();
+    prevPage();
+  } else if(e.key === "ArrowUp"){
+    if(scrollActiveBox(-95)) e.preventDefault();
+  } else if(e.key === "ArrowDown"){
+    if(scrollActiveBox(95)) e.preventDefault();
+  } else if(curPage === -1 && e.key.length === 1){
+    const k = e.key.toUpperCase();
+    const idx = PAGES.findIndex(p => p.key === k);
+    if(idx !== -1){
+      e.preventDefault();
+      goPage(idx);
+    }
+  }
+});
+
+/* 畫面自適應縮放 */
+function scaleScreen(){
+  const el = document.getElementById("dosScreen");
+  if(!el) return;
+  const W = window.innerWidth, H = window.innerHeight;
+  const sc = Math.min((W - 12) / 960, (H - 12) / 540);
+  el.style.transform = `scale(${Math.max(0.25, sc).toFixed(4)})`;
+}
+window.addEventListener("resize", scaleScreen);
+
+window.onload = function(){
+  scaleScreen();
+  const initHash = location.hash.replace("#","").toUpperCase();
+  const hashIdx = PAGES.findIndex(p => p.key === initHash);
+  goPage(hashIdx !== -1 ? hashIdx : -1);
+};
+</script>
+</body>
+</html>
