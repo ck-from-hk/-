@@ -10,6 +10,10 @@
 <script src="chinese_dict.js" onerror="void 0"></script>
 <script src="words_dict.js" onerror="void 0"></script>
 <script src="limit.js" onerror="void 0"></script>
+<script src="multi-1.js" onerror="void 0"></script>
+<script src="multi-2.js" onerror="void 0"></script>
+<script src="multi-3.js" onerror="void 0"></script>
+<script src="multi-4.js" onerror="void 0"></script>
 <script>window.__HAS_LIMIT_JS=()=>{const l=window.charList||(typeof charList!=="undefined"?charList:null);return Array.isArray(l)&&l.length>0};</script>
 <style>
 *{box-sizing:border-box;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
@@ -85,7 +89,7 @@ body.handheld-land .dos-screen{transform-origin:top center}
 .result-name-bar{margin-top:12px;background:#0000a8;border:1px solid #ff0;padding:6px 14px;display:flex;align-items:center;gap:8px;color:#ff5;font-size:15px}
 .result-name-input{background:#000050;border:1px solid #5ff;color:#fff;font-size:16px;padding:2px 8px;width:140px;font-family:inherit;outline:none}
 .sub-window{background:#003833;border:3px double #5ff;width:820px;min-height:400px;padding:16px;display:none;flex-direction:column;justify-content:space-between;box-shadow:6px 6px 0 rgba(0,0,0,.5);z-index:10}
-.dialog-box{width:620px;padding:18px;display:none;gap:12px;box-shadow:6px 6px 0 rgba(0,0,0,.5);z-index:20}
+.dialog-box{width:620px;padding:14px 18px;display:none;gap:9px;box-shadow:6px 6px 0 rgba(0,0,0,.5);z-index:20}
 .exit-dialog-box{width:420px;padding:18px 22px;display:none;gap:16px;box-shadow:8px 8px 0 rgba(0,0,0,.65);z-index:30}
 .dos-exit-screen{display:none;position:absolute;inset:0;width:100%;height:100%;background:#000;color:#c0c0c0;font-family:Consolas,monospace;font-size:18px;padding:28px 32px;flex-direction:column;justify-content:space-between;z-index:100}
 @keyframes blinkCursor{0%,49%{opacity:1}50%,100%{opacity:0}}
@@ -146,25 +150,31 @@ html.js #jsNote{display:none}
 </div>
 <div class="dialog-box" id="examSetupDialog">
 <div class="dialog-title"><span>測驗設定</span><span style="font-size:12px;color:#555">[Esc] 取消</span></div>
-<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;flex-direction:column;gap:6px">
 <div style="font-size:15px;font-weight:bold;color:#000080">請選擇命題方式：</div>
 <div class="dialog-option-row" id="optComputer"><div class="dialog-radio active" id="radioComputer"></div><div class="dialog-label">1. 電腦命題</div></div>
 <div class="dialog-option-row" id="optCustom"><div class="dialog-radio" id="radioCustom"></div><div class="dialog-label">2. 自訂命題</div></div>
 </div>
-<div id="compPoolGroup" style="display:flex;flex-direction:column;gap:4px;background:#b0b0b0;padding:8px;border:1px inset #808080">
-<div style="font-size:13px;font-weight:bold;color:#000080">電腦命題題庫：</div>
+<div id="compPoolGroup" style="display:flex;flex-direction:column;gap:5px;background:#b0b0b0;padding:8px;border:1px inset #808080">
+<div style="font-size:13px;font-weight:bold;color:#000080">電腦命題題庫（五選一，或自選題庫資料夾）：</div>
+<div id="multiBtnRow" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+<button type="button" class="key-button" id="poolOpt0" style="height:25px;font-size:13px;padding:0 10px">內建詞庫</button>
+<button type="button" class="key-button" id="poolOpt1" style="height:25px;font-size:13px;padding:0 10px">multi-1</button>
+<button type="button" class="key-button" id="poolOpt2" style="height:25px;font-size:13px;padding:0 10px">multi-2</button>
+<button type="button" class="key-button" id="poolOpt3" style="height:25px;font-size:13px;padding:0 10px">multi-3</button>
+<button type="button" class="key-button" id="poolOpt4" style="height:25px;font-size:13px;padding:0 10px">multi-4</button>
+</div>
 <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-<button class="key-button" id="btnPoolFolder" style="height:26px;color:#000080">📂 選擇題庫資料夾</button>
-<span style="font-size:12px;color:#333">有 .atc 即每局隨機抽整篇；無則 .txt 詞庫</span>
+<button class="key-button" id="btnPoolFolder" style="height:24px;font-size:12px;color:#000080;padding:0 10px">📂 選擇題庫資料夾</button>
+<span id="compPoolStatus" style="font-size:12px;color:#004080">偵測中…</span>
 </div>
 <input type="file" id="poolFolderInput" webkitdirectory directory multiple style="display:none">
-<div style="font-size:12px;color:#333">本機另可放 words_dict.js 自動載入｜<span id="compPoolStatus" style="color:#004080">偵測中…</span></div>
 </div>
 <div id="customTextInputGroup" style="display:none;flex-direction:column;gap:6px;background:#b0b0b0;padding:8px;border:1px inset #808080">
 <input type="file" id="localTxtFileInput" accept=".txt,text/plain" style="font-size:16px;width:200px">
 <input type="text" id="customInputString" class="dialog-input" value="快快樂樂 快快快樂 學習 倉頡 輸入 電腦 示範題目 打完第一頁之後會重覆" maxlength="500">
 </div>
-<div style="border-top:1px solid #888;margin:4px 0;padding-top:6px">
+<div style="border-top:1px solid #888;margin:2px 0;padding-top:6px">
 <div style="display:flex;align-items:center;gap:8px"><input type="file" id="cangjieTtFileInput" accept=".txt,.tt,text/plain,*/*" style="font-size:14px;width:190px"><span style="font-size:12px;color:#333">字庫：<span id="dictSizeDisplay">—</span> 字</span></div>
 <div style="font-size:11px;color:#666;margin-top:2px">💡 選檔後自動存入瀏覽器（IndexedDB），下次自動套用</div>
 </div>
@@ -228,17 +238,19 @@ html.js #jsNote{display:none}
 • 方法一（零點擊）：把 chinese.tt 內容以 <b>window.EXTERNAL_CHINESE_TT</b> 包裝成 JS 變數，存成 chinese_dict.js 放在本檔同目錄，開啟即自動載入。<br>• 方法二（永久記憶）：於測驗設定選取 chinese.tt 一次，內容即存入瀏覽器（IndexedDB），之後每次開啟自動套用，毋須再選。<br>• 網上部署：同目錄放 chinese.tt 即自動讀取。<br>• 擴展支援：碼表可載入擴展區漢字（Ext-A／兼容區／Ext-B~H，如 𠮶、𨋢），查碼一併支援；文章卷作答時擴展字自動保留（須系統字體備有該字形方會正常顯示）。隨機練習則只抽基本區（BMP）常用字，確保拆字體驗一致。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 匯出 .js 的用途（排行榜頁）</div>
 • 排行榜頁「匯出 .js」會把<b>目前生效的字庫</b>（內建＋已載入之擴充碼）包裝成 chinese_dict.js 下載。<br>• 把此檔與本程式 HTML 放在<b>同一資料夾</b>，下次開啟 HTML 即自動載入，毋須再手動上傳——適合備份或分發給他人（連同 HTML 一起傳）。<br>• 「匯出碼表 .tt」則為純文字碼表，供上傳載入或編輯之用。
-<div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 電腦命題題庫</div>
-• 按<b>選擇題庫資料夾</b>一鍵匯入整個資料夾（選一次永久記住）。資料夾內有 <b>.atc</b> 時進入<b>文章卷模式</b>：每局隨機抽出一整篇，全文連續漢字作答（標點自動剝除、滿行不插空格）；無 .atc 則照舊 <b>.txt 詞池</b>。兩種模式互斥，重新選取即切換。<br>• .atc 檔之自訂標頭（#／@／--- 開首行）自動忽略，內文連標點皆可，程式只取字庫內漢字。<br>• 本機另可放 words_dict.js（window.EXTERNAL_WORDS="詞1 詞2 …"）自動載入。<br>• http:// 部署時自動依序偵測 pool.txt、words.txt、questions.txt、*.atc 等。
+<div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 電腦命題題庫（外掛 multi-1~4.js ／ 題庫資料夾）</div>
+• 同目錄放置 <code>multi-1.js</code> ～ <code>multi-4.js</code>（由生成器打包多個 <code>.atc</code> 而成），測驗設定即自動顯示各題庫名稱並支援五選一，每局隨機抽出一整篇作答。<br>• 亦可按<b>選擇題庫資料夾</b>一鍵匯入整個資料夾（選一次永久記住）。資料夾內有 <b>.atc</b> 時進入<b>文章卷模式</b>：每局隨機抽出一整篇，全文連續漢字作答（標點自動剝除、滿行不插空格）；無 .atc 則照舊 <b>.txt 詞池</b>。<br>• .atc 檔之自訂標頭（#／@／--- 開首行）自動忽略，內文連標點皆可，程式只取字庫內漢字。<br>• 本機另可放 words_dict.js（window.EXTERNAL_WORDS="詞1 詞2 …"）自動載入。<br>• http:// 部署時自動依序偵測 pool.txt、words.txt、questions.txt、*.atc 等。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 公平計分</div>
 • 測驗中使用 <b>Z 萬用鍵</b>時，程式<b>不會</b>自動把目標字排到候選首位——須看清單以 <b>1-9</b> 手動選字（貼近真實輸入法行為，防止 Space 保送拿分）。不含 Z 的正常輸入仍自動首選，速度體驗不變。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 配套生成器</div>
-配套生成器能合併多來源 chinese.tt 倉頡碼表與 words.txt 詞庫，並自訂 limit.js 常用字範圍；一鍵輸出與本程式相容的 chinese_dict.js、words_dict.js，亦支援 .atc／.txt 目錄批量處理——詳見 /generator/index.html。
+配套生成器能合併多來源 chinese.tt 倉頡碼表與 words.txt 詞庫，並自訂 limit.js 常用字範圍；一鍵輸出與本程式相容的 chinese_dict.js、words_dict.js、limit.js 及 multi-1.js ～ multi-4.js 題庫包——詳見 /generator/index.html。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 關於排行榜資料的儲存</div>
 • 排行榜成績<b>只儲存在本機瀏覽器內（localStorage）</b>，不會上傳到任何伺服器，也不會同步到其他裝置或瀏覽器。<br>• 換裝置、換瀏覽器（或經不同方式開啟，如內建瀏覽器 vs Safari）所見的排行榜互不相通。<br>• 若清除瀏覽器的「網站資料／歷史記錄」，排行榜紀錄即會消失，請自行留意外。
 <div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 其他</div>
 • 畫面底部之 Enter／Esc／↑↓ 按鈕等同實體鍵盤；偵測到實體鍵盤輸入後，虛擬鍵盤自動隱藏，<b>再點觸螢幕即自動喚回</b>——實體／虛擬鍵盤可隨時交替使用，毋須重新整理。<br>• 主選單第 7 項「音效」之方格亮燈（青點）即代表音效開啟。
-<div style="margin-top:14px;text-align:right"><span style="color:#888;font-family:Consolas,monospace;margin-right:16px">v0.88</span><a href="https://github.com/ck-from-hk/-" target="_blank" rel="noopener" style="color:#5ff;font-weight:bold;text-decoration:none">🔗 專案主頁</a></div>
+<div style="margin-top:12px;font-weight:bold;color:#ff5">▶ 簡體倉頡特別版《快快快樂學簡倉》</div>
+• 如欲練習或測驗<b>簡體字與繁簡通用字</b>的倉頡拆碼（完整收錄《通用規範漢字表》8,105 字、分一／二／三級字練習範圍、繁體字查簡體碼、繁體文章自動轉簡體測驗及簡體拆字口訣），歡迎進入姊妹作《快快快樂學簡倉》：<br>• <a href="https://ck-from-hk.github.io/-/simp/" target="_blank" rel="noopener" style="color:#5ff;font-weight:bold;text-decoration:underline">🔗 前往《快快快樂學簡倉》（https://ck-from-hk.github.io/-/simp/）</a>
+<div style="margin-top:14px;text-align:right"><span style="color:#888;font-family:Consolas,monospace;margin-right:16px">v0.89</span><a href="https://github.com/ck-from-hk/-" target="_blank" rel="noopener" style="color:#5ff;font-weight:bold;text-decoration:none">🔗 專案主頁</a></div>
 </div>
 <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px">
 <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -299,7 +311,7 @@ const $=id=>document.getElementById(id),
 esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]),
 shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a},
 safe=fn=>function(ev){try{return fn.call(this,ev)}catch(e){const b=$("errorBanner");if(b){b.style.display="block";b.textContent="處理器錯誤："+(e?.message||e)}console.error(e)}};
-window.onerror=(m,u,l)=>{if(/chinese_dict\.js|words_dict\.js|limit\.js|questions/i.test(String(u||"")))return true;const b=$("errorBanner");if(b){b.style.display="block";b.textContent=`系統警告 (L${l}):${m}`}return false};
+window.onerror=(m,u,l)=>{if(/chinese_dict\.js|words_dict\.js|limit\.js|multi-[1-4]\.js|questions/i.test(String(u||"")))return true;const b=$("errorBanner");if(b){b.style.display="block";b.textContent=`系統警告 (L${l}):${m}`}return false};
 function sfxToast(msg,dark){const b=$("errorBanner");if(!b)return;const ob=b.style.backgroundColor;b.style.backgroundColor=dark?"#2a2a2a":"#a00";b.style.display="block";b.textContent=msg;clearTimeout(sfxToast._t);sfxToast._t=setTimeout(()=>{b.style.display="none";b.style.backgroundColor=ob||"#a00"},3500)}
 
 const sound={en:false,ctx:null,resuming:null,_t:[],
@@ -450,22 +462,69 @@ set(k,v){return IDB.open().then(db=>new Promise((res,rej)=>{const r=db.transacti
 let POOL_DONE=false;
 const stripATC=t=>String(t).replace(/^\uFEFF/,"").split(/\r?\n/).filter(l=>!/^\s*(#|@|---)/.test(l)).join(""),
 parsePool=t=>String(t).split(/[\r\n,;、，；\t ]+/).filter(w=>[...w].every(c=>c.codePointAt(0)<0x20000)).map(filterCJK).filter(w=>w.length>=2);
-function poolFinish(ws,src){if(POOL_DONE)return;POOL_DONE=true;const st=$("compPoolStatus");if(!st)return;st.style.color="#004080";if(ws?.length){S.compPool=ws;if(sound.en&&sound.ctx?.state==="running")sound.ok();st.textContent=`✅ 題庫：${src}（${ws.length} 詞）`}else st.textContent="未找到題庫檔（使用內建題庫）"}
+
+function getMultiSlot(idx){
+  const mp=(window.MULTI_POOLS&&window.MULTI_POOLS[idx])||window["MULTI_"+idx];
+  if(!mp||typeof mp!=="object")return null;
+  const name=String(mp.name||("題庫"+idx)).trim()||("題庫"+idx);
+  const rawArts=Array.isArray(mp.articles)?mp.articles:(Array.isArray(mp.list)?mp.list:[]);
+  const arts=rawArts.map(a=>stripATC(a).trim()).filter(a=>filterCJK(a).length>=5);
+  return arts.length?{name,articles:arts}:null;
+}
+
+function updateMultiPoolUI(){
+  const b0=$("poolOpt0");
+  const hasExtWords=!!(S.compPool&&S.compPool.length);
+  const hasFolderAtc=!!(S.atcPool&&S.atcPool.length);
+  if(b0)b0.textContent=hasFolderAtc?"資料夾文章":hasExtWords?"外掛詞庫":"內建詞庫";
+  for(let i=1;i<=4;i++){
+    const btn=$("poolOpt"+i),slot=getMultiSlot(i);
+    if(!btn)continue;
+    if(slot){btn.disabled=false;btn.style.opacity="1";btn.style.cursor="pointer";btn.textContent=slot.name}
+    else{btn.disabled=true;btn.style.opacity="0.45";btn.style.cursor="not-allowed";btn.textContent=`multi-${i}(無)`}
+  }
+  if(S.poolChoice>=1&&S.poolChoice<=4&&!getMultiSlot(S.poolChoice))S.poolChoice=0;
+  for(let i=0;i<=4;i++){
+    const btn=$("poolOpt"+i);if(!btn)continue;
+    const act=S.poolChoice===i;
+    btn.style.background=act?"#ffe600":"#c0c0c0";
+    btn.style.color=act?"#000":"#000080";
+  }
+  const st=$("compPoolStatus");
+  if(st){
+    st.style.color="#004080";
+    if(S.poolChoice===0){
+      st.textContent=S._pool0Status||"未找到題庫檔（使用內建題庫）";
+    }else{
+      const slot=getMultiSlot(S.poolChoice);
+      if(slot)st.textContent=`✅ 已選：「${slot.name}」（共 ${slot.articles.length} 篇，每局隨機抽一篇）`;
+    }
+  }
+}
+
+function selectPoolOption(idx){
+  if(idx>=1&&idx<=4&&!getMultiSlot(idx)){sound.err();return}
+  sound.nav();S.poolChoice=idx;updateMultiPoolUI();
+}
+
+function setPool0Status(msg){S._pool0Status=msg;if(S.poolChoice===0)updateMultiPoolUI()}
+function poolFinish(ws,src){if(POOL_DONE)return;POOL_DONE=true;if(ws?.length){S.compPool=ws;if(sound.en&&sound.ctx?.state==="running")sound.ok();setPool0Status(`✅ 題庫：${src}（${ws.length} 詞）`)}else setPool0Status("未找到題庫檔（使用內建詞庫）")}
 async function tryLoadPool(){
+  updateMultiPoolUI();
   try{if(typeof window.EXTERNAL_WORDS==="string"&&window.EXTERNAL_WORDS.trim()){const ws=parsePool(window.EXTERNAL_WORDS);if(ws.length)return poolFinish(ws,"words_dict.js")}}catch(e){}
-  try{const v=await IDB.get("atc_pool");if(typeof v==="string"&&v.trim()){const arts=JSON.parse(v).filter(Boolean);if(arts.length){S.atcPool=arts;POOL_DONE=true;const st=$("compPoolStatus");if(st){st.style.color="#004080";st.textContent=`✅ 文章題庫：${arts.length} 篇 .atc（瀏覽器記憶）`}return}}}catch(e){}
+  try{const v=await IDB.get("atc_pool");if(typeof v==="string"&&v.trim()){const arts=JSON.parse(v).filter(Boolean);if(arts.length){S.atcPool=arts;POOL_DONE=true;setPool0Status(`✅ 文章題庫：${arts.length} 篇 .atc（瀏覽器記憶）`);return}}}catch(e){}
   try{const v=await IDB.get("words_pool");if(typeof v==="string"&&v.trim()){const ws=parsePool(v);if(ws.length)return poolFinish(ws,"瀏覽器記憶")}}catch(e){}
   if(location.protocol!=="file:"){
     try{const r=await fetch("pool.txt");if(r.ok){const ws=parsePool(decodeBuf(await r.arrayBuffer()));if(ws.length)return poolFinish(ws,"pool.txt")}}catch(e){}
-    for(const f of shuffle(POOL_CANDIDATES)){const st=$("compPoolStatus");if(st){st.style.color="#004080";st.textContent=`偵測中…（${f}）`}
+    for(const f of shuffle(POOL_CANDIDATES)){setPool0Status(`偵測中…（${f}）`);
     try{const r=await fetch(f);if(!r.ok)continue;const txt=decodeBuf(await r.arrayBuffer());
-    if(/\.atc$/i.test(f)){const a=stripATC(txt).trim();if(a){S.atcPool=[a];POOL_DONE=true;if(st){st.style.color="#004080";st.textContent=`✅ 文章題庫：${f}（自動偵測）`}return}}
+    if(/\.atc$/i.test(f)){const a=stripATC(txt).trim();if(a){S.atcPool=[a];POOL_DONE=true;setPool0Status(`✅ 文章題庫：${f}（自動偵測）`);return}}
     const ws=parsePool(stripATC(txt));if(ws.length)return poolFinish(ws,f)}catch(e){}}
   }
   poolFinish(null);
 }
 
-const S={view:"MENU",sel:1,charIndex:0,buf:"",start:null,done:0,keys:0,errs:0,list:[],advTimer:null,zTimer:null,type:"COMPUTER",dur:5,rem:300,end:0,tStart:0,tRun:false,fin:false,tInt:null,txtContent:null,txtName:"",compPool:null,atcPool:null,atcArticle:null,articleMode:false,pages:[],typed:[],p:0,g:0,c:0,cbuf:"",cand:[],cpage:0,ok:0,bad:0,result:null,saved:false,scoreId:null,escSt:0,escTimer:null,hintTimer:null,lbSt:0,lbTimer:null,escConfirm:false,pendingDict:null,hasPhys:false,examTitle:"【實力測驗】電腦命題",examSrc:[],srcIdx:0,practiceScope:"ALL"},
+const S={view:"MENU",sel:1,charIndex:0,buf:"",start:null,done:0,keys:0,errs:0,list:[],advTimer:null,zTimer:null,type:"COMPUTER",poolChoice:0,_pool0Status:"偵測中…",dur:5,rem:300,end:0,tStart:0,tRun:false,fin:false,tInt:null,txtContent:null,txtName:"",compPool:null,atcPool:null,atcArticle:null,articleMode:false,pages:[],typed:[],p:0,g:0,c:0,cbuf:"",cand:[],cpage:0,ok:0,bad:0,result:null,saved:false,scoreId:null,escSt:0,escTimer:null,hintTimer:null,lbSt:0,lbTimer:null,escConfirm:false,pendingDict:null,hasPhys:false,examTitle:"【實力測驗】電腦命題",examSrc:[],srcIdx:0,practiceScope:"ALL"},
 LB_KEY="hcr_scores_v20";
 let LB=null;
 const sortLB=l=>l.slice().sort((a,b)=>(+b.speed||0)-(+a.speed||0)||(+b.acc||0)-(+a.acc||0)||String(b.date||"").localeCompare(a.date||""));
@@ -504,7 +563,7 @@ function resolveKey(e,isIn){
 }
 
 const VIEWS={MENU:"mainMenuPanel",EXIT_CONFIRM:"exitConfirmDialog",DOS_EXIT:"dosExitScreen",EXAM_SETUP:"examSetupDialog",EXAM:"exam18Screen",RESULT:"resultView",PRACTICE:"practiceWindow",QUERY:"queryWindow",LEADERBOARD:"leaderboardWindow",ABOUT:"aboutWindow",TUTORIAL:"tutorialWindow"};
-function syncSetup(){const c=S.type==="COMPUTER";$("radioComputer").classList.toggle("active",c);$("radioCustom").classList.toggle("active",!c);$("customTextInputGroup").style.display=c?"none":"flex";$("compPoolGroup").style.display=c?"flex":"none"}
+function syncSetup(){const c=S.type==="COMPUTER";$("radioComputer").classList.toggle("active",c);$("radioCustom").classList.toggle("active",!c);$("customTextInputGroup").style.display=c?"none":"flex";$("compPoolGroup").style.display=c?"flex":"none";if(c)updateMultiPoolUI()}
 function setView(v,opt={}){
   if(v!=="EXAM"){clearInterval(S.tInt);S.tInt=null}
   S.escSt=0;S.escConfirm=false;S.lbSt=0;
@@ -531,12 +590,12 @@ function setView(v,opt={}){
 function menuAction(i){
   if(i!==7)sound.key();
   if(i===2){
-    const f="tutorial.html"; // 主程式改寫
+    const f="tutorial.html";
     const s=document.createElement("script"),oldErr=window.onerror;
     const fin=ok=>{window.onerror=oldErr;s.remove();ok?location.href=f:setView("TUTORIAL")};
-    window.onerror=()=>true; // 暫時靜音 HTML 的 "<" 語法報錯
-    s.onload=()=>fin(true);  // 檔案存在才會觸發 onload -> 跳轉外部教學！
-    s.onerror=()=>fin(false);// 檔案不存在必觸發 onerror -> 開內置教學！
+    window.onerror=()=>true;
+    s.onload=()=>fin(true);
+    s.onerror=()=>fin(false);
     s.src=f;
     return document.head.appendChild(s);
   }
@@ -652,9 +711,22 @@ function prepExam(mins){
 function startExam(){
   if(S.type==="CUSTOM"&&filterCJK(S.txtContent||$("customInputString").value).length<5){$("examSetupMsg").textContent="⚠️ 自訂文字可用漢字不足五個（部分字不在字庫）";return sound.err()}
   S.articleMode=false;S.atcArticle=null;
-  if(S.type==="COMPUTER"&&S.atcPool?.length){S.atcArticle=S.atcPool[Math.random()*S.atcPool.length|0];if(filterCJK(S.atcArticle).length>=5)S.articleMode=true;else S.atcArticle=null}
+  let slotTitle="";
+  if(S.type==="COMPUTER"){
+    if(S.poolChoice>=1&&S.poolChoice<=4){
+      const slot=getMultiSlot(S.poolChoice);
+      if(slot&&slot.articles.length){
+        S.atcArticle=slot.articles[Math.random()*slot.articles.length|0];
+        S.articleMode=true;slotTitle=slot.name;
+      }
+    }else if(S.atcPool?.length){
+      S.atcArticle=S.atcPool[Math.random()*S.atcPool.length|0];
+      if(filterCJK(S.atcArticle).length>=5){S.articleMode=true;slotTitle="文章卷"}
+      else S.atcArticle=null;
+    }
+  }
   const m=Math.min(30,Math.max(1,+$("examTimeInput").value||5));
-  Object.assign(S,{dur:m,rem:m*60,tRun:false,tStart:0,fin:false,saved:false,scoreId:null,escSt:0,examTitle:S.articleMode?"【實力測驗】電腦命題（文章卷）":S.type==="COMPUTER"?(S.compPool?.length?"【實力測驗】電腦命題（題庫）":"【實力測驗】電腦命題"):"【實力測驗】自訂命題"});
+  Object.assign(S,{dur:m,rem:m*60,tRun:false,tStart:0,fin:false,saved:false,scoreId:null,escSt:0,examTitle:S.articleMode?`【實力測驗】電腦命題（${slotTitle}）`:S.type==="COMPUTER"?(S.compPool?.length?"【實力測驗】電腦命題（題庫）":"【實力測驗】電腦命題"):"【實力測驗】自訂命題"});
   $("exam18Title").textContent=S.examTitle;clearTimeout(S.escTimer);S.escTimer=null;prepExam(m);clearInterval(S.tInt);updateTimer();setView("EXAM");renderExam();$("line18HintMsg").textContent=HINT;
 }
 function startTimer(){if(S.tRun)return;S.tRun=true;S.tStart=Date.now();S.end=S.tStart+S.rem*1e3;updateTimer();S.tInt=setInterval(()=>{S.rem=Math.max(0,Math.round((S.end-Date.now())/1e3));updateTimer();if(S.rem<=0){clearInterval(S.tInt);S.tInt=null;sound.alarm();endExam()}},1e3)}
@@ -805,7 +877,6 @@ async function initSys(){
     if(location.protocol!=="file:"){
       let raw=null,src="chinese.tt";
       try{const r=await fetch("chinese.tt");if(r.ok)raw=await r.text()}catch(e){}
-      if(!raw){src="線上碼表";try{const r2=await fetch(chinese(1).tt);if(r2.ok)raw=await r2.text()}catch(e){}}
       if(raw){const text=raw.replace(/^\uFEFF/,"").trim();if(S.view==="EXAM"||S.view==="PRACTICE"){S.pendingDict=text;msg.textContent="⏳ 外部碼表已載入，離開測驗後自動套用"}else{const n=applyDict(text);if(n>0)msg.textContent=`✅ 已以外部碼表（${src}）校正 ${n} 字（共 ${Object.keys(DICT).length} 字）`}upSz();return tryLoadPool()}
     }
     const v=await IDB.get("chinese_tt");
@@ -849,20 +920,22 @@ const bootApp=()=>{
     $("btnRestartDos").addEventListener("click",safe(()=>setView("MENU")));
     $("optComputer").addEventListener("click",safe(()=>{S.type="COMPUTER";syncSetup();$("examTimeInput")?.blur()}));
     $("optCustom").addEventListener("click",safe(()=>{S.type="CUSTOM";syncSetup();$("examTimeInput")?.blur()}));
+    for(let i=0;i<=4;i++)$("poolOpt"+i)?.addEventListener("click",safe(()=>selectPoolOption(i)));
     $("customInputString").addEventListener("input",()=>{if(S.txtContent){S.txtContent=null;S.txtName="";$("examSetupMsg").textContent="💡 已改用文字框內容命題"}});
     $("localTxtFileInput").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const t=decodeFile(ev);S.txtContent=t;S.txtName=f.name;S.type="CUSTOM";syncSetup();$("examSetupMsg").textContent=`✅ 已載入：${f.name}（可打 ${filterCJK(t).length} 字，共 ${filterWords(t).length} 詞）`};r.onloadend=()=>e.target.value="";r.readAsArrayBuffer(f)});
     $("btnPoolFolder").addEventListener("click",safe(()=>$("poolFolderInput").click()));
     $("poolFolderInput").addEventListener("change",e=>{
-      const all=[...e.target.files||[]],atcFs=all.filter(f=>/\.atc$/i.test(f.name)),txtFs=all.filter(f=>/\.txt$/i.test(f.name)),st=$("compPoolStatus");
+      const all=[...e.target.files||[]],atcFs=all.filter(f=>/\.atc$/i.test(f.name)),txtFs=all.filter(f=>/\.txt$/i.test(f.name));
       try{e.target.value=""}catch(x){}
-      if(!atcFs.length&&!txtFs.length){st.style.color="#a00";st.textContent="⚠️ 資料夾內無 .txt / .atc 檔";return sound.err()}
-      const readBatch=(files,unit,onEach,onDone)=>{st.style.color="#004080";st.textContent=`讀取中…（0/${files.length}${unit}）`;let done=0;const chk=()=>{if(++done===files.length)onDone();else st.textContent=`讀取中…（${done}/${files.length}${unit}）`};files.forEach(f=>{const r=new FileReader();r.onload=ev=>{onEach(decodeBuf(ev.target.result));chk()};r.onerror=chk;r.readAsArrayBuffer(f)})};
+      S.poolChoice=0;
+      if(!atcFs.length&&!txtFs.length){setPool0Status("⚠️ 資料夾內無 .txt / .atc 檔");return sound.err()}
+      const readBatch=(files,unit,onEach,onDone)=>{setPool0Status(`讀取中…（0/${files.length}${unit}）`);let done=0;const chk=()=>{if(++done===files.length)onDone();else setPool0Status(`讀取中…（${done}/${files.length}${unit}）`)};files.forEach(f=>{const r=new FileReader();r.onload=ev=>{onEach(decodeBuf(ev.target.result));chk()};r.onerror=chk;r.readAsArrayBuffer(f)})};
       if(atcFs.length){
         let arts=[];
-        readBatch(atcFs," 篇",txt=>{const a=stripATC(txt).trim();if(a)arts.push(a)},()=>{if(arts.length){S.atcPool=arts;S.compPool=null;POOL_DONE=true;sound.ok();st.style.color="#004080";st.textContent=`✅ 文章題庫：${arts.length} 篇 .atc（已永久記住）`;IDB.set("atc_pool",JSON.stringify(arts)).catch(()=>{});IDB.set("words_pool","").catch(()=>{})}else{st.style.color="#a00";st.textContent="⚠️ .atc 檔內容為空";sound.err()}});
+        readBatch(atcFs," 篇",txt=>{const a=stripATC(txt).trim();if(a)arts.push(a)},()=>{if(arts.length){S.atcPool=arts;S.compPool=null;POOL_DONE=true;sound.ok();setPool0Status(`✅ 文章題庫：${arts.length} 篇 .atc（已永久記住）`);IDB.set("atc_pool",JSON.stringify(arts)).catch(()=>{});IDB.set("words_pool","").catch(()=>{})}else{setPool0Status("⚠️ .atc 檔內容為空");sound.err()}});
       }else{
         S.atcPool=null;IDB.set("atc_pool","").catch(()=>{});let ws=[];
-        readBatch(txtFs,"",txt=>{ws=ws.concat(parsePool(txt))},()=>{const u=[...new Set(ws)];if(u.length){S.compPool=u;POOL_DONE=true;sound.ok();st.style.color="#004080";st.textContent=`✅ 資料夾題庫：${txtFs.length} 檔／${u.length} 詞（已永久記住）`;IDB.set("words_pool",u.join("\n")).catch(()=>{})}else{st.style.color="#a00";st.textContent="⚠️ 檔內無可用詞條";sound.err()}});
+        readBatch(txtFs,"",txt=>{ws=ws.concat(parsePool(txt))},()=>{const u=[...new Set(ws)];if(u.length){S.compPool=u;POOL_DONE=true;sound.ok();setPool0Status(`✅ 資料夾題庫：${txtFs.length} 檔／${u.length} 詞（已永久記住）`);IDB.set("words_pool",u.join("\n")).catch(()=>{})}else{setPool0Status("⚠️ 檔內無可用詞條");sound.err()}});
       }
     });
     $("cangjieTtFileInput").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const t=decodeFile(ev),n=applyDict(t);$("examSetupMsg").textContent=`✅ 已以外部碼表校正 ${n} 字（共 ${Object.keys(DICT).length} 字）`;$("dictSizeDisplay").textContent=Object.keys(DICT).length;IDB.set("chinese_tt",t).then(()=>{$("examSetupMsg").textContent+="；已存入瀏覽器，下次毋須再選"}).catch(()=>{})};r.onloadend=()=>e.target.value="";r.readAsArrayBuffer(f)});
